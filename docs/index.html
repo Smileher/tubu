@@ -1,20 +1,66 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="utf-8">
-<title>涂布 CCD 软件 · 发布中心</title>
-<style>
-  body { font-family: "Microsoft YaHei", system-ui, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 90vh; color: #444; background: #f7f7f5; }
-  main { text-align: center; }
-  h1 { font-size: 20px; font-weight: 500; }
-  p { font-size: 14px; color: #777; }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light dark" />
+  <meta name="author" content="chenhe" />
+  <meta name="manual-version" content="20261026161312" />
+  <title>操作手册 · 涂布检测软件</title>
+  <link rel="stylesheet" href="assets/help.css" />
+  <link rel="icon" href="assets/logo.png" type="image/png" />
+  <script src="assets/content.js" defer></script>
+  <script src="assets/export.js" defer></script>
+  <script src="assets/search.js" defer></script>
+  <script src="assets/help.js" defer></script>
+  <script src="assets/host-banner.js" defer></script>
 </head>
 <body>
-<main>
-  <h1>涂布 CCD 软件 · 发布中心</h1>
-  <p>操作手册将在首次自动构建完成后发布到本页。</p>
-  <p>软件包请前往本仓库的 Releases 页面下载。</p>
-</main>
+  <a class="skip-link" href="#main">跳到正文</a>
+  <button id="nav-backdrop" class="nav-backdrop" type="button" aria-label="关闭目录" tabindex="-1" hidden="hidden"></button>
+  <aside id="sidebar" class="sidebar" aria-label="手册导航">
+    <button id="nav-close" class="nav-close" type="button" aria-label="关闭目录">关闭 ×</button>
+    <a class="brand" href="#overview"><img class="brand-logo" src="assets/logo.png" alt="软件 Logo" /><span><strong>VISIONMEASURE</strong><small>涂布检测软件</small></span></a>
+    <div class="sidebar-label">使用指南 <span>HELP CENTER</span></div>
+    <form class="search-form" role="search">
+      <label class="sr-only" for="search">搜索操作、参数或问题</label>
+      <span aria-hidden="true">⌕</span><input id="search" type="search" placeholder="搜索操作、参数或问题" autocomplete="off" /><kbd title="搜索快捷键">/</kbd>
+    </form>
+    <nav id="navigation" aria-label="文档分类"></nav>
+  </aside>
+  <div class="workspace">
+    <header class="topbar">
+      <button id="nav-toggle" class="nav-toggle" type="button" aria-expanded="false" aria-controls="sidebar">☰ 目录</button>
+      <div class="breadcrumb"><span class="company-label">南京华视智能科技股份有限公司</span><span class="author-label">by chenhe</span><span aria-hidden="true">/</span><strong id="breadcrumb">手册概览</strong></div>
+      <div class="toolbar" aria-label="阅读设置">
+        <details class="reading-settings" open="open"><summary aria-label="字号设置" title="字号设置">Aa</summary><div class="font-controls">
+        <button id="font-down" type="button" aria-label="缩小字号" title="缩小字号">A−</button>
+        <span id="font-size" aria-live="polite">100%</span>
+        <button id="font-up" type="button" aria-label="放大字号" title="放大字号">A+</button>
+        </div></details>
+        <span class="toolbar-divider"></span>
+        <button id="theme" class="theme-toggle" type="button" role="switch" aria-checked="false" aria-label="深色主题" title="切换主题"><span class="theme-sun" aria-hidden="true">☀</span><span class="theme-moon" aria-hidden="true">☾</span><span class="theme-thumb" aria-hidden="true"></span></button>
+        <span class="toolbar-divider"></span>
+        <div class="export-control">
+          <button id="export-toggle" type="button" aria-expanded="false" aria-controls="export-menu">导出 <span aria-hidden="true">↓</span></button>
+          <div id="export-menu" class="export-menu" hidden="hidden">
+            <label for="export-scope">导出范围</label>
+            <select id="export-scope"><option value="all" selected="selected">整本手册</option><option value="current">当前文章</option></select>
+            <button id="export-word" type="button">Word <small>下载可编辑 DOCX</small></button>
+            <p id="export-status" role="status"></p>
+          </div>
+        </div>
+        <a class="header-logo" href="#overview" aria-label="返回操作手册首页"><img src="assets/logo.png" alt="软件 Logo" /></a>
+      </div>
+    </header>
+    <div class="reading-layout">
+      <main id="main" tabindex="-1"></main>
+      <aside id="contents" class="contents" aria-label="本篇目录"></aside>
+    </div>
+    <footer class="site-footer"><span class="footer-company">南京华视智能科技股份有限公司</span><span class="footer-product">VISIONMEASURE <span class="footer-dot">·</span> 操作手册 <small class="signature"><em>powered by</em> chenhe</small></span><a class="footer-quiet-link" href="https://github.com/Smileher/tubu/releases/latest">下载</a><a class="footer-quiet-link" href="ai-knowledge.md">AI 知识文档</a></footer>
+  </div>
+  <div id="reading-progress" class="reading-progress" role="progressbar" aria-label="阅读进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" hidden="hidden"><span></span></div>
+  <p id="reader-status" class="sr-only" role="status"></p>
+  <noscript><p class="load-error">请在浏览器中启用 JavaScript 后查看操作手册。</p></noscript>
 </body>
 </html>

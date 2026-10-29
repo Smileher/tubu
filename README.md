@@ -15,8 +15,8 @@
 2. **开启 Pages**（Settings → Pages）：
    - Source: `Deploy from a branch`
    - Branch: `main`，目录 `/docs`
-3. 首次运行：Actions → daily-release → **Run workflow** 手动触发一次，验证全流程。
-4. 手册站点地址：`https://vchenhev.github.io/<仓库名>/`
+3. 首次运行：Actions → daily-release → **Run workflow** 手动触发一次，验证全流程；失败恢复可勾选 `force`。
+4. 手册站点地址：`https://smileher.github.io/tubu/`
 
 ## 运行逻辑
 
@@ -25,8 +25,8 @@
 - 有新提交才：浅克隆（`--depth 1`）→ NuGet 缓存还原 → 构建 Debug x64 → `Package.ps1` 打包 → 发布 Release（tag 形如 `build-2026.10.29-a1b2c3d`，附 SHA256）→ 更新 `docs/` 并推送 Pages。
 - 产物命名：`App-TuBu-<时间戳>_<commit短哈希>.7z`。
 
-## V2 规划（预留，未实现）
+## V2 自动化规划
 
-- 钉钉上传：每周五或满 10 天，把最新 Release 资产上传到钉盘指定目录（企业内部应用 AppKey/AppSecret 放 Secrets），并在群里机器人通知。
+- 钉钉上传：`.github/workflows/weekly-dingtalk-upload.yml` 每周五北京时间 05:00 在 GitHub 托管 runner 下载最新 Release 资产，幂等上传到指定钉盘目录并按文件名和大小复核；凭证放 GitHub Actions Secrets。
 - 知识运营：定时读取钉钉中 AI 助理无法答复的问题 → LLM 分析 → 回填 md → 更新钉钉知识库；每次发版同步 `ai-knowledge.md` 到钉钉。
-- 注意：本仓库 Actions 日志公开，V2 涉及 LLM 分析时严禁把源码内容打印到日志。
+- 注意：本仓库 Actions 日志公开，涉及 LLM 分析时严禁把源码内容和任何密钥打印到日志。

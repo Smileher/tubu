@@ -1,0 +1,65 @@
+name: weekly-dingtalk-upload
+
+# 北京时间每周五 09:00（UTC 01:00）上传最新成功 Release，避开 05:00 的构建。
+on:
+  schedule:
+    - cron: '0 1 * * 5'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: '只验证 Release、目录和权限，不上传文件'
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: weekly-dingtalk-upload
+  cancel-in-progress: false
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      DINGTALK_APP_KEY: ${{ secrets.DINGTALK_APP_KEY }}
+      DINGTALK_APP_SECRET: ${{ secrets.DINGTALK_APP_SECRET }}
+      DINGTALK_OPERATOR_ID: ${{ secrets.DINGTALK_OPERATOR_ID }}
+      DINGTALK_SPACE_ID: '6305393758'
+      DINGTALK_PARENT_DENTRY_ID: '241288441918'
+      DINGTALK_DRY_RUN: ${{ inputs.dry_run && '1' || '0' }}
+    steps:
+      - name: Check out uploader
+        uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Download latest Release package
+        id: package
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          release_json="$(gh api "repos/${GITHUB_REPOSITORY}/releases/latest")"
+          url="$(jq -r '[.assets[] | select(.name | endswith(".7z"))] | sort_by(.created_at) | last.browser_download_url // empty' <<<"$release_json")"
+          name="$(jq -r '[.assets[] | select(.name | endswith(".7z"))] | sort_by(.created_at) | last.name // empty' <<<"$release_json")"
+          tag="$(jq -r '.tag_name' <<<"$release_json")"
+          test -n "$url" && test -n "$name"
+          [[ "$name" =~ ^App-TuBu-[A-Za-z0-9._-]+\.7z$ ]]
+          mkdir -p downloads
+          curl --fail --location --retry 5 --retry-all-errors --connect-timeout 20 --max-time 1200 "$url" -o "downloads/$name"
+          test -s "downloads/$name"
+          echo "name=$name" >> "$GITHUB_OUTPUT"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          echo "path=$PWD/downloads/$name" >> "$GITHUB_OUTPUT"
+          echo "Downloaded $name from $tag"
+
+      - name: Upload and verify in DingTalk Drive
+        env:
+          DINGTALK_FILE_PATH: ${{ steps.package.outputs.path }}
+        run: node Tools/Upload-DingTalk.mjs

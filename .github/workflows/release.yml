@@ -6,6 +6,12 @@ on:
   schedule:
     - cron: '0 21 * * *'
   workflow_dispatch:
+    inputs:
+      force:
+        description: '忽略最近 Release 的 SHA 检查，强制重新构建'
+        required: false
+        default: false
+        type: boolean
 
 permissions:
   contents: write
@@ -38,19 +44,24 @@ jobs:
           # Secrets are never echoed to the log.
           $ls = git ls-remote "https://${env:CODEUP_USER}:${env:CODEUP_TOKEN}@${env:CODEUP_REPO}" "refs/heads/${env:SOURCE_BRANCH}"
           if ($LASTEXITCODE -ne 0 -or -not $ls) { throw 'Cannot read Codeup branch info. Check CODEUP_USER / CODEUP_TOKEN secrets.' }
-          $currentSha = ($ls -split '\s+')[0].Substring(0, 7)
+          $currentFullSha = ($ls -split '\s+')[0]
+          if ($currentFullSha -notmatch '^[0-9a-f]{40}$') { throw 'Codeup branch SHA format is invalid.' }
+          $currentShortSha = $currentFullSha.Substring(0, 7)
           $lastSha = ''
           $releases = gh api "repos/$env:GITHUB_REPOSITORY/releases?per_page=1" 2>$null | ConvertFrom-Json
           if ($releases -and $releases.Count -gt 0 -and $releases[0].tag_name -match '-([0-9a-f]{7})$') {
             $lastSha = $Matches[1]
           }
-          if ($currentSha -eq $lastSha) {
-            Write-Host "Codeup 无新提交（$currentSha），跳过本次构建。"
+          $force = '${{ inputs.force }}' -eq 'true'
+          if (-not $force -and $currentShortSha -eq $lastSha) {
+            Write-Host "Codeup 无新提交（$currentShortSha），跳过本次构建。"
             "skip=true" >> $env:GITHUB_OUTPUT
           } else {
-            Write-Host "检测到新提交：$lastSha -> $currentSha"
+            if ($force) { Write-Host '已启用 force，忽略最近 Release SHA 检查。' }
+            else { Write-Host "检测到新提交：$lastSha -> $currentShortSha" }
             "skip=false" >> $env:GITHUB_OUTPUT
-            "sha=$currentSha" >> $env:GITHUB_OUTPUT
+            "sha=$currentFullSha" >> $env:GITHUB_OUTPUT
+            "sha_short=$currentShortSha" >> $env:GITHUB_OUTPUT
             "prev=$lastSha" >> $env:GITHUB_OUTPUT
           }
 
@@ -64,6 +75,13 @@ jobs:
           $ErrorActionPreference = 'Stop'
           git clone --depth 1 --branch $env:SOURCE_BRANCH "https://${env:CODEUP_USER}:${env:CODEUP_TOKEN}@${env:CODEUP_REPO}" source
           if ($LASTEXITCODE -ne 0) { throw "Codeup shallow clone failed, exit code $LASTEXITCODE" }
+          git -C source fetch --depth 1 "https://${env:CODEUP_USER}:${env:CODEUP_TOKEN}@${env:CODEUP_REPO}" '${{ steps.check.outputs.sha }}'
+          if ($LASTEXITCODE -ne 0) { throw "Codeup target SHA fetch failed, exit code $LASTEXITCODE" }
+          git -C source checkout --detach '${{ steps.check.outputs.sha }}'
+          if ($LASTEXITCODE -ne 0) { throw "Codeup checkout failed, exit code $LASTEXITCODE" }
+          $head = (git -C source rev-parse HEAD).Trim()
+          if ($head -ne '${{ steps.check.outputs.sha }}') { throw "Codeup SHA mismatch: expected ${{ steps.check.outputs.sha }}, got $head" }
+          Write-Host "已固定源码基线：$head"
 
       - name: Deepen history for changelog
         if: steps.check.outputs.skip == 'false'
@@ -74,7 +92,11 @@ jobs:
         run: |
           # 变更日志需要跨越上次发布以来的提交历史，浅克隆需补深。失败不阻断（降级为仅当前提交）。
           git -C source fetch --deepen=200 "https://${env:CODEUP_USER}:${env:CODEUP_TOKEN}@${env:CODEUP_REPO}" $env:SOURCE_BRANCH 2>$null
-          Write-Host "history deepened: $((git -C source rev-list --count HEAD) 2>$null) commits"
+          if ($LASTEXITCODE -ne 0) {
+            Write-Host '历史补深失败，降级为当前浅克隆提交列表。'
+          } else {
+            Write-Host "历史补深成功：$((git -C source rev-list --count HEAD) 2>$null) commits"
+          }
 
       - name: Cache NuGet packages
         if: steps.check.outputs.skip == 'false'
@@ -113,6 +135,7 @@ jobs:
         run: |
           $ErrorActionPreference = 'Stop'
           $currentSha = '${{ steps.check.outputs.sha }}'
+          $currentShortSha = '${{ steps.check.outputs.sha_short }}'
           $prevSha = '${{ steps.check.outputs.prev }}'
           # 收集提交列表（LLM 失败时作为降级内容）
           if ($prevSha) {
@@ -149,15 +172,20 @@ jobs:
 
           # 更新仓库根 CHANGELOG.md（倒序追加）
           $stamp = [DateTime]::UtcNow.AddHours(8).ToString('yyyy-MM-dd')
-          $tag = "build-{0}-{1}" -f $stamp, $currentSha
+          $tag = "build-{0}-{1}" -f $stamp, $currentShortSha
           $entry = "## $tag（$stamp）`n`n$summary`n"
           $changelogPath = 'CHANGELOG.md'
           if (Test-Path $changelogPath) {
             $old = Get-Content $changelogPath -Raw -Encoding UTF8
-            $headerSplit = $old.IndexOf("## ")
-            if ($headerSplit -gt 0) {
-              $newContent = $old.Substring(0, $headerSplit) + $entry + "`n" + $old.Substring($headerSplit)
-            } else { $newContent = $old + "`n" + $entry }
+            if ($old -match [regex]::Escape("## $tag（$stamp）")) {
+              Write-Host "CHANGELOG 已包含 $tag，跳过重复追加。"
+              $newContent = $old
+            } else {
+              $headerSplit = $old.IndexOf("## ")
+              if ($headerSplit -gt 0) {
+                $newContent = $old.Substring(0, $headerSplit) + $entry + "`n" + $old.Substring($headerSplit)
+              } else { $newContent = $old + "`n" + $entry }
+            }
           } else {
             $newContent = "# 更新日志`n`n自动生成，每次发版追加。包内不含文档，变更内容以本文件与 Release 说明为准。`n`n$entry"
           }
@@ -168,6 +196,25 @@ jobs:
           Write-Host "----- 变更说明 -----"
           Write-Host $summary
 
+      - name: Deploy Pages (copy Help site)
+        if: steps.check.outputs.skip == 'false'
+        shell: pwsh
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if (Test-Path docs) { Remove-Item docs -Recurse -Force }
+          Copy-Item ./source/Help ./docs -Recurse
+          if (Test-Path CHANGELOG.md) { Copy-Item CHANGELOG.md docs/ -Force }
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs CHANGELOG.md
+          $changed = git diff --cached --name-only
+          if ($changed) {
+            git commit -m "更新 Pages：$env:SOURCE_BRANCH ${{ steps.check.outputs.sha_short }}"
+            git push
+          } else {
+            Write-Host 'docs 无变化，跳过 Pages 提交。'
+          }
+
       - name: Create GitHub Release
         if: steps.check.outputs.skip == 'false'
         shell: pwsh
@@ -176,7 +223,8 @@ jobs:
         run: |
           $ErrorActionPreference = 'Stop'
           $sha = '${{ steps.check.outputs.sha }}'
-          $tag = "build-{0}-{1}" -f ([DateTime]::UtcNow.AddHours(8).ToString('yyyy.MM.dd')), $sha
+          $shaShort = '${{ steps.check.outputs.sha_short }}'
+          $tag = "build-{0}-{1}" -f ([DateTime]::UtcNow.AddHours(8).ToString('yyyy.MM.dd')), $shaShort
           $stamp = [DateTime]::UtcNow.AddHours(8).ToString('yyyy-MM-dd HH:mm')
           $notes = @(
             '自动构建发布',
@@ -193,25 +241,6 @@ jobs:
           [IO.File]::WriteAllText('release-notes.md', $notes + [IO.File]::ReadAllText('changelog-body.md'), (New-Object Text.UTF8Encoding($true)))
           gh release create $tag "${{ steps.package.outputs.archive_path }}" --title $tag --notes-file release-notes.md
           if ($LASTEXITCODE -ne 0) { throw "gh release create failed, exit code $LASTEXITCODE" }
-
-      - name: Deploy Pages (copy Help site)
-        if: steps.check.outputs.skip == 'false'
-        shell: pwsh
-        run: |
-          $ErrorActionPreference = 'Stop'
-          if (Test-Path docs) { Remove-Item docs -Recurse -Force }
-          Copy-Item ./source/Help ./docs -Recurse
-          if (Test-Path CHANGELOG.md) { Copy-Item CHANGELOG.md docs/ -Force }
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs CHANGELOG.md
-          $changed = git diff --cached --name-only
-          if ($changed) {
-            git commit -m "更新 Pages：$env:SOURCE_BRANCH ${{ steps.check.outputs.sha }}"
-            git push
-          } else {
-            Write-Host 'docs 无变化，跳过 Pages 提交。'
-          }
 
       # ============================================================
       # V2 预留：钉钉上传步骤。

@@ -28,7 +28,7 @@ jobs:
 
       - name: Detect new commits on Codeup
         id: check
-        shell: powershell
+        shell: pwsh
         env:
           CODEUP_USER: ${{ secrets.CODEUP_USER }}
           CODEUP_TOKEN: ${{ secrets.CODEUP_TOKEN }}
@@ -37,7 +37,7 @@ jobs:
           $ErrorActionPreference = 'Stop'
           # Secrets are never echoed to the log.
           $ls = git ls-remote "https://${env:CODEUP_USER}:${env:CODEUP_TOKEN}@${env:CODEUP_REPO}" "refs/heads/${env:SOURCE_BRANCH}"
-          if ($LASTEXITCODE -ne 0 -or -not $ls) { throw '无法读取 Codeup 分支信息，请检查 CODEUP_USER / CODEUP_TOKEN' }
+          if ($LASTEXITCODE -ne 0 -or -not $ls) { throw 'Cannot read Codeup branch info. Check CODEUP_USER / CODEUP_TOKEN secrets.' }
           $currentSha = ($ls -split '\s+')[0].Substring(0, 7)
           $lastSha = ''
           $releases = gh api "repos/$env:GITHUB_REPOSITORY/releases?per_page=1" 2>$null | ConvertFrom-Json
@@ -56,18 +56,18 @@ jobs:
 
       - name: Clone source from Codeup (shallow)
         if: steps.check.outputs.skip == 'false'
-        shell: powershell
+        shell: pwsh
         env:
           CODEUP_USER: ${{ secrets.CODEUP_USER }}
           CODEUP_TOKEN: ${{ secrets.CODEUP_TOKEN }}
         run: |
           $ErrorActionPreference = 'Stop'
           git clone --depth 1 --branch $env:SOURCE_BRANCH "https://${env:CODEUP_USER}:${env:CODEUP_TOKEN}@${env:CODEUP_REPO}" source
-          if ($LASTEXITCODE -ne 0) { throw 'Codeup 浅克隆失败' }
+          if ($LASTEXITCODE -ne 0) { throw "Codeup shallow clone failed, exit code $LASTEXITCODE" }
 
       - name: Deepen history for changelog
         if: steps.check.outputs.skip == 'false' && steps.check.outputs.prev != ''
-        shell: powershell
+        shell: pwsh
         env:
           CODEUP_USER: ${{ secrets.CODEUP_USER }}
           CODEUP_TOKEN: ${{ secrets.CODEUP_TOKEN }}
@@ -88,14 +88,14 @@ jobs:
       - name: Build and package
         id: package
         if: steps.check.outputs.skip == 'false'
-        shell: powershell
+        shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
           & ./source/Package.ps1
-          if ($LASTEXITCODE -ne 0) { throw "Package.ps1 失败，退出码 $LASTEXITCODE" }
+          if ($LASTEXITCODE -ne 0) { throw "Package.ps1 failed, exit code $LASTEXITCODE" }
           $archive = Get-ChildItem ./source -Filter 'App-TuBu-*.7z' |
             Sort-Object LastWriteTime -Descending | Select-Object -First 1
-          if (-not $archive) { throw '未找到打包产物 App-TuBu-*.7z' }
+          if (-not $archive) { throw 'Package archive App-TuBu-*.7z not found' }
           $hash = (Get-FileHash $archive.FullName -Algorithm SHA256).Hash
           "archive_path=$($archive.FullName)" >> $env:GITHUB_OUTPUT
           "archive_name=$($archive.Name)" >> $env:GITHUB_OUTPUT
@@ -105,7 +105,7 @@ jobs:
       - name: Generate changelog
         id: changelog
         if: steps.check.outputs.skip == 'false'
-        shell: powershell
+        shell: pwsh
         env:
           LLM_BASE_URL: ${{ secrets.LLM_BASE_URL }}
           LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
@@ -170,7 +170,7 @@ jobs:
 
       - name: Create GitHub Release
         if: steps.check.outputs.skip == 'false'
-        shell: powershell
+        shell: pwsh
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
@@ -192,11 +192,11 @@ jobs:
           ) -join "`n"
           [IO.File]::WriteAllText('release-notes.md', $notes + [IO.File]::ReadAllText('changelog-body.md'), (New-Object Text.UTF8Encoding($true)))
           gh release create $tag "${{ steps.package.outputs.archive_path }}" --title $tag --notes-file release-notes.md
-          if ($LASTEXITCODE -ne 0) { throw '创建 Release 失败' }
+          if ($LASTEXITCODE -ne 0) { throw "gh release create failed, exit code $LASTEXITCODE" }
 
       - name: Deploy Pages (copy Help site)
         if: steps.check.outputs.skip == 'false'
-        shell: powershell
+        shell: pwsh
         run: |
           $ErrorActionPreference = 'Stop'
           if (Test-Path docs) { Remove-Item docs -Recurse -Force }

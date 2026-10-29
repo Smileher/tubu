@@ -1,0 +1,222 @@
+name: daily-release
+
+# 每日自动构建发布。UTC 21:00 = 北京时间次日凌晨 05:00，可在 schedule 中调整。
+# 手动触发：Actions 页面 -> daily-release -> Run workflow。
+on:
+  schedule:
+    - cron: '0 21 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-release
+  cancel-in-progress: false
+
+env:
+  CODEUP_REPO: codeup.aliyun.com/655ac6bcc4c6ca1cb0430697/ccd-general-software/TuBuMeasureSystem.git
+  SOURCE_BRANCH: Develop
+
+jobs:
+  build-and-release:
+    runs-on: windows-latest
+    timeout-minutes: 90
+    steps:
+      - name: Check out release repository
+        uses: actions/checkout@v4
+
+      - name: Detect new commits on Codeup
+        id: check
+        shell: powershell
+        env:
+          CODEUP_USER: ${{ secrets.CODEUP_USER }}
+          CODEUP_TOKEN: ${{ secrets.CODEUP_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          # Secrets are never echoed to the log.
+          $ls = git ls-remote "https://${env:CODEUP_USER}:${env:CODEUP_TOKEN}@${env:CODEUP_REPO}" "refs/heads/${env:SOURCE_BRANCH}"
+          if ($LASTEXITCODE -ne 0 -or -not $ls) { throw '无法读取 Codeup 分支信息，请检查 CODEUP_USER / CODEUP_TOKEN' }
+          $currentSha = ($ls -split '\s+')[0].Substring(0, 7)
+          $lastSha = ''
+          $releases = gh api "repos/$env:GITHUB_REPOSITORY/releases?per_page=1" 2>$null | ConvertFrom-Json
+          if ($releases -and $releases.Count -gt 0 -and $releases[0].tag_name -match '-([0-9a-f]{7})$') {
+            $lastSha = $Matches[1]
+          }
+          if ($currentSha -eq $lastSha) {
+            Write-Host "Codeup 无新提交（$currentSha），跳过本次构建。"
+            "skip=true" >> $env:GITHUB_OUTPUT
+          } else {
+            Write-Host "检测到新提交：$lastSha -> $currentSha"
+            "skip=false" >> $env:GITHUB_OUTPUT
+            "sha=$currentSha" >> $env:GITHUB_OUTPUT
+            "prev=$lastSha" >> $env:GITHUB_OUTPUT
+          }
+
+      - name: Clone source from Codeup (shallow)
+        if: steps.check.outputs.skip == 'false'
+        shell: powershell
+        env:
+          CODEUP_USER: ${{ secrets.CODEUP_USER }}
+          CODEUP_TOKEN: ${{ secrets.CODEUP_TOKEN }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          git clone --depth 1 --branch $env:SOURCE_BRANCH "https://${env:CODEUP_USER}:${env:CODEUP_TOKEN}@${env:CODEUP_REPO}" source
+          if ($LASTEXITCODE -ne 0) { throw 'Codeup 浅克隆失败' }
+
+      - name: Deepen history for changelog
+        if: steps.check.outputs.skip == 'false' && steps.check.outputs.prev != ''
+        shell: powershell
+        env:
+          CODEUP_USER: ${{ secrets.CODEUP_USER }}
+          CODEUP_TOKEN: ${{ secrets.CODEUP_TOKEN }}
+        run: |
+          # 变更日志需要跨越上次发布以来的提交历史，浅克隆需补深。失败不阻断（降级为仅当前提交）。
+          git -C source fetch --deepen=200 "https://${env:CODEUP_USER}:${env:CODEUP_TOKEN}@${env:CODEUP_REPO}" $env:SOURCE_BRANCH 2>$null
+          Write-Host "history deepened: $((git -C source rev-list --count HEAD) 2>$null) commits"
+
+      - name: Cache NuGet packages
+        if: steps.check.outputs.skip == 'false'
+        uses: actions/cache@v4
+        with:
+          path: source/packages
+          key: nuget-windows-v1
+          restore-keys: |
+            nuget-windows-v1
+
+      - name: Build and package
+        id: package
+        if: steps.check.outputs.skip == 'false'
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          & ./source/Package.ps1
+          if ($LASTEXITCODE -ne 0) { throw "Package.ps1 失败，退出码 $LASTEXITCODE" }
+          $archive = Get-ChildItem ./source -Filter 'App-TuBu-*.7z' |
+            Sort-Object LastWriteTime -Descending | Select-Object -First 1
+          if (-not $archive) { throw '未找到打包产物 App-TuBu-*.7z' }
+          $hash = (Get-FileHash $archive.FullName -Algorithm SHA256).Hash
+          "archive_path=$($archive.FullName)" >> $env:GITHUB_OUTPUT
+          "archive_name=$($archive.Name)" >> $env:GITHUB_OUTPUT
+          "sha256=$hash" >> $env:GITHUB_OUTPUT
+          "size_mb=$([Math]::Round($archive.Length / 1MB, 1))" >> $env:GITHUB_OUTPUT
+
+      - name: Generate changelog
+        id: changelog
+        if: steps.check.outputs.skip == 'false'
+        shell: powershell
+        env:
+          LLM_BASE_URL: ${{ secrets.LLM_BASE_URL }}
+          LLM_API_KEY: ${{ secrets.LLM_API_KEY }}
+          LLM_MODEL: ${{ secrets.LLM_MODEL }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $currentSha = '${{ steps.check.outputs.sha }}'
+          $prevSha = '${{ steps.check.outputs.prev }}'
+          # 收集提交列表（LLM 失败时作为降级内容）
+          if ($prevSha) {
+            $log = git -C source log "$prevSha..$currentSha" --pretty=format:'- %s (%an)' 2>$null
+          }
+          if (-not $log) { $log = git -C source log -15 --pretty=format:'- %s (%an)' 2>$null }
+          $commits = ($log | Where-Object { $_ -and $_ -notmatch '知识问答库' }) -join "`n"
+          if (-not $commits) { $commits = "- 维护性提交 $currentSha" }
+
+          $summary = $null
+          if ($env:LLM_BASE_URL -and $env:LLM_API_KEY) {
+            try {
+              $payload = @{
+                model = $env:LLM_MODEL
+                messages = @(
+                  @{ role = 'system'; content = '你是工业检测软件（涂布CCD视觉检测）的发布助理。根据 git 提交记录，生成面向现场实施人员的简明变更说明：5-10 条要点，每条以"- "开头，只写用户可感知的变化（新功能、行为变化、修复的问题），忽略纯文档、合并提交与内部重构。中文输出，只输出要点列表，不要开场白和结束语。' }
+                  @{ role = 'user'; content = "本次发布 commit 范围：$prevSha..$currentSha`n`n提交列表：`n$commits" }
+                )
+                temperature = 0.3
+                max_tokens = 800
+              } | ConvertTo-Json -Depth 6
+              $resp = Invoke-RestMethod -Uri "$($env:LLM_BASE_URL.TrimEnd('/'))/v1/chat/completions" `
+                -Method Post -Headers @{ Authorization = "Bearer $($env:LLM_API_KEY)" } `
+                -ContentType 'application/json; charset=utf-8' -Body $payload -TimeoutSec 180
+              $summary = $resp.choices[0].message.content.Trim()
+              Write-Host "LLM 变更说明生成成功（$($summary.Length) 字符）"
+            } catch {
+              Write-Host "LLM 生成失败，降级为 commit 列表：$($_.Exception.Message)"
+            }
+          } else {
+            Write-Host '未配置 LLM Secrets，使用 commit 列表。'
+          }
+          if (-not $summary) { $summary = $commits }
+
+          # 更新仓库根 CHANGELOG.md（倒序追加）
+          $stamp = [DateTime]::UtcNow.AddHours(8).ToString('yyyy-MM-dd')
+          $tag = "build-{0}-{1}" -f $stamp, $currentSha
+          $entry = "## $tag（$stamp）`n`n$summary`n"
+          $changelogPath = 'CHANGELOG.md'
+          if (Test-Path $changelogPath) {
+            $old = Get-Content $changelogPath -Raw -Encoding UTF8
+            $headerSplit = $old.IndexOf("## ")
+            if ($headerSplit -gt 0) {
+              $newContent = $old.Substring(0, $headerSplit) + $entry + "`n" + $old.Substring($headerSplit)
+            } else { $newContent = $old + "`n" + $entry }
+          } else {
+            $newContent = "# 更新日志`n`n自动生成，每次发版追加。包内不含文档，变更内容以本文件与 Release 说明为准。`n`n$entry"
+          }
+          [IO.File]::WriteAllText($changelogPath, $newContent, (New-Object Text.UTF8Encoding($true)))
+
+          # 写入临时文件供 Release 步骤引用
+          [IO.File]::WriteAllText('changelog-body.md', $summary, (New-Object Text.UTF8Encoding($true)))
+          Write-Host "----- 变更说明 -----"
+          Write-Host $summary
+
+      - name: Create GitHub Release
+        if: steps.check.outputs.skip == 'false'
+        shell: powershell
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          $ErrorActionPreference = 'Stop'
+          $sha = '${{ steps.check.outputs.sha }}'
+          $tag = "build-{0}-{1}" -f ([DateTime]::UtcNow.AddHours(8).ToString('yyyy.MM.dd')), $sha
+          $stamp = [DateTime]::UtcNow.AddHours(8).ToString('yyyy-MM-dd HH:mm')
+          $notes = @(
+            '自动构建发布',
+            "- 来源分支: $env:SOURCE_BRANCH",
+            "- Commit: $sha",
+            "- 构建时间: $stamp（UTC+8）",
+            "- 文件: ${{ steps.package.outputs.archive_name }}",
+            "- 大小: ${{ steps.package.outputs.size_mb }} MB",
+            "- SHA256: ``${{ steps.package.outputs.sha256 }}``",
+            '',
+            '## 本次变更',
+            ''
+          ) -join "`n"
+          [IO.File]::WriteAllText('release-notes.md', $notes + [IO.File]::ReadAllText('changelog-body.md'), (New-Object Text.UTF8Encoding($true)))
+          gh release create $tag "${{ steps.package.outputs.archive_path }}" --title $tag --notes-file release-notes.md
+          if ($LASTEXITCODE -ne 0) { throw '创建 Release 失败' }
+
+      - name: Deploy Pages (copy Help site)
+        if: steps.check.outputs.skip == 'false'
+        shell: powershell
+        run: |
+          $ErrorActionPreference = 'Stop'
+          if (Test-Path docs) { Remove-Item docs -Recurse -Force }
+          Copy-Item ./source/Help ./docs -Recurse
+          if (Test-Path CHANGELOG.md) { Copy-Item CHANGELOG.md docs/ -Force }
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs CHANGELOG.md
+          $changed = git diff --cached --name-only
+          if ($changed) {
+            git commit -m "更新 Pages：$env:SOURCE_BRANCH ${{ steps.check.outputs.sha }}"
+            git push
+          } else {
+            Write-Host 'docs 无变化，跳过 Pages 提交。'
+          }
+
+      # ============================================================
+      # V2 预留：钉钉上传步骤。
+      # 触发条件示例：每周五或距上次上传满 10 天。
+      #   if: github.event.schedule != '' && [DateTime]::Now.DayOfWeek -eq 'Friday'
+      # 做法：用 gh api 取最新 Release 资产 -> Tools/Upload-DingDrive.ps1
+      # 凭证：secrets.DINGTALK_APP_KEY / DINGTALK_APP_SECRET / 钉盘 spaceId 与目录 id。
+      # ============================================================

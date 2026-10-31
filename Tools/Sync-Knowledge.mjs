@@ -120,7 +120,10 @@ export class DingTalkKnowledge {
         if (!Array.isArray(result.children)) throw new Error('知识库目录树返回缺失');
         for (const child of result.children) {
           if (child.spaceId !== this.workspaceId) throw new Error('知识库目录树空间不符');
-          if (child.dentryUuid === this.parentUuid || directChildren.has(child.dentryUuid)) return node;
+          if (child.dentryUuid === this.parentUuid || directChildren.has(child.dentryUuid)) {
+            this.knowledgeParentId = child.dentryUuid === this.parentUuid ? child.dentryId : folderId;
+            return node;
+          }
           if (child.dentryType === 'folder' && child.dentryId && !folders.includes(child.dentryId)) folders.push(child.dentryId);
         }
         if (!result.hasMore) break;
@@ -154,12 +157,33 @@ export class DingTalkKnowledge {
   }
 
   async createFolder(parent, name) {
-    const result = await this.api(`/v1.0/storage/spaces/${this.spaceId}/dentries/${parent.id}/folders`,
-      { unionId: this.operatorId }, { name, option: { conflictStrategy: 'RETURN_ERROR_IF_EXISTS' } });
-    if (!result.dentry?.id) throw new Error('创建目录未返回节点');
-    const node = await this.inspect(result.dentry.id);
+    const result = await this.api(`/v1.0/doc/workspaces/${encodeURIComponent(this.workspaceId)}/docs`, {}, {
+      name, docType: 'FOLDER', operatorId: this.operatorId,
+      ...(this.knowledgeParentId ? { parentNodeId: this.knowledgeParentId } : {}),
+    });
+    if (result.workspaceId !== this.workspaceId || !result.dentryUuid) throw new Error('创建知识库目录未返回节点');
+    const mapped = await this.map(result.dentryUuid);
+    if (String(mapped.spaceId) !== String(this.spaceId)) throw new Error('创建目录空间不符');
+    const node = await this.inspect(mapped.dentryId);
     if (node.name !== name || node.type !== 'FOLDER' || String(node.parentId) !== String(parent.id) || !node.uuid) throw new Error('创建目录回读不符');
     return node;
+  }
+
+  async verifyFolder(folder) {
+    let cursor = '';
+    const seen = new Set();
+    for (let page = 0; page < 100; page++) {
+      const result = await this.api(`/v2.0/doc/spaces/${encodeURIComponent(this.workspaceId)}/directories`, {
+        operatorId: this.operatorId, dentryId: this.knowledgeParentId || '', maxResults: 50, nextToken: cursor,
+      });
+      if (!Array.isArray(result.children)) throw new Error('知识库目录树返回缺失');
+      if (result.children.some((child) => child.dentryUuid === folder.uuid && child.dentryType === 'folder')) return;
+      if (!result.hasMore) break;
+      cursor = result.nextToken;
+      if (!cursor || seen.has(cursor)) throw new Error('知识库目录树分页不完整');
+      seen.add(cursor);
+    }
+    throw new Error('KnowledgeQA 仅存在于存储层，未注册为指定知识库目录，停止写入');
   }
 
   async same(node, content) {
@@ -194,10 +218,16 @@ export class DingTalkKnowledge {
     });
     const committed = result.dentry;
     if (!committed?.id || (existing && String(committed.id) !== String(existing.id))) throw new Error('提交未返回原文件节点，停止该项');
-    const verified = await this.inspect(committed.id);
-    if (!verified.uuid || fullName(verified) !== name || verified.type !== 'FILE' ||
-        String(verified.parentId) !== String(parent.id) || Number(verified.size) !== content.length || verified.storageDriver !== 'DINGTALK') {
-      throw new Error('写后文件元信息不符');
+    const verified = { ...committed, ...await this.inspect(committed.id) };
+    const differences = [];
+    if (!verified.uuid) differences.push('缺少 UUID');
+    if (fullName(verified) !== name) differences.push('名称不符');
+    if (verified.type !== 'FILE') differences.push('类型不符');
+    if (String(verified.parentId) !== String(parent.id)) differences.push('父目录不符');
+    if (Number(verified.size) !== content.length) differences.push(`大小不符：expected=${content.length}, actual=${verified.size}`);
+    if (verified.storageDriver !== 'DINGTALK') differences.push('存储驱动不符');
+    if (differences.length) {
+      throw new Error(`写后文件元信息不符（${differences.join('；')}）`);
     }
     return verified;
   }
@@ -218,6 +248,7 @@ export async function syncFiles({ client, files, dryRun = true, log = console.lo
   try {
     qaFolder = selectNode(rootNodes, 'KnowledgeQA', 'FOLDER');
     if (!qaFolder && !dryRun) qaFolder = await client.createFolder(root, 'KnowledgeQA');
+    if (qaFolder && client.verifyFolder) await client.verifyFolder(qaFolder);
     qaNodes = qaFolder ? await client.list(qaFolder) : [];
   } catch (error) { qaError = error; }
   for (const file of files) {

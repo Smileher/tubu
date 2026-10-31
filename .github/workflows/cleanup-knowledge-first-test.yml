@@ -1,0 +1,47 @@
+name: cleanup-knowledge-first-test
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: daily-knowledge-sync
+  cancel-in-progress: false
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Remove only the empty unregistered folder created by the first test
+        env:
+          DINGTALK_APP_KEY: ${{ secrets.DINGTALK_APP_KEY }}
+          DINGTALK_APP_SECRET: ${{ secrets.DINGTALK_APP_SECRET }}
+          DINGTALK_OPERATOR_ID: ${{ secrets.DINGTALK_OPERATOR_ID }}
+        run: |
+          node --input-type=module <<'NODE'
+          import { createTransport, DingTalkKnowledge } from './Tools/Sync-Knowledge.mjs';
+          const request = createTransport();
+          const auth = await request('https://api.dingtalk.com/v1.0/oauth2/accessToken', {
+            method: 'POST', headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ appKey: process.env.DINGTALK_APP_KEY, appSecret: process.env.DINGTALK_APP_SECRET }),
+          }, { safe: true, label: '认证' });
+          const client = new DingTalkKnowledge({ token: auth.accessToken, operatorId: process.env.DINGTALK_OPERATOR_ID,
+            workspaceId: 'YRBGvgKbpvp0KzDA', parentUuid: 'ydxXB52LJqA1O6onF2e4kbwMJqjMp697', request });
+          const root = await client.resolve();
+          const taskCreatedUuid = 'm9bN7RYPWdbzD6BMiRzlYzM5JZd1wyK0';
+          const folder = (await client.listStorage(root)).find((node) => node.uuid === taskCreatedUuid);
+          if (!folder) { console.log('本任务首次测试创建的空目录已不存在，无需清理'); process.exit(0); }
+          if (folder.type !== 'FOLDER' || folder.name !== 'KnowledgeQA' || String(folder.parentId) !== String(root.id)) throw new Error('目标不符，停止清理');
+          if ((await client.list(root)).some((node) => node.uuid === taskCreatedUuid)) throw new Error('该目录已注册在知识库中，保留并停止清理');
+          if ((await client.listStorage(folder)).length) throw new Error('该目录不是空目录，保留并停止清理');
+          const url = new URL(`https://api.dingtalk.com/v1.0/storage/spaces/${client.spaceId}/dentries/${folder.id}`);
+          url.searchParams.set('unionId', process.env.DINGTALK_OPERATOR_ID);
+          url.searchParams.set('toRecycleBin', 'false');
+          await request(url, { method: 'DELETE', headers: { 'x-acs-dingtalk-access-token': auth.accessToken } },
+            { binary: true, label: '清理本任务创建的空目录' });
+          if ((await client.listStorage(root)).some((node) => node.uuid === taskCreatedUuid)) throw new Error('清理后仍存在，停止');
+          console.log('已清理首次测试创建的未注册空目录；原知识库和文档均保留');
+          NODE

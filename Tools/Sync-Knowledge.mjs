@@ -32,6 +32,7 @@ export function createTransport({ fetchImpl = fetch, timeoutMs = 30000, pause = 
           throw error;
         }
         if (!binary) return await response.json();
+        if (!response.body) return Buffer.alloc(0);
         const length = Number(response.headers.get('content-length'));
         if (length > MAX_MARKDOWN_BYTES) throw new Error('Markdown 超过读取上限');
         const chunks = [];
@@ -163,6 +164,7 @@ export class DingTalkKnowledge {
   async list(parent) {
     // 知识库标题与底层存储文件名不同；仅用目录树的标题匹配，存储信息只用于传输及大小核对。
     const entries = [];
+    const byUuid = new Map();
     const seen = new Set();
     let cursor = '';
     const parentNodeId = parent.knowledgeNodeId ?? this.knowledgeParentId;
@@ -174,14 +176,22 @@ export class DingTalkKnowledge {
       if (!Array.isArray(result.children)) throw new Error('知识库目录树返回缺失');
       for (const child of result.children) {
         if (child.spaceId !== this.workspaceId || !child.dentryUuid || !child.dentryId) throw new Error('知识库节点归属或 ID 缺失');
+        const duplicate = byUuid.get(child.dentryUuid);
+        if (duplicate) {
+          if (fullName(duplicate) !== fullName(child) || duplicate.type !== (child.dentryType === 'folder' ? 'FOLDER' : 'FILE')) {
+            throw new Error('同一知识库 UUID 的标题或类型冲突');
+          }
+          continue;
+        }
         const mapped = await this.map(child.dentryUuid);
         if (String(mapped.spaceId) !== String(this.spaceId)) throw new Error('知识库节点存储空间不符');
         const stored = await this.inspect(mapped.dentryId);
         if (String(stored.parentId) !== String(parent.id)) throw new Error('知识库节点父目录不符');
-        if (entries.some((entry) => entry.uuid === child.dentryUuid)) continue;
-        entries.push({ ...stored, uuid: child.dentryUuid, name: child.name, extension: child.extension,
+        const entry = { ...stored, uuid: child.dentryUuid, name: child.name, extension: child.extension,
           type: child.dentryType === 'folder' ? 'FOLDER' : child.dentryType === 'file' ? 'FILE' : 'UNKNOWN',
-          knowledgeNodeId: child.dentryId });
+          knowledgeNodeId: child.dentryId };
+        entries.push(entry);
+        byUuid.set(child.dentryUuid, entry);
       }
       if (!result.hasMore) return entries;
       cursor = result.nextToken;

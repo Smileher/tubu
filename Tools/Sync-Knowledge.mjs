@@ -98,24 +98,12 @@ export class DingTalkKnowledge {
   }
 
   async resolve() {
-    // workspace 的根节点映射与目标目录的祖先链共同验证归属，复用现有 Document/Storage 权限。
-    const workspace = await this.api(`/v1.0/doc/workspaces/${encodeURIComponent(this.workspaceId)}`);
-    if (workspace.isDeleted || !workspace.rootDentryUuid) throw new Error('知识库不存在或根节点缺失');
-    const root = await this.map(workspace.rootDentryUuid);
+    // 直接使用已核实的目标父节点 UUID；workspace 元信息接口属于另一套权限，不能因校验便利而扩大权限要求。
     const parent = await this.map(this.parentUuid);
-    if (String(root.spaceId) !== String(parent.spaceId)) throw new Error('目标目录不属于指定知识库空间');
     this.spaceId = parent.spaceId;
-    let node = await this.inspect(parent.dentryId);
+    const node = await this.inspect(parent.dentryId);
     if (node.type !== 'FOLDER' || node.uuid !== this.parentUuid) throw new Error('目标父节点不是指定文件夹');
-    const target = node;
-    const seen = new Set();
-    for (let depth = 0; depth < 30; depth++) {
-      if (String(node.id) === String(root.dentryId)) return target;
-      if (!node.parentId || node.parentId === '0' || seen.has(node.id)) break;
-      seen.add(node.id);
-      node = await this.inspect(node.parentId);
-    }
-    throw new Error('无法确认目标目录位于指定知识库根节点下');
+    return node;
   }
 
   async list(parent) {

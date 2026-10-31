@@ -31,7 +31,7 @@
 
 - 执行位置：本仓库 `.github/workflows/daily-knowledge-sync.yml`，GitHub 托管 Ubuntu runner / Node.js 22；整轮 20 分钟，同一任务串行，定时启动可能因 GitHub 排队延迟。
 - 来源：Codeup `Develop` 本轮固定 SHA；`Help/ai-knowledge.md` → 目标父目录现有同名 Markdown；`KnowledgeQA/*.md`（包括 README）→ 现有 `KnowledgeQA` 子目录。
-- 目标 workspace：`YRBGvgKbpvp0KzDA`；父目录 UUID：`ydxXB52LJqA1O6onF2e4kbwMJqjMp697`。先通过 workspace 根节点和存储祖先链验证归属，再读取完整分页列表，复用现有节点。
+- 目标 workspace：`YRBGvgKbpvp0KzDA`；父目录 UUID：`ydxXB52LJqA1O6onF2e4kbwMJqjMp697`。使用已核实的父目录 UUID 映射到存储空间并回读文件夹类型后，再读取完整分页列表，复用现有节点；不调用需要额外 `Wiki.Workspace.Read` 的 workspace 元信息接口。
 - 使用既有 `CODEUP_USER`、`CODEUP_TOKEN`、`DINGTALK_APP_KEY`、`DINGTALK_APP_SECRET`、`DINGTALK_OPERATOR_ID` Secrets。运行期间的源码、QA、Git 认证 helper 仅放临时目录，结束清理；不提交、不上传 Actions 附件。
 - 文档目录、workspace、目标父目录和预览开关使用工作流中的 `KNOWLEDGE_*` 环境变量配置。执行脚本为 `Tools/Sync-Knowledge.mjs`，与安装包上传脚本分开。
 - 当前 Storage 元信息无可比内容哈希，因此仅下载小体积 Markdown（单文件上限 8 MiB）比较 SHA256；内容相同跳过，变化覆盖原节点，缺少则新建，不删除远端额外文件。同名冲突或类型不符停止该项。写后只核对节点和元信息，不重复下载全文或安装包。

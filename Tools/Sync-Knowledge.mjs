@@ -60,7 +60,8 @@ export function fullName(node) {
 }
 
 export function selectNode(nodes, name, type) {
-  const candidates = nodes.filter((node) => fullName(node) === name || node.name === name);
+  const candidates = nodes.filter((node) => fullName(node) === name || node.name === name ||
+    (type === 'FILE' && node.name === name.replace(/\.md$/, '')));
   if (candidates.length > 1) throw new Error('远端存在多个同名节点，停止该项写入');
   const node = candidates[0];
   if (node && (node.type !== type || (type === 'FILE' &&
@@ -104,7 +105,14 @@ export class DingTalkKnowledge {
     this.spaceId = parent.spaceId;
     const node = await this.inspect(parent.dentryId);
     if (node.type !== 'FOLDER' || node.uuid !== this.parentUuid) throw new Error('目标父节点不是指定文件夹');
-    const directChildren = new Set((await this.list(node)).map((child) => child.uuid).filter(Boolean));
+    const storedChildren = await this.list(node);
+    const metadata = (entry) => ({ id: entry.id, uuid: entry.uuid, name: entry.name, extension: entry.extension,
+      type: entry.type, parentId: entry.parentId, size: entry.size, storageDriver: entry.storageDriver });
+    console.log(`目标目录元信息=${JSON.stringify(metadata(node))}`);
+    console.log(`相关文件元信息=${JSON.stringify(storedChildren.filter((entry) => /knowledge|qa/i.test(entry.name || '')).map(metadata))}`);
+    const originalHelp = await this.map('Y1OQX0akWmEYO6oxcNd0qYALWGlDd3mE');
+    console.log(`原手册节点元信息=${JSON.stringify(metadata(await this.inspect(originalHelp.dentryId)))}`);
+    const directChildren = new Set(storedChildren.map((child) => child.uuid).filter(Boolean));
     const folders = [''];
     let pages = 0;
     // 旧知识库 ID 与 UUID 不混用：从 workspace 目录树的真实 dentryId 逐层查询。
@@ -258,7 +266,7 @@ export async function syncFiles({ client, files, dryRun = true, log = console.lo
       const parent = file.qa ? qaFolder : root;
       const nodes = file.qa ? qaNodes : rootNodes;
       const existing = selectNode(nodes, file.name, 'FILE');
-      if (file.qa && rootNodes.some((node) => fullName(node) === file.name || node.name === file.name)) {
+      if (file.qa && rootNodes.some((node) => fullName(node) === file.name || node.name === file.name || node.name === file.name.replace(/\.md$/, ''))) {
         throw new Error('同名 QA 已存在父目录，与 KnowledgeQA 子目录映射冲突，停止写入以避免重复知识源');
       }
       let action;

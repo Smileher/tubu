@@ -81,6 +81,7 @@ test('name + extension 与完整文件名兼容，普通文档类型严格核对
   assert.equal(fullName(split), 'ai-knowledge.md');
   assert.equal(selectNode([split], 'ai-knowledge.md', 'FILE'), split);
   assert.throws(() => selectNode([{ ...split, type: 'FOLDER' }], 'ai-knowledge.md', 'FILE'), /类型不符/);
+  assert.throws(() => selectNode([{ ...split, extension: 'alidoc', storageDriver: 'ALIDOC' }], 'ai-knowledge.md', 'FILE'), /类型不符/);
 });
 test('只读超时最多三次，写入超时只执行一次，不泄露 URL 和响应正文', async () => {
   let calls = 0;

@@ -1,0 +1,79 @@
+name: daily-knowledge-sync
+
+on:
+  schedule:
+    # UTC 19:00 = 北京时间次日 03:00；GitHub 定时启动可能排队延迟。
+    - cron: '0 19 * * *'
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: '只读预览，不写入知识库'
+        type: boolean
+        required: false
+        default: true
+
+permissions:
+  contents: read
+
+concurrency:
+  group: daily-knowledge-sync
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Test sync behavior
+        run: node --test Tools/Sync-Knowledge.test.mjs
+      - name: Read committed Codeup documents
+        shell: bash
+        env:
+          CODEUP_USER: ${{ secrets.CODEUP_USER }}
+          CODEUP_TOKEN: ${{ secrets.CODEUP_TOKEN }}
+        run: |
+          set -euo pipefail
+          test -n "$CODEUP_USER" && test -n "$CODEUP_TOKEN"
+          umask 077
+          cat > "$RUNNER_TEMP/knowledge-askpass.sh" <<'ASKPASS'
+          #!/bin/sh
+          case "$1" in
+            *Username*) printf '%s\n' "$CODEUP_USER" ;;
+            *Password*) printf '%s\n' "$CODEUP_TOKEN" ;;
+            *) exit 1 ;;
+          esac
+          ASKPASS
+          chmod 700 "$RUNNER_TEMP/knowledge-askpass.sh"
+          export GIT_ASKPASS="$RUNNER_TEMP/knowledge-askpass.sh" GIT_TERMINAL_PROMPT=0
+          # Git 输出仅保留固定提示，不把私有仓库错误正文写入公开日志。
+          if ! git -c credential.helper= clone --depth 1 --single-branch --branch Develop --no-checkout \
+            https://codeup.aliyun.com/655ac6bcc4c6ca1cb0430697/ccd-general-software/TuBuMeasureSystem.git \
+            "$RUNNER_TEMP/knowledge-source" > "$RUNNER_TEMP/knowledge-git.log" 2>&1; then
+            echo 'Codeup 拉取失败，请检查 Secrets 和仓库访问情况'; exit 1
+          fi
+          source_sha=$(git -C "$RUNNER_TEMP/knowledge-source" rev-parse HEAD)
+          git -C "$RUNNER_TEMP/knowledge-source" sparse-checkout set --no-cone '/Help/ai-knowledge.md' '/KnowledgeQA/*.md'
+          git -C "$RUNNER_TEMP/knowledge-source" checkout --detach "$source_sha" > "$RUNNER_TEMP/knowledge-git.log" 2>&1
+          echo "KNOWLEDGE_SOURCE_SHA=$source_sha" >> "$GITHUB_ENV"
+          echo "已固定源码版本 $source_sha"
+      - name: Sync Help and QA to existing knowledge workspace
+        env:
+          DINGTALK_APP_KEY: ${{ secrets.DINGTALK_APP_KEY }}
+          DINGTALK_APP_SECRET: ${{ secrets.DINGTALK_APP_SECRET }}
+          DINGTALK_OPERATOR_ID: ${{ secrets.DINGTALK_OPERATOR_ID }}
+          KNOWLEDGE_HELP_DIR: ${{ runner.temp }}/knowledge-source/Help
+          KNOWLEDGE_QA_DIR: ${{ runner.temp }}/knowledge-source/KnowledgeQA
+          KNOWLEDGE_WORKSPACE_ID: YRBGvgKbpvp0KzDA
+          KNOWLEDGE_PARENT_UUID: ydxXB52LJqA1O6onF2e4kbwMJqjMp697
+          KNOWLEDGE_DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run && 'true' || 'false' }}
+        run: node Tools/Sync-Knowledge.mjs
+      - name: Remove temporary private source and authentication helper
+        if: always()
+        shell: bash
+        run: |
+          rm -rf -- "$RUNNER_TEMP/knowledge-source"
+          rm -f -- "$RUNNER_TEMP/knowledge-askpass.sh" "$RUNNER_TEMP/knowledge-git.log"

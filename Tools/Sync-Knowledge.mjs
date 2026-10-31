@@ -227,6 +227,9 @@ export async function syncFiles({ client, files, dryRun = true, log = console.lo
       const parent = file.qa ? qaFolder : root;
       const nodes = file.qa ? qaNodes : rootNodes;
       const existing = selectNode(nodes, file.name, 'FILE');
+      if (file.qa && rootNodes.some((node) => fullName(node) === file.name || node.name === file.name)) {
+        throw new Error('同名 QA 已存在父目录，与 KnowledgeQA 子目录映射冲突，停止写入以避免重复知识源');
+      }
       let action;
       if (existing && await client.same(existing, file.content)) {
         summary.skipped++;
@@ -237,9 +240,11 @@ export async function syncFiles({ client, files, dryRun = true, log = console.lo
         else {
           const saved = await client.upload(parent, file.name, file.content, existing);
           summary[action]++;
-          summary.items.push({ file: key, action, nodeId: saved.uuid });
+          summary.items.push({ file: key, action, nodeId: saved.uuid, parentId: parent.uuid });
         }
       }
+      if (dryRun || action === 'skipped') summary.items.push({ file: key, action: dryRun && action !== 'skipped' ? `planned-${action}` : action,
+        nodeId: existing?.uuid || '', parentId: parent?.uuid || '待建 KnowledgeQA 子目录' });
       log(`${dryRun ? '预览 ' : ''}${action} ${key}`);
     } catch (error) { fail(key, error); }
   }
@@ -293,6 +298,7 @@ async function main() {
     await fs.appendFile(env.GITHUB_STEP_SUMMARY, `## 每日知识库同步${dryRun ? '（只读预览）' : ''}\n\n` +
       `源码：\`${sourceSha}\`\n\n新增 ${summary.created} · 更新 ${summary.updated} · 跳过 ${summary.skipped} · 失败 ${summary.failed}\n\n` +
       `预计新增 ${summary.plannedCreated} · 预计更新 ${summary.plannedUpdated} · 耗时 ${summary.durationSeconds} 秒\n\n` +
+      '| 文件 | 结果 | 节点 |\n| --- | --- | --- |\n' + summary.items.map((item) => `| ${item.file} | ${item.action} | ${item.nodeId || '待创建'} |`).join('\n') + '\n\n' +
       summary.failures.map((item) => `- ${item.file}: ${item.error.replace(/[\r\n<>]/g, ' ')}`).join('\n') + '\n', 'utf8');
   }
   if (summary.failed) process.exitCode = 1;

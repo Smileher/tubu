@@ -50,6 +50,25 @@ test('同名冲突、类型不符均不覆盖，继续其他文件', async () =>
   assert.equal(result.created, 1);
   assert.deepEqual(f.writes, ['good.md']);
 });
+test('父目录已经有同名 QA 时，不能在子目录创建第二份知识源', async () => {
+  const f = fixture({ rootNodes: [node('QA-week.md'), { name: 'KnowledgeQA', id: 'qa', type: 'FOLDER' }] });
+  const result = await run(f, [file('QA-week.md', true)], true);
+  assert.equal(result.failed, 1);
+  assert.equal(result.plannedCreated, 0);
+  assert.deepEqual(f.writes, []);
+});
+test('文件查询使用官方 POST query 契约，读取可重试', async () => {
+  let call;
+  const c = new DingTalkKnowledge({ operatorId: 'operator', token: 'test', request: async (url, options, policy) => {
+    call = { url: String(url), options, policy };
+    return { dentry: { id: 'file', spaceId: 'space' } };
+  } });
+  c.spaceId = 'space';
+  await c.inspect('file');
+  assert.equal(call.url, 'https://api.dingtalk.com/v1.0/storage/spaces/space/dentries/file/query?unionId=operator');
+  assert.equal(call.options.method, 'POST');
+  assert.equal(call.policy.safe, true);
+});
 test('文件失败保留其他成功项，并标记整轮失败', async () => {
   const f = fixture({ uploadError: 'ai-knowledge.md' });
   const result = await run(f, [file('ai-knowledge.md'), file('README.md', true)]);

@@ -69,6 +69,21 @@ test('文件查询使用官方 POST query 契约，读取可重试', async () =>
   assert.equal(call.options.method, 'POST');
   assert.equal(call.policy.safe, true);
 });
+test('按知识库标题匹配文件，不能把底层数字文件名作为知识源名称', async () => {
+  const c = new DingTalkKnowledge({ workspaceId: 'workspace', operatorId: 'operator' });
+  c.spaceId = 'space'; c.knowledgeParentId = '';
+  c.api = async () => ({ hasMore: false, children: [{ spaceId: 'workspace', dentryId: 'legacy-id',
+    dentryUuid: 'uuid', name: 'ai-knowledge', extension: 'md', dentryType: 'file' }] });
+  c.map = async () => ({ spaceId: 'space', dentryId: 'storage-id' });
+  c.inspect = async () => ({ id: 'storage-id', uuid: 'uuid', name: '8441088075.md', extension: 'md',
+    parentId: 'parent', storageDriver: 'DINGTALK', size: 512 });
+  const entries = await c.list({ id: 'parent' });
+  const existing = selectNode(entries, 'ai-knowledge.md', 'FILE');
+  assert.equal(existing.uuid, 'uuid');
+  assert.equal(existing.id, 'storage-id');
+  assert.equal(fullName(existing), 'ai-knowledge.md');
+  assert.equal(existing.size, 512);
+});
 test('文件失败保留其他成功项，并标记整轮失败', async () => {
   const f = fixture({ uploadError: 'ai-knowledge.md' });
   const result = await run(f, [file('ai-knowledge.md'), file('README.md', true)]);
@@ -112,9 +127,9 @@ test('分页未完成或跨目录返回不能作为完整列表处理', async ()
   const c = new DingTalkKnowledge({ token: 'test', operatorId: 'test' });
   c.spaceId = 'space';
   c.api = async () => ({ dentries: [], nextToken: 'same' });
-  await assert.rejects(c.list({ id: 'parent' }), /游标重复/);
+  await assert.rejects(c.listStorage({ id: 'parent' }), /游标重复/);
   c.api = async () => ({ dentries: [{ id: 'x', spaceId: 'other', parentId: 'parent' }] });
-  await assert.rejects(c.list({ id: 'parent' }), /其他位置/);
+  await assert.rejects(c.listStorage({ id: 'parent' }), /其他位置/);
 });
 test('原文件覆盖返回新 ID 时失败，禁止将其作为更新成功', async () => {
   const c = new DingTalkKnowledge({ operatorId: 'test', request: async () => Buffer.alloc(0) });

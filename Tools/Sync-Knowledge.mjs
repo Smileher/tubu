@@ -105,7 +105,7 @@ export class DingTalkKnowledge {
     this.spaceId = parent.spaceId;
     const node = await this.inspect(parent.dentryId);
     if (node.type !== 'FOLDER' || node.uuid !== this.parentUuid) throw new Error('目标父节点不是指定文件夹');
-    const storedChildren = await this.list(node);
+    const storedChildren = await this.listStorage(node);
     const directChildren = new Set(storedChildren.map((child) => child.uuid).filter(Boolean));
     const folders = [''];
     let pages = 0;
@@ -137,7 +137,7 @@ export class DingTalkKnowledge {
     throw new Error('目标父目录未在指定知识库目录树中确认，停止写入');
   }
 
-  async list(parent) {
+  async listStorage(parent) {
     const nodes = [];
     const cursors = new Set();
     let cursor = '';
@@ -158,6 +158,36 @@ export class DingTalkKnowledge {
     throw new Error('目录分页超过上限');
   }
 
+  async list(parent) {
+    // 知识库标题与底层存储文件名不同；仅用目录树的标题匹配，存储信息只用于传输及大小核对。
+    const entries = [];
+    const seen = new Set();
+    let cursor = '';
+    const parentNodeId = parent.knowledgeNodeId ?? this.knowledgeParentId;
+    if (parentNodeId === undefined) throw new Error('知识库父节点 ID 缺失');
+    for (let page = 0; page < 100; page++) {
+      const result = await this.api(`/v2.0/doc/spaces/${encodeURIComponent(this.workspaceId)}/directories`, {
+        operatorId: this.operatorId, dentryId: parentNodeId, maxResults: 50, nextToken: cursor,
+      });
+      if (!Array.isArray(result.children)) throw new Error('知识库目录树返回缺失');
+      for (const child of result.children) {
+        if (child.spaceId !== this.workspaceId || !child.dentryUuid || !child.dentryId) throw new Error('知识库节点归属或 ID 缺失');
+        const mapped = await this.map(child.dentryUuid);
+        if (String(mapped.spaceId) !== String(this.spaceId)) throw new Error('知识库节点存储空间不符');
+        const stored = await this.inspect(mapped.dentryId);
+        if (String(stored.parentId) !== String(parent.id)) throw new Error('知识库节点父目录不符');
+        entries.push({ ...stored, uuid: child.dentryUuid, name: child.name, extension: child.extension,
+          type: child.dentryType === 'folder' ? 'FOLDER' : child.dentryType === 'file' ? 'FILE' : 'UNKNOWN',
+          knowledgeNodeId: child.dentryId });
+      }
+      if (!result.hasMore) return entries;
+      cursor = result.nextToken;
+      if (!cursor || seen.has(cursor)) throw new Error('知识库目录树分页不完整');
+      seen.add(cursor);
+    }
+    throw new Error('知识库目录树分页超过上限');
+  }
+
   async createFolder(parent, name) {
     const result = await this.api(`/v1.0/doc/workspaces/${encodeURIComponent(this.workspaceId)}/docs`, {}, {
       name, docType: 'FOLDER', operatorId: this.operatorId,
@@ -167,25 +197,10 @@ export class DingTalkKnowledge {
     const mapped = await this.map(result.dentryUuid);
     if (String(mapped.spaceId) !== String(this.spaceId)) throw new Error('创建目录空间不符');
     const node = await this.inspect(mapped.dentryId);
-    if (node.name !== name || node.type !== 'FOLDER' || String(node.parentId) !== String(parent.id) || !node.uuid) throw new Error('创建目录回读不符');
-    return node;
-  }
-
-  async verifyFolder(folder) {
-    let cursor = '';
-    const seen = new Set();
-    for (let page = 0; page < 100; page++) {
-      const result = await this.api(`/v2.0/doc/spaces/${encodeURIComponent(this.workspaceId)}/directories`, {
-        operatorId: this.operatorId, dentryId: this.knowledgeParentId || '', maxResults: 50, nextToken: cursor,
-      });
-      if (!Array.isArray(result.children)) throw new Error('知识库目录树返回缺失');
-      if (result.children.some((child) => child.dentryUuid === folder.uuid && child.dentryType === 'folder')) return;
-      if (!result.hasMore) break;
-      cursor = result.nextToken;
-      if (!cursor || seen.has(cursor)) throw new Error('知识库目录树分页不完整');
-      seen.add(cursor);
-    }
-    throw new Error('KnowledgeQA 仅存在于存储层，未注册为指定知识库目录，停止写入');
+    if (node.type !== 'FOLDER' || String(node.parentId) !== String(parent.id) || !node.uuid) throw new Error('创建目录回读不符');
+    const registered = (await this.list(parent)).filter((entry) => entry.uuid === result.dentryUuid && entry.name === name && entry.type === 'FOLDER');
+    if (registered.length !== 1) throw new Error('创建目录后未读到唯一知识库节点');
+    return registered[0];
   }
 
   async same(node, content) {
@@ -220,7 +235,10 @@ export class DingTalkKnowledge {
     });
     const committed = result.dentry;
     if (!committed?.id || (existing && String(committed.id) !== String(existing.id))) throw new Error('提交未返回原文件节点，停止该项');
-    const verified = { ...committed, ...await this.inspect(committed.id) };
+    const stored = { ...committed, ...await this.inspect(committed.id) };
+    const registered = (await this.list(parent)).filter((entry) => String(entry.id) === String(committed.id));
+    if (registered.length !== 1) throw new Error('写后未读到唯一知识库文件节点');
+    const verified = { ...stored, ...registered[0] };
     const differences = [];
     if (!verified.uuid) differences.push('缺少 UUID');
     if (fullName(verified) !== name) differences.push('名称不符');
@@ -258,9 +276,8 @@ export async function syncFiles({ client, files, dryRun = true, log = console.lo
       if (file.qa && qaError) throw qaError;
       const parent = file.qa ? qaFolder : root;
       const nodes = file.qa ? qaNodes : rootNodes;
-      const existing = !file.qa && client.helpNodeUuid
-        ? [...rootNodes, ...nodes].find((node) => node.uuid === client.helpNodeUuid) || null
-        : selectNode(nodes, file.name, 'FILE');
+      const existing = selectNode(nodes, file.name, 'FILE');
+      if (!file.qa && client.helpNodeUuid && existing?.uuid !== client.helpNodeUuid) throw new Error('原手册节点映射不符，停止写入');
       if (file.qa && rootNodes.some((node) => fullName(node) === file.name || node.name === file.name || node.name === file.name.replace(/\.md$/, ''))) {
         throw new Error('同名 QA 已存在父目录，与 KnowledgeQA 子目录映射冲突，停止写入以避免重复知识源');
       }

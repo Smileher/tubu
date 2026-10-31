@@ -100,16 +100,36 @@ export class DingTalkKnowledge {
 
   async resolve() {
     // 直接使用已核实的目标父节点 UUID；workspace 元信息接口属于另一套权限，不能因校验便利而扩大权限要求。
-    const knowledgeNode = await this.api(`/v2.0/doc/spaces/${encodeURIComponent(this.workspaceId)}/dentries/${encodeURIComponent(this.parentUuid)}`,
-      { operatorId: this.operatorId, includeSpace: false });
-    if (knowledgeNode.spaceId !== this.workspaceId || knowledgeNode.dentryUuid !== this.parentUuid || knowledgeNode.dentryType !== 'folder') {
-      throw new Error('知识库父目录归属或类型不符');
-    }
     const parent = await this.map(this.parentUuid);
     this.spaceId = parent.spaceId;
     const node = await this.inspect(parent.dentryId);
     if (node.type !== 'FOLDER' || node.uuid !== this.parentUuid) throw new Error('目标父节点不是指定文件夹');
-    return node;
+    const directChildren = new Set((await this.list(node)).map((child) => child.uuid).filter(Boolean));
+    const folders = [''];
+    let pages = 0;
+    // 旧知识库 ID 与 UUID 不混用：从 workspace 目录树的真实 dentryId 逐层查询。
+    // 根节点不出现在目录树中时，通过已回读父目录的直接子节点 UUID 确认归属。
+    for (const folderId of folders) {
+      let cursor = '';
+      const seen = new Set();
+      do {
+        if (++pages > 100) throw new Error('知识库归属查询超过分页上限');
+        const result = await this.api(`/v2.0/doc/spaces/${encodeURIComponent(this.workspaceId)}/directories`, {
+          operatorId: this.operatorId, dentryId: folderId, maxResults: 50, nextToken: cursor,
+        });
+        if (!Array.isArray(result.children)) throw new Error('知识库目录树返回缺失');
+        for (const child of result.children) {
+          if (child.spaceId !== this.workspaceId) throw new Error('知识库目录树空间不符');
+          if (child.dentryUuid === this.parentUuid || directChildren.has(child.dentryUuid)) return node;
+          if (child.dentryType === 'folder' && child.dentryId && !folders.includes(child.dentryId)) folders.push(child.dentryId);
+        }
+        if (!result.hasMore) break;
+        cursor = result.nextToken;
+        if (!cursor || seen.has(cursor)) throw new Error('知识库目录树分页不完整');
+        seen.add(cursor);
+      } while (cursor);
+    }
+    throw new Error('目标父目录未在指定知识库目录树中确认，停止写入');
   }
 
   async list(parent) {

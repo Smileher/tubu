@@ -31,7 +31,7 @@
 
 - 执行位置：本仓库 `.github/workflows/daily-knowledge-sync.yml`，GitHub 托管 Ubuntu runner / Node.js 22；整轮 20 分钟，同一任务串行，定时启动可能因 GitHub 排队延迟。
 - 来源：Codeup `Develop` 本轮固定 SHA；`Help/ai-knowledge.md` → 目标父目录现有同名 Markdown；`KnowledgeQA/*.md`（包括 README）→ 现有 `KnowledgeQA` 子目录。
-- 目标 workspace：`YRBGvgKbpvp0KzDA`；父目录 UUID：`ydxXB52LJqA1O6onF2e4kbwMJqjMp697`。使用已核实的父目录 UUID 映射到存储空间并回读文件夹类型后，再读取完整分页列表，复用现有节点；不调用需要额外 `Wiki.Workspace.Read` 的 workspace 元信息接口。
+- 目标 workspace：`YRBGvgKbpvp0KzDA`；父目录 UUID：`ydxXB52LJqA1O6onF2e4kbwMJqjMp697`。通过知识库逻辑目录树与 UUID 存储映射核对归属，按逻辑标题匹配文件；底层存储名可能是内部数字，不能用它匹配知识源。完整读取分页后复用原节点，同 UUID 的旧目录重复记录去重，不同 UUID 的同名文件停止写入。手册固定复用 `Y1OQX0akWmEYO6oxcNd0qYALWGlDd3mE`，缺失或映射不符时停止该项；缺少 QA 子目录时使用 Document 接口创建并确认注册。
 - 使用既有 `CODEUP_USER`、`CODEUP_TOKEN`、`DINGTALK_APP_KEY`、`DINGTALK_APP_SECRET`、`DINGTALK_OPERATOR_ID` Secrets。运行期间的源码、QA、Git 认证 helper 仅放临时目录，结束清理；不提交、不上传 Actions 附件。
 - 文档目录、workspace、目标父目录和预览开关使用工作流中的 `KNOWLEDGE_*` 环境变量配置。执行脚本为 `Tools/Sync-Knowledge.mjs`，与安装包上传脚本分开。
 - 当前 Storage 元信息无可比内容哈希，因此仅下载小体积 Markdown（单文件上限 8 MiB）比较 SHA256；内容相同跳过，变化覆盖原节点，缺少则新建，不删除远端额外文件。同名冲突或类型不符停止该项。写后只核对节点和元信息，不重复下载全文或安装包。
@@ -49,7 +49,14 @@
 
 云效 QA 日期游标可能漏题的风险单独保留，本轮不改游标或处理状态。五天后按实际失败与回答效果决定是否修漏题、迁移云效、调整提示词或拆分手册；不新建监控或群通知。
 
-当前状态：实现待云端验收，尚未移除千问知识库同步。
+2026-10-31 验收记录：
+
+- 14 项针对性测试通过，涵盖变化/不变/新建、预览无写入、同名冲突、重复 UUID、类型、超时、安全重试、部分失败与重复执行；无需运行软件构建。
+- 云端已完成只读预览；[正式同步 #12](https://github.com/Smileher/tubu/actions/runs/41188332396) 新增 0、更新 1、跳过 2、失败 0；[再次正式执行 #13](https://github.com/Smileher/tubu/actions/runs/41188516580) 新增 0、更新 0、跳过 3、失败 0。源码版本均为 `44e169ecf74e415685f205306444d1fc22a35011`，三份文档均复用既有知识库节点。
+- 超级小布预览测试：相机释放/重连问题返回手册「相机配置与采集 → 相机连接管理」章节及检测中禁止操作；过程能力过滤问题返回 `QA-20261026-20261101.md` 第 1 条及原提问时间，答案与资料一致。此为样本回答与来源核对，不代表所有知识均已索引或所有问题均可回答；未修改、保存或发布助手提示词。
+- **尚未切换定时执行**：千问办公仍停在登录页，无法移除其原知识库同步部分。保留千问现有任务及 `https://t3nez98e.qwenwork.host/` 网页同步；新 `daily-knowledge-sync` 工作流暂时 Disable，避免两套 03:00 同时写入。
+- 完成千问登录后，只移除原任务的 Help/QA 知识库同步段，保留 host 网页同步和必要配置；保存核实后在本仓库 Actions 页面点击 **Enable workflow**。需要补跑时再使用 **Run workflow**，默认预览，取消 `dry_run` 才正式写入。
+- 五天观察从上述切换后第一个 03:00 定时运行日开始，目前尚未开始。
 
 ## 后续规划
 

@@ -178,6 +178,7 @@ export class DingTalkKnowledge {
         if (String(mapped.spaceId) !== String(this.spaceId)) throw new Error('知识库节点存储空间不符');
         const stored = await this.inspect(mapped.dentryId);
         if (String(stored.parentId) !== String(parent.id)) throw new Error('知识库节点父目录不符');
+        if (entries.some((entry) => entry.uuid === child.dentryUuid)) continue;
         entries.push({ ...stored, uuid: child.dentryUuid, name: child.name, extension: child.extension,
           type: child.dentryType === 'folder' ? 'FOLDER' : child.dentryType === 'file' ? 'FILE' : 'UNKNOWN',
           knowledgeNodeId: child.dentryId });

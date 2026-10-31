@@ -69,6 +69,7 @@ jobs:
           KNOWLEDGE_QA_DIR: ${{ runner.temp }}/knowledge-source/KnowledgeQA
           KNOWLEDGE_WORKSPACE_ID: YRBGvgKbpvp0KzDA
           KNOWLEDGE_PARENT_UUID: ydxXB52LJqA1O6onF2e4kbwMJqjMp697
+          KNOWLEDGE_HELP_NODE_UUID: Y1OQX0akWmEYO6oxcNd0qYALWGlDd3mE
           KNOWLEDGE_DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run && 'true' || 'false' }}
         run: node Tools/Sync-Knowledge.mjs
       - name: Remove temporary private source and authentication helper

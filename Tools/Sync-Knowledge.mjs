@@ -213,7 +213,7 @@ export class DingTalkKnowledge {
     const route = `/v2.0/storage/spaces/files/${encodeURIComponent(parent.uuid)}`;
     const info = await this.api(`${route}/uploadInfos/query`, query, {
       protocol: 'HEADER_SIGNATURE', option: { storageDriver: 'DINGTALK', preCheckParam: { size: content.length, name } },
-    });
+    }, true);
     const signed = info.headerSignatureInfo;
     if (!info.uploadKey || !signed?.resourceUrls?.[0] || !signed.headers) throw new Error('上传信息不完整');
     // signed PUT 可能返回空正文，按字节模式消费响应；它不是重复下载验收。
@@ -256,7 +256,6 @@ export async function syncFiles({ client, files, dryRun = true, log = console.lo
   try {
     qaFolder = selectNode(rootNodes, 'KnowledgeQA', 'FOLDER');
     if (!qaFolder && !dryRun) qaFolder = await client.createFolder(root, 'KnowledgeQA');
-    if (qaFolder && client.verifyFolder) await client.verifyFolder(qaFolder);
     qaNodes = qaFolder ? await client.list(qaFolder) : [];
   } catch (error) { qaError = error; }
   for (const file of files) {
@@ -265,7 +264,9 @@ export async function syncFiles({ client, files, dryRun = true, log = console.lo
       if (file.qa && qaError) throw qaError;
       const parent = file.qa ? qaFolder : root;
       const nodes = file.qa ? qaNodes : rootNodes;
-      const existing = selectNode(nodes, file.name, 'FILE');
+      const existing = !file.qa && client.helpNodeUuid
+        ? [...rootNodes, ...nodes].find((node) => node.uuid === client.helpNodeUuid) || null
+        : selectNode(nodes, file.name, 'FILE');
       if (file.qa && rootNodes.some((node) => fullName(node) === file.name || node.name === file.name || node.name === file.name.replace(/\.md$/, ''))) {
         throw new Error('同名 QA 已存在父目录，与 KnowledgeQA 子目录映射冲突，停止写入以避免重复知识源');
       }
@@ -277,7 +278,8 @@ export async function syncFiles({ client, files, dryRun = true, log = console.lo
         action = existing ? 'updated' : 'created';
         if (dryRun) summary[existing ? 'plannedUpdated' : 'plannedCreated']++;
         else {
-          const saved = await client.upload(parent, file.name, file.content, existing);
+          const targetName = existing ? fullName(existing) : file.name;
+          const saved = await client.upload(parent, targetName, file.content, existing);
           summary[action]++;
           summary.items.push({ file: key, action, nodeId: saved.uuid, parentId: parent.uuid });
         }
@@ -326,6 +328,7 @@ async function main() {
     if (!auth.accessToken) throw new Error('访问凭证返回为空');
     const client = new DingTalkKnowledge({ token: auth.accessToken, operatorId: required(env, 'DINGTALK_OPERATOR_ID'),
       workspaceId: required(env, 'KNOWLEDGE_WORKSPACE_ID'), parentUuid: required(env, 'KNOWLEDGE_PARENT_UUID'), request });
+    client.helpNodeUuid = env.KNOWLEDGE_HELP_NODE_UUID || '';
     summary = await syncFiles({ client, files, dryRun });
   } catch (error) {
     summary = { created: 0, updated: 0, skipped: 0, plannedCreated: 0, plannedUpdated: 0, failed: 1,

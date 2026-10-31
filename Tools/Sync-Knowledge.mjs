@@ -106,12 +106,6 @@ export class DingTalkKnowledge {
     const node = await this.inspect(parent.dentryId);
     if (node.type !== 'FOLDER' || node.uuid !== this.parentUuid) throw new Error('目标父节点不是指定文件夹');
     const storedChildren = await this.list(node);
-    const metadata = (entry) => ({ id: entry.id, uuid: entry.uuid, name: entry.name, extension: entry.extension,
-      type: entry.type, parentId: entry.parentId, size: entry.size, storageDriver: entry.storageDriver });
-    console.log(`目标目录元信息=${JSON.stringify(metadata(node))}`);
-    console.log(`相关文件元信息=${JSON.stringify(storedChildren.filter((entry) => /knowledge|qa/i.test(entry.name || '')).map(metadata))}`);
-    const originalHelp = await this.map('Y1OQX0akWmEYO6oxcNd0qYALWGlDd3mE');
-    console.log(`原手册节点元信息=${JSON.stringify(metadata(await this.inspect(originalHelp.dentryId)))}`);
     const directChildren = new Set(storedChildren.map((child) => child.uuid).filter(Boolean));
     const folders = [''];
     let pages = 0;

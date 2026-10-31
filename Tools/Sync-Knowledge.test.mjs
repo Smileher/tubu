@@ -70,19 +70,29 @@ test('文件查询使用官方 POST query 契约，读取可重试', async () =>
   assert.equal(call.policy.safe, true);
 });
 test('按知识库标题匹配文件，不能把底层数字文件名作为知识源名称', async () => {
+  let reads = 0;
   const c = new DingTalkKnowledge({ workspaceId: 'workspace', operatorId: 'operator' });
   c.spaceId = 'space'; c.knowledgeParentId = '';
   c.api = async () => ({ hasMore: false, children: [{ spaceId: 'workspace', dentryId: 'legacy-id',
-    dentryUuid: 'uuid', name: 'ai-knowledge', extension: 'md', dentryType: 'file' }] });
+    dentryUuid: 'uuid', name: 'ai-knowledge', extension: 'md', dentryType: 'file' },
+    { spaceId: 'workspace', dentryId: 'another-legacy-id', dentryUuid: 'uuid',
+      name: 'ai-knowledge', extension: 'md', dentryType: 'file' }] });
   c.map = async () => ({ spaceId: 'space', dentryId: 'storage-id' });
-  c.inspect = async () => ({ id: 'storage-id', uuid: 'uuid', name: '8441088075.md', extension: 'md',
-    parentId: 'parent', storageDriver: 'DINGTALK', size: 512 });
+  c.inspect = async () => { reads++; return { id: 'storage-id', uuid: 'uuid', name: '8441088075.md', extension: 'md',
+    parentId: 'parent', storageDriver: 'DINGTALK', size: 512 }; };
   const entries = await c.list({ id: 'parent' });
   const existing = selectNode(entries, 'ai-knowledge.md', 'FILE');
   assert.equal(existing.uuid, 'uuid');
   assert.equal(existing.id, 'storage-id');
   assert.equal(fullName(existing), 'ai-knowledge.md');
   assert.equal(existing.size, 512);
+  assert.equal(entries.length, 1);
+  assert.equal(reads, 1);
+  c.api = async () => ({ hasMore: false, children: [
+    { spaceId: 'workspace', dentryId: 'one', dentryUuid: 'uuid', name: 'first', extension: 'md', dentryType: 'file' },
+    { spaceId: 'workspace', dentryId: 'two', dentryUuid: 'uuid', name: 'second', extension: 'md', dentryType: 'file' },
+  ] });
+  await assert.rejects(c.list({ id: 'parent' }), /标题或类型冲突/);
 });
 test('文件失败保留其他成功项，并标记整轮失败', async () => {
   const f = fixture({ uploadError: 'ai-knowledge.md' });

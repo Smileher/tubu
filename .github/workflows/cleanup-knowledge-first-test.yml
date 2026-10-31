@@ -39,7 +39,7 @@ jobs:
           if ((await client.listStorage(folder)).length) throw new Error('该目录不是空目录，保留并停止清理');
           const url = new URL(`https://api.dingtalk.com/v1.0/storage/spaces/${client.spaceId}/dentries/${folder.id}`);
           url.searchParams.set('unionId', process.env.DINGTALK_OPERATOR_ID);
-          url.searchParams.set('toRecycleBin', 'false');
+          url.searchParams.set('toRecycleBin', 'true');
           await request(url, { method: 'DELETE', headers: { 'x-acs-dingtalk-access-token': auth.accessToken } },
             { binary: true, label: '清理本任务创建的空目录' });
           if ((await client.listStorage(root)).some((node) => node.uuid === taskCreatedUuid)) throw new Error('清理后仍存在，停止');

@@ -92,13 +92,19 @@ export class DingTalkKnowledge {
   }
 
   async inspect(id) {
-    const result = await this.api(`/v1.0/storage/spaces/${this.spaceId}/dentries/${id}`, { unionId: this.operatorId });
+    const result = await this.api(`/v1.0/storage/spaces/${this.spaceId}/dentries/${id}/query`,
+      { unionId: this.operatorId }, { option: { withThumbnail: false } }, true);
     if (!result.dentry?.id || String(result.dentry.spaceId) !== String(this.spaceId)) throw new Error('文件信息缺失或空间不符');
     return result.dentry;
   }
 
   async resolve() {
     // 直接使用已核实的目标父节点 UUID；workspace 元信息接口属于另一套权限，不能因校验便利而扩大权限要求。
+    const knowledgeNode = await this.api(`/v2.0/doc/spaces/${encodeURIComponent(this.workspaceId)}/dentries/${encodeURIComponent(this.parentUuid)}`,
+      { operatorId: this.operatorId, includeSpace: false });
+    if (knowledgeNode.spaceId !== this.workspaceId || knowledgeNode.dentryUuid !== this.parentUuid || knowledgeNode.dentryType !== 'folder') {
+      throw new Error('知识库父目录归属或类型不符');
+    }
     const parent = await this.map(this.parentUuid);
     this.spaceId = parent.spaceId;
     const node = await this.inspect(parent.dentryId);

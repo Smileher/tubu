@@ -62,7 +62,9 @@ export function fullName(node) {
 export function selectNode(nodes, name, type) {
   const candidates = nodes.filter((node) => fullName(node) === name || node.name === name ||
     (type === 'FILE' && node.name === name.replace(/\.md$/, '')));
-  if (candidates.length > 1) throw new Error('远端存在多个同名节点，停止该项写入');
+  if (candidates.length > 1) throw new Error(`远端存在多个同名节点，停止该项写入：${JSON.stringify(candidates.map((node) => ({
+    name: fullName(node), uuid: node.uuid, knowledgeNodeId: node.knowledgeNodeId, id: node.id, createTime: node.createTime,
+  })))}`);
   const node = candidates[0];
   if (node && (node.type !== type || (type === 'FILE' &&
       (String(node.extension).toLowerCase() !== 'md' || node.storageDriver !== 'DINGTALK')))) {

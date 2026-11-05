@@ -63,6 +63,11 @@ jobs:
           if (qa) console.log('QA_DIRECTORY_COUNTS=' + JSON.stringify(await counts(qa)));
           const name = `sync-overwrite-check-${process.env.GITHUB_RUN_ID}`;
           let folder;
+          const originalList = client.list.bind(client);
+          client.list = async (parent) => {
+            if (folder && parent.uuid === folder.uuid && (await client.listStorage(parent)).length === 0) return [];
+            return originalList(parent);
+          };
           try {
             folder = await client.createFolder(root, name);
             let saved = await client.upload(folder, 'overwrite-check.md', Buffer.from('Disposable sync check version 1\n'), undefined);

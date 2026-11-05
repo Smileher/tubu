@@ -1,6 +1,7 @@
-<article id="cameras" data-title="相机配置与采集" data-category="设备与系统" data-summary="配置相机、连接与释放设备，使用本地仿真及自动取流，排查没有图像。" data-updated="2026-10-30" data-order="20">
+<article id="cameras" data-title="相机配置与采集" data-category="设备与系统" data-summary="配置相机、连接与释放设备，使用本地仿真及自动取流，排查没有图像。" data-updated="2026-11-04" data-order="20">
 <h2 id="configuration">管理相机配置</h2><p>进入相机配置，选择相机后使用添加、修改或删除按钮，完成后点击“保存相机配置”。先核对驱动类型和设备连接参数，再保存。</p><p>相机配置页面保存与料号参数保存是不同入口。保存成功后按提示重启软件使连接配置生效，再获取图像确认。</p>
   <h2 id="connection">连接与取图</h2>
+  <p>测量数据集尚未配置时，相机表格显示“未配置，请设置”；详细相机名称写入 Error 日志，启动时不弹窗。兼容默认值仍保留，现场应配置正确的数据集、保存并重启软件。</p>
   <p>配置相机前，先确认驱动类型和设备在厂商工具中的真实名称、地址或索引。不同驱动使用不同字段，不能把“设备名称”统一当成 IP。</p>
   <table><thead><tr><th>常见驱动</th><th>连接字段要点</th></tr></thead><tbody>
     <tr><td>海康 GigE</td><td>通过相机 IPv4 地址选择设备。</td></tr>

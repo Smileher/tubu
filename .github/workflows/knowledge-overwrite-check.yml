@@ -1,0 +1,105 @@
+name: knowledge-overwrite-check
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: daily-knowledge-sync
+  cancel-in-progress: false
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Compare overwrite directory registrations using disposable test content
+        env:
+          DINGTALK_APP_KEY: ${{ secrets.DINGTALK_APP_KEY }}
+          DINGTALK_APP_SECRET: ${{ secrets.DINGTALK_APP_SECRET }}
+          DINGTALK_OPERATOR_ID: ${{ secrets.DINGTALK_OPERATOR_ID }}
+        run: |
+          node --input-type=module <<'NODE'
+          import { createTransport, DingTalkKnowledge, fullName } from './Tools/Sync-Knowledge.mjs';
+          const request = createTransport();
+          const auth = await request('https://api.dingtalk.com/v1.0/oauth2/accessToken', {
+            method: 'POST', headers: { 'content-type': 'application/json' },
+            body: JSON.stringify({ appKey: process.env.DINGTALK_APP_KEY, appSecret: process.env.DINGTALK_APP_SECRET }),
+          }, { safe: true, label: '认证' });
+          const client = new DingTalkKnowledge({ token: auth.accessToken, operatorId: process.env.DINGTALK_OPERATOR_ID,
+            workspaceId: 'YRBGvgKbpvp0KzDA', parentUuid: 'ydxXB52LJqA1O6onF2e4kbwMJqjMp697', request });
+          const root = await client.resolve();
+          async function directory(parent) {
+            const rows = [];
+            let cursor = '';
+            const seen = new Set();
+            for (let page = 0; page < 30; page++) {
+              const result = await client.api(`/v2.0/doc/spaces/${client.workspaceId}/directories`, {
+                operatorId: client.operatorId, dentryId: parent.knowledgeNodeId ?? client.knowledgeParentId,
+                maxResults: 50, nextToken: cursor,
+              });
+              if (!Array.isArray(result.children)) throw new Error('目录列表缺失');
+              rows.push(...result.children);
+              if (!result.hasMore) return rows;
+              cursor = result.nextToken;
+              if (!cursor || seen.has(cursor)) throw new Error('目录分页不完整');
+              seen.add(cursor);
+            }
+            throw new Error('目录分页超限');
+          }
+          async function counts(parent) {
+            const grouped = new Map();
+            for (const row of await directory(parent)) {
+              const entry = grouped.get(row.dentryUuid) ?? { name: row.name, uuid: row.dentryUuid, aliases: 0 };
+              entry.aliases++;
+              grouped.set(row.dentryUuid, entry);
+            }
+            return [...grouped.values()];
+          }
+          console.log('SOURCE_DIRECTORY_COUNTS=' + JSON.stringify(await counts(root)));
+          const qa = (await client.list(root)).find((node) => node.name === 'KnowledgeQA' && node.type === 'FOLDER');
+          if (qa) console.log('QA_DIRECTORY_COUNTS=' + JSON.stringify(await counts(qa)));
+          const name = `sync-overwrite-check-${process.env.GITHUB_RUN_ID}`;
+          let folder;
+          try {
+            folder = await client.createFolder(root, name);
+            let saved = await client.upload(folder, 'overwrite-check.md', Buffer.from('Disposable sync check version 1\n'), undefined);
+            console.log('CHECK_V2_CREATE=' + JSON.stringify({ id: saved.id, version: saved.version, entries: await counts(folder) }));
+            saved = await client.upload(folder, 'overwrite-check.md', Buffer.from('Disposable sync check version 2\n'), saved);
+            console.log('CHECK_V2_OVERWRITE=' + JSON.stringify({ id: saved.id, version: saved.version, entries: await counts(folder) }));
+            const stored = await client.inspect(saved.id);
+            const storageName = fullName(stored);
+            if (!storageName || stored.uuid !== saved.uuid || String(stored.parentId) !== String(folder.id)) throw new Error('测试文件存储映射不符');
+            const content = Buffer.from('Disposable sync check version 3\n');
+            const route = `/v1.0/storage/spaces/${client.spaceId}/files`;
+            const query = { unionId: client.operatorId };
+            const info = await client.api(`${route}/uploadInfos/query`, query, {
+              protocol: 'HEADER_SIGNATURE', multipart: false,
+              option: { storageDriver: 'DINGTALK', preCheckParam: { parentId: folder.id, name: storageName, size: content.length } },
+            }, true);
+            const signed = info.headerSignatureInfo;
+            if (!info.uploadKey || !signed?.resourceUrls?.[0] || !signed.headers) throw new Error('上传凭证不完整');
+            await request(signed.resourceUrls[0], { method: 'PUT', headers: { ...signed.headers, 'content-type': '' }, body: content },
+              { binary: true, label: '上传测试文本' });
+            const result = await client.api(`${route}/commit`, query, { uploadKey: info.uploadKey, name: storageName, parentId: folder.id,
+              option: { size: content.length, conflictStrategy: 'OVERWRITE' } });
+            if (String(result.dentry?.id) !== String(saved.id)) throw new Error('测试更新未返回原文件 ID');
+            const updated = await client.inspect(saved.id);
+            if (!await client.same(updated, content)) throw new Error('测试内容更新不符');
+            console.log('CHECK_V1_OVERWRITE=' + JSON.stringify({ id: updated.id, version: updated.version, entries: await counts(folder), contentMatches: true }));
+          } finally {
+            if (folder) {
+              const stored = await client.inspect(folder.id);
+              if (stored.uuid !== folder.uuid || stored.type !== 'FOLDER' || String(stored.parentId) !== String(root.id)) throw new Error('测试目录归属不符，保留');
+              const url = new URL(`https://api.dingtalk.com/v1.0/storage/spaces/${client.spaceId}/dentries/${folder.id}`);
+              url.searchParams.set('unionId', client.operatorId);
+              url.searchParams.set('toRecycleBin', 'true');
+              await request(url, { method: 'DELETE', headers: { 'x-acs-dingtalk-access-token': auth.accessToken } },
+                { binary: true, label: '回收本次测试目录' });
+              if ((await client.listStorage(root)).some((node) => node.uuid === folder.uuid)) throw new Error('测试目录回收未确认');
+              console.log('CHECK_CLEANUP=RECYCLED');
+            }
+          }
+          NODE

@@ -181,6 +181,7 @@ export class DingTalkKnowledge {
           if (fullName(duplicate) !== fullName(child) || duplicate.type !== (child.dentryType === 'folder' ? 'FOLDER' : 'FILE')) {
             throw new Error('同一知识库 UUID 的标题或类型冲突');
           }
+          duplicate.directoryEntryCount++;
           continue;
         }
         const mapped = await this.map(child.dentryUuid);
@@ -189,7 +190,7 @@ export class DingTalkKnowledge {
         if (String(stored.parentId) !== String(parent.id)) throw new Error('知识库节点父目录不符');
         const entry = { ...stored, uuid: child.dentryUuid, name: child.name, extension: child.extension,
           type: child.dentryType === 'folder' ? 'FOLDER' : child.dentryType === 'file' ? 'FILE' : 'UNKNOWN',
-          knowledgeNodeId: child.dentryId };
+          storageName: fullName(stored), directoryEntryCount: 1, knowledgeNodeId: child.dentryId };
         entries.push(entry);
         byUuid.set(child.dentryUuid, entry);
       }
@@ -232,9 +233,15 @@ export class DingTalkKnowledge {
     const current = selectNode(await this.list(parent), name, 'FILE');
     if ((current?.id || null) !== (existing?.id || null) || (existing && current.version !== existing.version)) throw new Error('远端文件在同步期间变化，请重跑');
     const query = { unionId: this.operatorId };
-    const route = `/v2.0/storage/spaces/files/${encodeURIComponent(parent.uuid)}`;
+    // v2 OVERWRITE 会为同一 UUID 再注册知识节点；已有文件按真实存储名用 v1 更新，仅新文件使用 v2 注册。
+    if (existing && (!current.storageName || !current.directoryEntryCount)) throw new Error('原文件存储名或目录登记信息缺失');
+    const storageName = existing ? current.storageName : name;
+    const route = existing ? `/v1.0/storage/spaces/${this.spaceId}/files` :
+      `/v2.0/storage/spaces/files/${encodeURIComponent(parent.uuid)}`;
     const info = await this.api(`${route}/uploadInfos/query`, query, {
-      protocol: 'HEADER_SIGNATURE', option: { storageDriver: 'DINGTALK', preCheckParam: { size: content.length, name } },
+      protocol: 'HEADER_SIGNATURE', ...(existing ? { multipart: false } : {}),
+      option: { storageDriver: 'DINGTALK', preCheckParam: { size: content.length, name: storageName,
+        ...(existing ? { parentId: parent.id } : {}) } },
     }, true);
     const signed = info.headerSignatureInfo;
     if (!info.uploadKey || !signed?.resourceUrls?.[0] || !signed.headers) throw new Error('上传信息不完整');
@@ -243,8 +250,9 @@ export class DingTalkKnowledge {
       method: 'PUT', headers: { ...signed.headers, 'content-type': '' }, body: content,
     }, { binary: true, label: '上传 Markdown' });
     const result = await this.api(`${route}/commit`, query, {
-      uploadKey: info.uploadKey, name,
-      option: { size: content.length, conflictStrategy: existing ? 'OVERWRITE' : 'RETURN_ERROR_IF_EXISTS', convertToOnlineDoc: false },
+      uploadKey: info.uploadKey, name: storageName, ...(existing ? { parentId: parent.id } : {}),
+      option: { size: content.length, conflictStrategy: existing ? 'OVERWRITE' : 'RETURN_ERROR_IF_EXISTS',
+        ...(existing ? {} : { convertToOnlineDoc: false }) },
     });
     const committed = result.dentry;
     if (!committed?.id || (existing && String(committed.id) !== String(existing.id))) throw new Error('提交未返回原文件节点，停止该项');
@@ -253,6 +261,9 @@ export class DingTalkKnowledge {
     if (registered.length !== 1) throw new Error('写后未读到唯一知识库文件节点');
     const verified = { ...stored, ...registered[0] };
     const differences = [];
+    if (existing && verified.directoryEntryCount !== current.directoryEntryCount) differences.push('知识库目录登记数发生变化');
+    if (existing && verified.uuid !== existing.uuid) differences.push('原文件 UUID 不符');
+    if (!existing && verified.directoryEntryCount !== 1) differences.push('新文件目录登记不唯一');
     if (!verified.uuid) differences.push('缺少 UUID');
     if (fullName(verified) !== name) differences.push('名称不符');
     if (verified.type !== 'FILE') differences.push('类型不符');

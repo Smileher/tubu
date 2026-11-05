@@ -35,6 +35,7 @@
 - 使用既有 `CODEUP_USER`、`CODEUP_TOKEN`、`DINGTALK_APP_KEY`、`DINGTALK_APP_SECRET`、`DINGTALK_OPERATOR_ID` Secrets。运行期间的源码、QA、Git 认证 helper 仅放临时目录，结束清理；不提交、不上传 Actions 附件。
 - 文档目录、workspace、目标父目录和预览开关使用工作流中的 `KNOWLEDGE_*` 环境变量配置。执行脚本为 `Tools/Sync-Knowledge.mjs`，与安装包上传脚本分开。
 - 当前 Storage 元信息无可比内容哈希，因此仅下载小体积 Markdown（单文件上限 8 MiB）比较 SHA256；内容相同跳过，变化覆盖原节点，缺少则新建，不删除远端额外文件。同名冲突或类型不符停止该项。写后只核对节点和元信息，不重复下载全文或安装包。
+- 已有文件使用 v1 Storage 接口，按底层真实存储名覆盖；新文件使用 v2 接口注册知识库节点。不能对已有文件使用 v2 `OVERWRITE`：云端对照已复现它会保留物理文件 ID，却为相同 UUID 增加一条知识库目录登记，导致 DEAP 重复学习。更新后检查 UUID、文件信息及目录登记数保持不变；历史目录登记不自动删除，以免影响源文件。
 - 单请求超时 30 秒；读取和获取访问凭证、下载信息最多额外重试两次；创建、上传、提交不盲重试。单项失败继续处理其他文件，最终任务失败并列出失败项。
 - 手动补跑：[Actions → daily-knowledge-sync](https://github.com/Smileher/tubu/actions/workflows/daily-knowledge-sync.yml) → **Run workflow**。默认勾选 `dry_run` 只读预览；取消勾选正式同步。摘要记录源码 SHA、新增/更新/跳过/失败数量、预计变化及耗时，不含正文和密钥。
 - 本地编辑功能时仍维护 Help，正文改变后运行源仓库 `Tools/UpdateHelpIndex.ps1` 并一起提交生成文件。同步不调用 LLM，不重新编写手册；离线 Help、Pages 和云效 QA 生产保持原路径。

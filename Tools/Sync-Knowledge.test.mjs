@@ -86,6 +86,8 @@ test('按知识库标题匹配文件，不能把底层数字文件名作为知�
   assert.equal(existing.id, 'storage-id');
   assert.equal(fullName(existing), 'ai-knowledge.md');
   assert.equal(existing.size, 512);
+  assert.equal(existing.storageName, '8441088075.md');
+  assert.equal(existing.directoryEntryCount, 2);
   assert.equal(entries.length, 1);
   assert.equal(reads, 1);
   c.api = async () => ({ hasMore: false, children: [
@@ -143,11 +145,64 @@ test('分页未完成或跨目录返回不能作为完整列表处理', async ()
 });
 test('原文件覆盖返回新 ID 时失败，禁止将其作为更新成功', async () => {
   const c = new DingTalkKnowledge({ operatorId: 'test', request: async () => Buffer.alloc(0) });
-  const original = node('ai-knowledge.md', 'original');
+  const original = { ...node('ai-knowledge.md', 'original'), storageName: '123.md', directoryEntryCount: 1 };
   c.list = async () => [original];
   c.api = async (route) => route.endsWith('/commit') ? { dentry: { id: 'different' } } :
     { uploadKey: 'test', headerSignatureInfo: { resourceUrls: ['https://example.com'], headers: {} } };
   await assert.rejects(c.upload({ uuid: 'parent' }, original.name, Buffer.from('changed'), original), /原文件节点/);
+});
+
+test('已有文件通过 v1 按真实存储名更新，保留 UUID 和历史登记数', async () => {
+  const calls = [];
+  const content = Buffer.from('changed');
+  const original = { ...node('ai-knowledge.md', 'original'), storageName: '123.md', directoryEntryCount: 6,
+    parentId: 'parent', size: content.length, version: 1 };
+  const c = new DingTalkKnowledge({ operatorId: 'test', request: async () => Buffer.alloc(0) });
+  c.spaceId = 'space';
+  let committed = false;
+  let aliases = 6;
+  c.list = async () => [{ ...original, version: committed ? 2 : 1, directoryEntryCount: aliases }];
+  c.inspect = async () => ({ ...original, name: '123.md', version: 2 });
+  c.api = async (route, query, body, safe) => {
+    calls.push({ route, query, body, safe });
+    if (route.endsWith('/commit')) { committed = true; return { dentry: { id: original.id } }; }
+    return { uploadKey: 'test', headerSignatureInfo: { resourceUrls: ['https://example.com'], headers: {} } };
+  };
+  const updated = await c.upload({ id: 'parent', uuid: 'parent-uuid' }, original.name, content, original);
+  assert.equal(updated.uuid, original.uuid);
+  assert.equal(updated.directoryEntryCount, 6);
+  assert.equal(calls[0].route, '/v1.0/storage/spaces/space/files/uploadInfos/query');
+  assert.equal(calls[0].body.option.preCheckParam.name, '123.md');
+  assert.equal(calls[0].body.option.preCheckParam.parentId, 'parent');
+  assert.equal(calls[0].body.multipart, false);
+  assert.equal(calls[1].route, '/v1.0/storage/spaces/space/files/commit');
+  assert.equal(calls[1].body.name, '123.md');
+  assert.equal(calls[1].body.parentId, 'parent');
+  assert.equal(calls[1].body.option.conflictStrategy, 'OVERWRITE');
+  assert.equal(calls[1].safe, undefined);
+  committed = false;
+  const list = c.list;
+  c.list = async () => { const nodes = await list(); if (committed) nodes[0].directoryEntryCount++; return nodes; };
+  await assert.rejects(c.upload({ id: 'parent', uuid: 'parent-uuid' }, original.name, content, original), /目录登记数发生变化/);
+});
+
+test('新文件仍通过 v2 注册，避免已有文件更新接口漏建知识节点', async () => {
+  const content = Buffer.from('new');
+  const saved = { ...node('new.md', 'created'), parentId: 'parent', size: content.length, directoryEntryCount: 1 };
+  const calls = [];
+  let committed = false;
+  const c = new DingTalkKnowledge({ operatorId: 'test', request: async () => Buffer.alloc(0) });
+  c.list = async () => committed ? [saved] : [];
+  c.inspect = async () => saved;
+  c.api = async (route, _query, body) => {
+    calls.push({ route, body });
+    if (route.endsWith('/commit')) { committed = true; return { dentry: saved }; }
+    return { uploadKey: 'test', headerSignatureInfo: { resourceUrls: ['https://example.com'], headers: {} } };
+  };
+  await c.upload({ id: 'parent', uuid: 'parent-uuid' }, 'new.md', content);
+  assert.equal(calls[0].route, '/v2.0/storage/spaces/files/parent-uuid/uploadInfos/query');
+  assert.equal(calls[1].body.name, 'new.md');
+  assert.equal(calls[1].body.option.conflictStrategy, 'RETURN_ERROR_IF_EXISTS');
 });
 test('重复运行读取已保存内容后跳过，未重复新建', async () => {
   const f = fixture({ rootNodes: [{ name: 'KnowledgeQA', id: 'qa', type: 'FOLDER' }] });

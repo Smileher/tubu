@@ -1,0 +1,108 @@
+<article id="camera-drivers" data-title="相机类型与连接参数" data-category="相机与采集" data-summary="按网口、采集卡与本地仿真分类，核对每种相机驱动的设备选择字段和配置文件。" data-order="21" data-updated="2026-11-12" data-keywords="海康 DALSA ITEK DVP 大华 INS CIS CameraLink CXP 本地相机">
+  <h2 id="selection">先选择驱动和连接方式</h2>
+  <p>软件提供以下驱动接入方式；实际下拉选项以安装的相机插件为准，不能据此认为某品牌全部型号都可直接使用。先在厂商工具中确认设备可用、名称与枚举顺序，再选择匹配驱动。连接方式相同也不能互换不同厂商的驱动。</p>
+  <table><thead><tr><th>分类</th><th>驱动</th></tr></thead><tbody>
+    <tr><td>网口与按名称连接</td><td>HIKGige、DalsaGige、GigeITEKCamera、DVPGigeCamera、DaHuaGige</td></tr>
+    <tr><td>CameraLink 与采集卡</td><td>DalsaCamlink、ITEKCamlink、HIKCamlinkCamera、HIKCamlinkCameraV2、DaHuaCamlink</td></tr>
+    <tr><td>CXP、板卡及 INS/CIS</td><td>CXPITEKCamera、GigEVisionBoard、InsCHVSCLCameraTool、CamlinkCISGigeCamera</td></tr>
+    <tr><td>本地仿真</td><td>LocalCamera</td></tr>
+  </tbody></table>
+  <p>以下配置图均为中文浅色主题的演示状态。驱动名称保留软件中的真实英文标识；设备名称和路径需替换为实际值。索引从 0 开始，重新插拔、增减设备后须重新核对；显示顺序不等于设备索引。配置保存后按提示重启，详情见<a href="#cameras/setup">新增或修改相机</a>。</p>
+  <h2 id="network">网口及按名称选择的相机</h2>
+  <h3>海康 GigE HIKGige</h3>
+  <p>填写“相机 IP”，按 IPv4 地址精确匹配枚举设备。相机显示名称用于软件识别，不代替 IP。设备名称、板卡索引和配置文件不用于此驱动连接。先核对网卡网段、供电及相机 IP。</p>
+  <figure>
+    <img data-image="assets/screenshots/cameras/camera-options.js" alt="海康 GigE相机驱动的配置字段与文件选项"/>
+    <figcaption>海康 GigE 配置演示。核对当前驱动、连接字段与图像配置，示例值不对应真实设备。</figcaption>
+  </figure>
+  <h3>DALSA GigE DalsaGige</h3>
+  <p>填写“设备名称”，须与 Sapera 枚举的 AcqDevice 资源名称一致；并选择适用于该设备的 Sapera 配置文件。连接使用设备名称，不使用 IP 或板卡索引。</p>
+  <figure>
+    <img data-image="assets/screenshots/cameras/camera-driver-dalsagige.js" alt="DALSA GigE相机驱动的配置字段与文件选项"/>
+    <figcaption>DALSA GigE 配置演示。核对当前驱动、连接字段与图像配置，示例值不对应真实设备。</figcaption>
+  </figure>
+  <h3>ITEK GigE GigeITEKCamera</h3>
+  <p>填写“用户自定义名称”，与 SDK 中的设备用户名称一致；选择对应配置文件。此驱动按名称选择设备，不使用窗口中的 IP 和板卡索引。</p>
+  <figure>
+    <img data-image="assets/screenshots/cameras/camera-driver-gigeitekcamera.js" alt="ITEK GigE相机驱动的配置字段与文件选项"/>
+    <figcaption>ITEK GigE 配置演示。核对当前驱动、连接字段与图像配置，示例值不对应真实设备。</figcaption>
+  </figure>
+  <h3>DVP DVPGigeCamera</h3>
+  <p>填写“用户自定义名称”，与 DVP SDK 显示的名称一致。使用所选像素格式核对图像输出；不使用 IP、板卡索引或配置文件选择设备。</p>
+  <figure>
+    <img data-image="assets/screenshots/cameras/camera-driver-dvpgigecamera.js" alt="DVP相机驱动的配置字段与文件选项"/>
+    <figcaption>DVP 配置演示。核对当前驱动、连接字段与图像配置，示例值不对应真实设备。</figcaption>
+  </figure>
+  <h3>大华 GigE DaHuaGige</h3>
+  <p>在“设备名称”中填写 SDK 枚举的 cameraName，字段存储名虽为 CamIP，实际按设备名称匹配，不能填 IP 代替。其余板卡和配置文件字段不用于此驱动连接。</p>
+  <figure>
+    <img data-image="assets/screenshots/cameras/camera-driver-dahuagige.js" alt="大华 GigE相机驱动的配置字段与文件选项"/>
+    <figcaption>大华 GigE 配置演示。核对当前驱动、连接字段与图像配置，示例值不对应真实设备。</figcaption>
+  </figure>
+  <h2 id="cameralink">CameraLink 与采集卡相机</h2>
+  <h3>DALSA CameraLink DalsaCamlink</h3>
+  <p>“采集卡名称”（采集服务器）填写 Sapera 采集服务器名称，“采集资源索引”填写其采集通道索引，并选择采集配置文件。Mono8P2 需要单独相机控制时，再填写“设备名称”（相机控制服务器）和“相机控制资源索引”；它们与采集服务器和采集通道不是同一对象。控制不可用时须查看控制命令日志，不能只看采集卡返回。</p>
+  <figure>
+    <img data-image="assets/screenshots/cameras/camera-driver-dalsacamlink.js" alt="DALSA CameraLink相机驱动的配置字段与文件选项"/>
+    <figcaption>DALSA CameraLink 配置演示。核对当前驱动、连接字段与图像配置，示例值不对应真实设备。</figcaption>
+  </figure>
+  <h3>ITEK CameraLink ITEKCamlink</h3>
+  <p>填写“板卡索引”（通道索引所在字段），选择对应的采集卡配置文件。当前驱动以板卡索引和配置文件建立采集，不用 IP、设备名称或另一板卡编号选择相机。Mono8P2 图像还须核对像素格式和分时/多重曝光布局。</p>
+  <figure>
+    <img data-image="assets/screenshots/cameras/camera-driver-itekcamlink.js" alt="ITEK CameraLink相机驱动的配置字段与文件选项"/>
+    <figcaption>ITEK CameraLink 配置演示。核对当前驱动、连接字段与图像配置，示例值不对应真实设备。</figcaption>
+  </figure>
+  <h3>海康 CameraLink HIKCamlinkCamera</h3>
+  <p>分别填写“板卡索引”和“设备索引”，与厂商工具中的板卡及其设备枚举对应；两者均从 0 开始。不使用 IP、设备名称或配置文件。</p>
+  <figure>
+    <img data-image="assets/screenshots/cameras/camera-driver-hikcamlinkcamera.js" alt="海康 CameraLink相机驱动的配置字段与文件选项"/>
+    <figcaption>海康 CameraLink 配置演示。核对当前驱动、连接字段与图像配置，示例值不对应真实设备。</figcaption>
+  </figure>
+  <h3>海康 CameraLink V2 HIKCamlinkCameraV2</h3>
+  <p>填写“设备索引”，按当前 MVS 枚举列表选择设备；“板卡编号”虽可编辑，不用于此版本的设备选择。配置文件为可选的 MVS 相机特征配置；不填写则沿用设备参数，加载失败时保留设备当前参数并记录原因。</p>
+  <figure>
+    <img data-image="assets/screenshots/cameras/camera-driver-hikcamlinkcamerav2.js" alt="海康 CameraLink V2相机驱动的配置字段与文件选项"/>
+    <figcaption>海康 CameraLink V2 配置演示。核对当前驱动、连接字段与图像配置，示例值不对应真实设备。</figcaption>
+  </figure>
+  <h3>大华 CameraLink DaHuaCamlink</h3>
+  <p>“采集卡名称”填写 SDK 的 interfaceName，“设备名称”填写相机的 cameraName。两个名称分别精确匹配，不使用板卡索引；此驱动不加载窗口中的配置文件。</p>
+  <figure>
+    <img data-image="assets/screenshots/cameras/camera-driver-dahuacamlink.js" alt="大华 CameraLink相机驱动的配置字段与文件选项"/>
+    <figcaption>大华 CameraLink 配置演示。核对当前驱动、连接字段与图像配置，示例值不对应真实设备。</figcaption>
+  </figure>
+  <h2 id="board">CXP 与其他板卡接入</h2>
+  <h3>ITEK CXP CXPITEKCamera</h3>
+  <p>“相机显示名称”必须与设备 UserDefinedName 一致，并选择对应配置文件。当前驱动不按设备名称、IP 或窗口中的板卡编号筛选设备；不要仅凭这些字段可编辑就认为它们参与连接。</p>
+  <figure>
+    <img data-image="assets/screenshots/cameras/camera-driver-cxpitekcamera.js" alt="ITEK CXP相机驱动的配置字段与文件选项"/>
+    <figcaption>ITEK CXP 配置演示。核对当前驱动、连接字段与图像配置，示例值不对应真实设备。</figcaption>
+  </figure>
+  <h3>GigE Vision 板卡 GigEVisionBoard</h3>
+  <p>填写“设备索引”，并选择相应采集卡配置文件。此驱动按设备索引选择对象，不按软件显示名称、设备名称、IP 或另一板卡编号匹配。</p>
+  <figure>
+    <img data-image="assets/screenshots/cameras/camera-driver-gigevisionboard.js" alt="GigE Vision 板卡相机驱动的配置字段与文件选项"/>
+    <figcaption>GigE Vision 板卡 配置演示。核对当前驱动、连接字段与图像配置，示例值不对应真实设备。</figcaption>
+  </figure>
+  <h3>INS 采集卡 InsCHVSCLCameraTool</h3>
+  <p>填写“设备索引”，选择由配套工具生成的配置文件。软件显示名称用于日志识别；连接使用设备索引，不使用 IP 或设备名称。配置加载失败时保留 SDK 原始错误及文件路径。</p>
+  <figure>
+    <img data-image="assets/screenshots/cameras/camera-driver-inschvsclcameratool.js" alt="INS 采集卡相机驱动的配置字段与文件选项"/>
+    <figcaption>INS 采集卡 配置演示。核对当前驱动、连接字段与图像配置，示例值不对应真实设备。</figcaption>
+  </figure>
+  <h3>CIS 采集接入 CamlinkCISGigeCamera</h3>
+  <p>填写“设备索引”（窗口的通道索引字段），选择匹配的配置文件。当前驱动实际按该索引打开设备，其他名称及 IP 不用于选择；先核对 SDK 枚举数量和索引范围。</p>
+  <figure>
+    <img data-image="assets/screenshots/cameras/camera-driver-camlinkcisgigecamera.js" alt="CIS 采集接入相机驱动的配置字段与文件选项"/>
+    <figcaption>CIS 采集接入 配置演示。核对当前驱动、连接字段与图像配置，示例值不对应真实设备。</figcaption>
+  </figure>
+  <h2 id="local">本地图片仿真</h2>
+  <h3>本地相机 LocalCamera</h3>
+  <p>选择“图片加载路径”，填写“采集间隔”，单位毫秒；有效范围 200～5000，未设置或无效时使用 1000。文件按名称排序后循环出图；不需要 IP、设备名称、板卡索引或相机配置文件。连接成功仅说明本地图片可加载，不能代替真实相机通信验证。</p>
+  <figure>
+    <img data-image="assets/screenshots/cameras/camera-driver-localcamera.js" alt="本地相机相机驱动的配置字段与文件选项"/>
+    <figcaption>本地相机 配置演示。核对当前驱动、连接字段与图像配置，示例值不对应真实设备。</figcaption>
+  </figure>
+  <h2 id="check">保存后如何核对</h2>
+  <ol><li>停止检测，保存相机配置并按提示重启。</li><li>在相机连接管理中逐台确认状态，失败时记录驱动、设备字段、SDK 阶段和原始错误码。</li><li>全部相机就绪后获取图像，核对方向、宽高、像素格式、曝光、触发及分时布局。</li><li>再检查测量数据集、标定、定位区域与模板，不用另一台相机的正常图像代替本机验证。</li></ol>
+  <p>设备名称不匹配时以厂商工具和日志列出的资源为准；按索引连接时核对枚举数量。更多检查顺序见<a href="#cameras/camera-problems">没有图像或图像顺序异常</a>。</p>
+</article>

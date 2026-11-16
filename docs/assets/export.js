@@ -11,19 +11,40 @@
   document.addEventListener('click', event => { if (!event.target.closest('.export-control')) closeMenu(); });
   document.addEventListener('keydown', event => { if (event.key === 'Escape' && !menu.hidden) { closeMenu(); toggle.focus(); } });
   function selectedArticles() {
-    if (scope.value === 'all') return articles;
+    // 专用说明只在网页按需阅读，即使已显示也不参与导出。
+    const exportable = articles.filter(article => article.scope !== 'site');
+    if (scope.value === 'all') return exportable;
     const id = location.hash.slice(1).split(/[/?]/)[0];
-    return articles.filter(article => article.id === id);
+    return exportable.filter(article => article.id === id);
   }
   function selection() {
     const selected = selectedArticles();
     if (!selected.length) throw Error('请先打开需要导出的文章。');
     return selected;
   }
-  function exportName(selected) {
+  async function prepareImages(selected) {
+    const assets = [...new Map(selected.flatMap(article => Object.entries(article.images || {})).map(([source,asset]) => [asset.hash,{source,...asset}])).values()];
+    const prepared = new Map();
+    let next = 0, completed = 0, failure;
+    // 限制并发，复用网页的 WebP 数据；PNG 只保留在本次导出的内存中。
+    await Promise.all(Array.from({length:Math.min(6,assets.length)},async () => {
+      while (!failure && next < assets.length) {
+        try {
+          const asset = assets[next++];
+          prepared.set(asset.hash,await window.HELP_IMAGES.png(asset.source,asset));
+        }
+        catch (error) { failure = failure || error; return; }
+        if (!failure) status.textContent = `正在准备截图 ${++completed}/${assets.length}…`;
+      }
+    }));
+    // 等待已开始的任务结束后再报告失败，避免后台进度覆盖错误或干扰重试。
+    if (failure) throw failure;
+    return prepared;
+  }
+  function exportName(selected, all) {
     const now = new Date();
     const timestamp = [now.getFullYear(),now.getMonth()+1,now.getDate(),now.getHours(),now.getMinutes(),now.getSeconds()].map(value => String(value).padStart(2,'0')).join('');
-    const name = scope.value === 'all' ? '涂布检测软件操作手册' : selected[0].title;
+    const name = all ? '涂布检测软件操作手册' : selected[0].title;
     return name.replace(/[<>:"/\\|?*\u0000-\u001f]/g,'-') + '-v' + timestamp;
   }
 
@@ -36,7 +57,7 @@
   function zip(parts) {
     const local = [], central = []; let offset = 0, centralSize = 0;
     Object.entries(parts).forEach(([name,text]) => {
-      const filename = encoder.encode(name), data = encoder.encode(text);
+      const filename = encoder.encode(name), data = text instanceof Uint8Array ? text : encoder.encode(text);
       let crc = 0xffffffff;
       data.forEach(byte => { crc = crcTable[(crc ^ byte) & 255] ^ (crc >>> 8); });
       crc = (crc ^ 0xffffffff) >>> 0;
@@ -52,13 +73,28 @@
     ev.setUint32(0,0x06054b50,true); ev.setUint16(8,central.length,true); ev.setUint16(10,central.length,true); ev.setUint32(12,centralSize,true); ev.setUint32(16,offset,true);
     return new Blob([...local,...central,end],{type:'application/vnd.openxmlformats-officedocument.wordprocessingml.document'});
   }
-  function wordDocument(selected) {
+  function wordDocument(selected, all, prepared) {
     const ns = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main';
-    let listId=0; const lists=[], contents=[];
+    let listId=0, drawingId=0; const lists=[], contents=[], media=new Map();
+    const imageAssets=new Map(selected.flatMap(article=>Object.entries(article.images || {})));
     const run = (text,bold=false) => `<w:r>${bold ? '<w:rPr><w:b/></w:rPr>' : ''}<w:t xml:space="preserve">${xml(text)}</w:t></w:r>`;
     const field = instruction => `<w:r><w:fldChar w:fldCharType="begin" w:dirty="true"/></w:r><w:r><w:instrText xml:space="preserve"> ${xml(instruction)} </w:instrText></w:r><w:r><w:fldChar w:fldCharType="separate"/></w:r><w:r><w:t>1</w:t></w:r><w:r><w:fldChar w:fldCharType="end"/></w:r>`;
     const pageBreak = '<w:p><w:r><w:br w:type="page"/></w:r></w:p>';
     const paragraph = (content,style='',extra='') => `<w:p><w:pPr>${style ? `<w:pStyle w:val="${style}"/>` : ''}${extra}</w:pPr>${content}</w:p>`;
+    function picture(node) {
+      const source=node.getAttribute('data-image'), asset=imageAssets.get(source);
+      const bytes=asset && prepared.get(asset.hash);
+      if (!asset || !asset.width || !asset.height || !bytes) throw Error('缺少截图数据：'+source);
+      if (!media.has(asset.hash)) {
+        const id=media.size+1;
+        media.set(asset.hash,{id:'image'+id,name:'screenshot'+id+'.png',bytes});
+      }
+      const entry=media.get(asset.hash), id=++drawingId;
+      // 使用 144 DPI 原始截图尺寸，按 A4 正文宽高等比例缩小，避免图片越过页边距。
+      const scale=Math.min(1,6120130/(asset.width*6350),8000000/(asset.height*6350));
+      const cx=Math.round(asset.width*6350*scale), cy=Math.round(asset.height*6350*scale), alt=xml(node.getAttribute('alt'));
+      return paragraph(`<w:r><w:drawing><wp:inline xmlns:wp="http://schemas.openxmlformats.org/drawingml/2006/wordprocessingDrawing" distT="0" distB="0" distL="0" distR="0"><wp:extent cx="${cx}" cy="${cy}"/><wp:docPr id="${id}" name="截图 ${id}" descr="${alt}"/><a:graphic xmlns:a="http://schemas.openxmlformats.org/drawingml/2006/main"><a:graphicData uri="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:pic xmlns:pic="http://schemas.openxmlformats.org/drawingml/2006/picture"><pic:nvPicPr><pic:cNvPr id="${id}" name="${entry.name}" descr="${alt}"/><pic:cNvPicPr><a:picLocks noChangeAspect="1"/></pic:cNvPicPr></pic:nvPicPr><pic:blipFill><a:blip xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships" r:embed="${entry.id}"/><a:stretch><a:fillRect/></a:stretch></pic:blipFill><pic:spPr><a:xfrm><a:off x="0" y="0"/><a:ext cx="${cx}" cy="${cy}"/></a:xfrm><a:prstGeom prst="rect"><a:avLst/></a:prstGeom></pic:spPr></pic:pic></a:graphicData></a:graphic></wp:inline></w:drawing></w:r>`,'','<w:jc w:val="center"/><w:keepNext/>');
+    }
     function heading(text,level,extra='') {
       const id=contents.length+1, anchor='HelpHeading'+id;
       contents.push({text,level,anchor});
@@ -68,11 +104,14 @@
     function blocks(parent) {
       return [...parent.children].map(node => {
         const tag=node.tagName;
+        if (tag === 'IMG') return picture(node);
+        if (tag === 'FIGCAPTION') return paragraph(inline(node),'Subtitle','<w:jc w:val="center"/>');
         if (tag === 'H2') return heading(node.textContent,3);
         if (/^H[1-6]$/.test(tag)) return paragraph(inline(node),'Heading4');
-        if (tag === 'P' || tag === 'SUMMARY') return paragraph(inline(node),tag === 'SUMMARY' ? 'SummaryTitle' : '');
+        // 配图前的说明跟随图片分页，避免相机类型说明与对应配置图分离。
+        if (tag === 'P' || tag === 'SUMMARY') return paragraph(inline(node),tag === 'SUMMARY' ? 'SummaryTitle' : '',node.nextElementSibling?.tagName === 'FIGURE' ? '<w:keepNext/>' : '');
         if (tag === 'UL' || tag === 'OL') {
-          const id=++listId; lists.push(`<w:num w:numId="${id}"><w:abstractNumId w:val="${tag === 'OL' ? 1 : 0}"/></w:num>`);
+          const id=++listId; lists.push(`<w:num w:numId="${id}"><w:abstractNumId w:val="${tag === 'OL' ? 1 : 0}"/>${tag === 'OL' ? '<w:lvlOverride w:ilvl="0"><w:startOverride w:val="1"/></w:lvlOverride>' : ''}</w:num>`);
           return [...node.children].map(item => paragraph(inline(item),'',`<w:numPr><w:ilvl w:val="0"/><w:numId w:val="${id}"/></w:numPr>`)).join('');
         }
         if (tag === 'TABLE') {
@@ -94,8 +133,9 @@
     });
     let body = paragraph(run('涂布检测软件操作手册'),'CoverTitle');
     body += paragraph(run('VISIONMEASURE'),'CoverSubtitle');
-    body += paragraph(run(selected.length === articles.length ? '完整操作手册' : '当前文章导出'),'CoverMeta');
+    body += paragraph(run(all ? '完整操作手册' : '当前文章导出'),'CoverMeta');
     body += paragraph(run('导出日期：' + new Date().toLocaleDateString('zh-CN')),'CoverMeta');
+    body += paragraph(run('截图中的名称、数值及状态仅供操作说明参考。'),'Subtitle');
     body += pageBreak;
     body += paragraph(run('目录'),'TocHeading');
     body += paragraph(run('目录按网页分类排列，可通过链接跳转。需要目录页码时，在 Word 中右键目录并选择“更新域”，再选择“更新整个目录”。'),'Subtitle');
@@ -115,22 +155,30 @@
     const rels='http://schemas.openxmlformats.org/package/2006/relationships';
     const office='http://schemas.openxmlformats.org/officeDocument/2006/relationships/';
     return zip({
-      '[Content_Types].xml':`<Types xmlns="${types}"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/> ${[['document','document.main'],['styles','styles'],['numbering','numbering'],['footer1','footer'],['settings','settings']].map(([file,type])=>`<Override PartName="/word/${file}.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.${type}+xml"/>`).join('')}</Types>`,
+      '[Content_Types].xml':`<Types xmlns="${types}"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/>${media.size ? '<Default Extension="png" ContentType="image/png"/>' : ''} ${[['document','document.main'],['styles','styles'],['numbering','numbering'],['footer1','footer'],['settings','settings']].map(([file,type])=>`<Override PartName="/word/${file}.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.${type}+xml"/>`).join('')}</Types>`,
       '_rels/.rels':`<Relationships xmlns="${rels}"><Relationship Id="rId1" Type="${office}officeDocument" Target="word/document.xml"/></Relationships>`,
       'word/document.xml':`<w:document xmlns:w="${ns}"><w:body>${body}<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134" w:header="720" w:footer="720"/><w:footerReference w:type="default" r:id="rId3" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"/></w:sectPr></w:body></w:document>`,
       'word/styles.xml':styles,
       'word/numbering.xml':numbering,
       'word/footer1.xml':footer,
       'word/settings.xml':settings,
-      'word/_rels/document.xml.rels':`<Relationships xmlns="${rels}"><Relationship Id="rId1" Type="${office}styles" Target="styles.xml"/><Relationship Id="rId2" Type="${office}numbering" Target="numbering.xml"/><Relationship Id="rId3" Type="${office}footer" Target="footer1.xml"/><Relationship Id="rId4" Type="${office}settings" Target="settings.xml"/></Relationships>`
+      'word/_rels/document.xml.rels':`<Relationships xmlns="${rels}"><Relationship Id="rId1" Type="${office}styles" Target="styles.xml"/><Relationship Id="rId2" Type="${office}numbering" Target="numbering.xml"/><Relationship Id="rId3" Type="${office}footer" Target="footer1.xml"/><Relationship Id="rId4" Type="${office}settings" Target="settings.xml"/>${[...media.values()].map(entry=>`<Relationship Id="${entry.id}" Type="${office}image" Target="media/${entry.name}"/>`).join('')}</Relationships>`,
+      ...Object.fromEntries([...media.values()].map(entry=>['word/media/'+entry.name,entry.bytes]))
     });
   }
-  document.getElementById('export-word').addEventListener('click', () => {
+  const wordButton=document.getElementById('export-word');
+  wordButton.addEventListener('click', async () => {
+    if (wordButton.disabled) return;
     try {
-      const selected=selection(), url=URL.createObjectURL(wordDocument(selected));
-      const link=document.createElement('a'); link.href=url; link.download=exportName(selected)+'.docx';
+      const selected=selection(), all=scope.value === 'all';
+      wordButton.disabled=true; toggle.disabled=true; scope.disabled=true;
+      status.textContent='正在准备 Word 文件…';
+      const prepared=await prepareImages(selected);
+      const url=URL.createObjectURL(wordDocument(selected,all,prepared));
+      const link=document.createElement('a'); link.href=url; link.download=exportName(selected,all)+'.docx';
       document.body.append(link); link.click(); link.remove(); setTimeout(()=>URL.revokeObjectURL(url),60000);
-      status.textContent='已生成 Word 文件，已包含分类目录和章节链接；目录页码可在 Word 中更新域生成。';
+      status.textContent='已生成 Word 文件，已包含截图、分类目录和章节链接；目录页码可在 Word 中更新域生成。';
     } catch (error) { status.textContent='导出失败：'+error.message; }
+    finally { wordButton.disabled=false; toggle.disabled=false; scope.disabled=false; }
   });
 })();

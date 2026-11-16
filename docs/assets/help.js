@@ -1,6 +1,8 @@
 (() => {
   'use strict';
-  const articles = window.HELP_ARTICLES || [];
+  const allArticles = window.HELP_ARTICLES || [];
+  let showSites = false;
+  let articles = allArticles.filter(article => article.scope !== 'site');
   const main = document.getElementById('main');
   const toc = document.getElementById('contents');
   const search = document.getElementById('search');
@@ -57,10 +59,22 @@
     main.innerHTML = '<p class="load-error">帮助内容未能加载，请检查是否完整复制了 Help 文件夹。</p>';
     return;
   }
-  const categories = [...new Set(articles.map(article => article.category))];
-  navigation.innerHTML = '<a class="nav-link" href="#overview"><span class="nav-number">⌂</span>手册概览<span class="nav-arrow">↗</span></a>' + categories.map((category, index) =>
+  let categories = [];
+  function renderNavigation() {
+    categories = [...new Set(articles.map(article => article.category))];
+    navigation.innerHTML = '<a class="nav-link" href="#overview"><span class="nav-number">⌂</span>手册概览<span class="nav-arrow">↗</span></a>' + categories.map((category, index) =>
     `<details class="nav-group"${index === 0 ? ' open' : ''}><summary>${escape(category)}<span>${articles.filter(article => article.category === category).length}</span></summary>` + articles.filter(article => article.category === category).map(article =>
       `<a class="nav-link" href="#${article.id}"><span class="nav-number">${String(articles.indexOf(article) + 1).padStart(2, '0')}</span>${escape(article.title)}<span class="nav-arrow">↗</span></a>`).join('') + '</details>').join('');
+  }
+  renderNavigation();
+  document.getElementById('site-notes').addEventListener('click', event => {
+    showSites = !showSites;
+    event.currentTarget.setAttribute('aria-pressed', String(showSites));
+    articles = allArticles.filter(article => showSites || article.scope !== 'site');
+    renderNavigation();
+    if (!showSites && allArticles.some(article => article.id === route().id && article.scope === 'site')) location.hash = 'overview';
+    else render();
+  });
 
   function route() {
     const [path, query = ''] = location.hash.slice(1).split('?');
@@ -102,19 +116,41 @@
     const paths = [
       ['01', '开始一次检测', '从准备到运行，按顺序完成首次检查。', [['daily','preparation','运行前核对'],['recipes','switch','确认料号'],['daily','start','开始与观察']]],
       ['02', '建立新料号', '准备图像、测量与检测，保存可用配置。', [['recipes','guide','创建引导'],['sizes','workflow','建立尺寸'],['ai','registration','注册模板']]],
-      ['03', '调整检测效果', '先判断图像和定位，再调整检测参数。', [['calibration','workflow','标定与标零'],['sizes','parameters','抓边调参'],['inspection','regions','检测区域']]],
-      ['04', '查找生产异常', '从现象进入，逐项核对数据和设备。', [['diagnostics',null,'问题排查'],['communication',null,'PLC 与 MES'],['alarms','alarm-reset','报警复位']]]
+      ['03', '调整检测效果', '先判断图像和定位，再调整检测参数。', [['calibration','workflow','标定与标零'],['edges','parameters','抓边调参'],['inspection','regions','检测区域']]],
+      ['04', '查找生产异常', '从现象进入，逐项核对数据和设备。', [['diagnostics',null,'问题排查'],['communication',null,'PLC 通信'],['mes',null,'MES 上传'],['alarms','alarm-reset','报警复位']]],
+      ['05', '查看数据与导出', '查询结果、保存图像，核对输出文件。', [['data','query','历史查询'],['images','choose-mode','选择存图方式'],['statistics','export','统计导出']]],
+      ['06', '登录与权限', '确认操作身份、角色与保存权限。', [['users','login','账号登录'],['users','roles','模块权限'],['users','session','保存确认']]]
     ];
-    const recent = articles.map((article,index) => ({article,index})).sort((a,b) => b.article.updated.localeCompare(a.article.updated) || a.index-b.index).slice(0,4);
+    const categoryDescriptions = {
+      '生产操作':'启动检测、管理料号与膜卷', '相机与采集':'连接相机、取图与保存图像',
+      '标定与光源':'标定标零、照明与触发', '尺寸测量':'抓边、尺寸计算与错位',
+      '瑕疵检测':'区域定位、模板、检测与分类', '补偿与纠偏':'调整测量补偿与闭环输出',
+      'PLC 与设备通信':'连接设备、配置点位与工位数据', 'MES 与文件传输':'上传报文、绑定变量与同步文件',
+      '报警与喷码':'配置报警条件、复位与喷码', '统计与质量':'统计、过程能力、MSA 与点检',
+      '数据与系统维护':'查询数据、维护设置与收集诊断', '用户与权限':'登录、角色与保存权限'
+    };
     let saved;
     try { saved = JSON.parse(readSetting('reading') || 'null'); } catch (_) {}
     const resume = saved && validLink(saved.id, saved.section) ? chapterLink(saved.id, saved.section, '继续阅读 · ' + articles.find(a => a.id === saved.id).title) : '';
-    return `<div class="overview"><section class="overview-hero"><p class="eyebrow">VISIONMEASURE / HELP CENTER</p><div class="hero-heading"><h1>涂布检测软件<br /><em>操作手册</em></h1><span class="hero-seal" aria-hidden="true">V<span>操作手册</span></span></div><p class="intro">查找操作方法、理解运行过程，快速定位生产中的问题。</p>${searchForm('home-search', '', true)}<div class="popular-searches"><span>常用搜索</span>${popular.map(word => `<a href="${queryLink(word)}">${word}</a>`).join('')}</div><div class="hero-meta"><span>${articles.length} 个功能主题</span>${manualVersionLabel ? `<time class="manual-updated" datetime="${escape(manualVersionLabel.replace(' ', 'T'))}"><small>手册更新</small><strong>${escape(manualVersionLabel)}</strong></time>` : ''}</div>${resume ? `<div class="resume-link">${resume}</div>` : ''}</section>
+    // 首页复用正文的概览与配图，图片和 Word 仍只有一份来源。
+    const introduction = articles.find(article => article.id === 'interface');
+    const preview = document.createElement('div');
+    preview.innerHTML = introduction?.html || '';
+    const overviewFigure = preview.querySelector('figure');
+    const introductionHtml = overviewFigure ? `<section><div class="section-caption"><h2>软件整体界面与功能</h2><span>从图像到质量追溯</span></div><div class="article-body">${preview.querySelector('p')?.outerHTML || ''}${overviewFigure.outerHTML}</div><div class="quick-links">${[
+      ['interface','navigation','完整界面与原图'],['interface','functions','软件功能总览'],['interface','home-trends','尺寸趋势布局'],['interface','home-defects','瑕疵分布布局'],['interface','home-quality','质量统计布局'],['edges','setup','尺寸抓边界面']
+    ].map(args => chapterLink(...args)).join('')}</div></section>` : '';
+    return `<div class="overview"><section class="overview-hero"><p class="eyebrow">VISIONMEASURE / HELP CENTER</p><div class="hero-heading"><h1>涂布检测软件<br /><em>操作手册</em></h1><span class="hero-seal" aria-hidden="true">V<span>操作手册</span></span></div><p class="intro">查找操作方法、理解运行过程，快速定位生产中的问题。</p>${searchForm('home-search', '', true)}${resume ? `<div class="resume-link">${resume}</div>` : ''}<div class="popular-searches"><span>常用搜索</span>${popular.map(word => `<a href="${queryLink(word)}">${word}</a>`).join('')}</div><div class="hero-meta"><span>${articles.length} 个功能主题</span>${manualVersionLabel ? `<time class="manual-updated" datetime="${escape(manualVersionLabel.replace(' ', 'T'))}">手册更新 ${escape(manualVersionLabel.slice(0,10))}</time>` : ''}</div></section>
+      ${introductionHtml}
       <section><div class="section-caption"><h2>从你要完成的事开始</h2><span>按步骤查阅</span></div><div class="task-grid">${paths.map(([number,title,description,links]) => `<section class="task-card"><span class="task-number">${number}</span><h3>${title}</h3><p>${description}</p><div>${links.map(args => chapterLink(...args)).join('')}</div></section>`).join('')}</div></section>
-      <section><div class="section-caption"><h2>浏览功能手册</h2><span>${categories.length} 个分类 · 按功能查找</span></div><div class="category-grid">${categories.map((category,index) => `<section class="category-card"><div class="category-heading"><span>${String(index+1).padStart(2,'0')}</span><h3>${escape(category)}</h3></div>${articles.filter(article => article.category === category).map(article => `<a href="#${article.id}"><span><strong>${escape(article.title)}</strong><small>${escape(article.summary)}</small></span><span aria-hidden="true">↗</span></a>`).join('')}</section>`).join('')}</div></section>
-      <div class="home-bottom"><section><div class="section-caption"><h2>常见问题</h2><span>从现象查找</span></div><div class="faq-links">${[
-        ['cameras','camera-problems','运行中没有新图像'],['sizes','troubleshooting','测量尺寸不稳定或有偏差'],['inspection','troubleshooting','瑕疵误报或漏检'],['rolls','check','换卷后计米或报表异常'],['communication','troubleshooting','PLC 没有动作'],['images','troubleshooting','找不到保存的图像']
-      ].map(args => chapterLink(...args)).join('')}</div></section><section><div class="section-caption"><h2>最近更新</h2><span>按内容更新时间</span></div><div class="recent-list">${recent.map(({article}) => `<a href="#${article.id}"><time datetime="${article.updated}">${article.updated}</time><span>${escape(article.title)}</span><span aria-hidden="true">↗</span></a>`).join('')}</div></section></div></div>`;
+      <section><div class="section-caption"><h2>常见问题</h2><span>从现象查找</span></div><div class="faq-links">${[
+        ['daily','startup-messages','无法启动检测'],['cameras','camera-problems','运行中没有新图像'],['sizes','troubleshooting','测量尺寸不稳定或有偏差'],['inspection','troubleshooting','瑕疵误报或漏检'],['rolls','check','换卷后计米或报表异常'],['communication','troubleshooting','PLC 没有动作'],['images','troubleshooting','找不到保存的图像'],['users','logs','没有保存权限']
+      ].map(args => chapterLink(...args)).join('')}</div></section>
+      <section><div class="section-caption"><h2>浏览功能手册</h2><span>${categories.length} 个分类 · 完整目录见左侧</span></div><div class="category-grid">${categories.map((category,index) => {
+        const items=articles.filter(article => article.category === category);
+        const links=items.map(article => `<a href="#${article.id}"><strong>${escape(article.title)}</strong><span aria-hidden="true">↗</span></a>`);
+        return `<section class="category-card"><div class="category-heading"><span>${String(index+1).padStart(2,'0')}</span><h3>${escape(category)}</h3></div><p>${escape(categoryDescriptions[category] || '按适用配置查阅专用流程')}</p>${links.slice(0,2).join('')}${links.length>2 ? `<details><summary>更多文章（${links.length-2}）</summary>${links.slice(2).join('')}</details>` : ''}</section>`;
+      }).join('')}</div></section><p class="manual-note">截图中的名称、数值及状态仅供操作说明参考。</p></div>`;
   }
   function searchResults(query, category) {
     const all = window.HELP_SEARCH.find(articles, query);
@@ -131,6 +167,34 @@
   let observer;
   let activeArticle = '';
   let restoreSearchFocus = false;
+  const imageViewer=document.createElement('dialog');
+  imageViewer.className='image-viewer';
+  imageViewer.setAttribute('aria-label','截图原图');
+  imageViewer.innerHTML='<div class="image-viewer-tools"><p id="image-viewer-title"></p><button type="button" data-action="size" aria-pressed="false">原始尺寸</button><button type="button" data-action="close" aria-label="关闭原图">关闭 ×</button></div><div class="image-viewer-scroll"><img alt="" /></div>';
+  imageViewer.setAttribute('aria-labelledby','image-viewer-title');
+  document.body.append(imageViewer);
+  let imageReturn;
+  function openImage(img,button) {
+    imageReturn=button;
+    imageViewer.classList.remove('original-size');
+    const picture=imageViewer.querySelector('img'); picture.src=img.src; picture.alt=img.alt;
+    imageViewer.querySelector('p').textContent=img.alt;
+    const sizeButton=imageViewer.querySelector('[data-action="size"]');
+    sizeButton.textContent='原始尺寸'; sizeButton.setAttribute('aria-pressed','false');
+    imageViewer.showModal();
+    const scroll=imageViewer.querySelector('.image-viewer-scroll'); scroll.scrollTo(0,0);
+  }
+  imageViewer.querySelector('[data-action="size"]').addEventListener('click',event => {
+    const original=imageViewer.classList.toggle('original-size');
+    event.currentTarget.textContent=original ? '适合窗口' : '原始尺寸';
+    event.currentTarget.setAttribute('aria-pressed',String(original));
+  });
+  imageViewer.querySelector('[data-action="close"]').addEventListener('click',() => imageViewer.close());
+  imageViewer.addEventListener('close',() => {
+    imageViewer.querySelector('img').removeAttribute('src');
+    if (imageReturn?.isConnected) imageReturn.focus({preventScroll:true});
+  });
+  window.addEventListener('hashchange',() => { if (imageViewer.open) imageViewer.close(); });
   function render() {
     if (observer) observer.disconnect();
     const focused = document.activeElement;
@@ -138,11 +202,12 @@
     const inputText = keepFocus ? focused.value : '';
     const cursor = keepFocus ? focused.selectionStart : null;
     const current = route();
+    main.dataset.scope = articles.find(article => article.id === current.id)?.scope || '';
     activeArticle = '';
     document.getElementById('reading-progress').hidden = true;
     const exportScope = document.getElementById('export-scope');
     const currentOption = exportScope.querySelector('[value="current"]');
-    const hasArticle = articles.some(article => article.id === current.id);
+    const hasArticle = articles.some(article => article.id === current.id && article.scope !== 'site');
     currentOption.disabled = !hasArticle;
     if (!hasArticle) exportScope.value = 'all';
     if (focused !== search) search.value = current.query;
@@ -157,6 +222,22 @@
     });
     if (current.id === 'overview') {
       main.innerHTML = overview();
+      const image = main.querySelector('.article-body figure img');
+      if (image) {
+        const source = image.getAttribute('data-image');
+        const asset = articles.find(article => article.id === 'interface')?.images[source];
+        if (asset) { image.width = asset.width; image.height = asset.height; }
+        image.decoding = 'async';
+        window.HELP_IMAGES.load(source, asset).then(async url => {
+          if (!image.isConnected) return;
+          image.src = url;
+          await image.decode();
+        }).catch(() => {
+          window.HELP_IMAGES.forget(asset);
+          image.hidden = true;
+          if (image.isConnected) image.parentElement.append('截图加载失败，请完整复制 Help 文件夹后刷新。');
+        });
+      }
       document.getElementById('breadcrumb').textContent = '手册概览';
       document.title = '操作手册 · 涂布检测软件';
     } else if (current.id === 'search') {
@@ -179,7 +260,32 @@
         window.scrollTo(0,0); return;
       }
       const index = articles.indexOf(article);
-      main.innerHTML = `<header class="article-header"><p class="eyebrow">CHAPTER ${String(index+1).padStart(2,'0')} / 功能与操作</p><h1>${escape(article.title)}</h1><p class="description">${escape(article.summary)}</p><div class="article-meta"><span>更新时间：${escape(manualVersionLabel || article.updated + ' 00:00:00')}</span><span>${article.sections.length} 个主题</span></div></header><article class="article-body">${article.html}</article><nav class="article-pagination" aria-label="相邻章节">${index > 0 ? `<a href="#${articles[index-1].id}"><small>← 上一篇</small>${escape(articles[index-1].title)}</a>` : '<a href="#overview"><small>← 返回</small>手册概览</a>'}${index < articles.length-1 ? `<a href="#${articles[index+1].id}"><small>下一篇 →</small>${escape(articles[index+1].title)}</a>` : '<a href="#overview"><small>全部章节 →</small>手册概览</a>'}</nav>`;
+      main.innerHTML = `<header class="article-header"><p class="eyebrow">CHAPTER ${String(index+1).padStart(2,'0')} / 功能与操作</p><h1>${escape(article.title)}</h1><p class="description">${escape(article.summary)}</p><div class="article-meta"><span>更新时间：${escape(article.updated)}</span><span>${article.sections.length} 个主题</span></div></header><article class="article-body">${article.html}</article><nav class="article-pagination" aria-label="相邻章节">${index > 0 ? `<a href="#${articles[index-1].id}"><small>← 上一篇</small>${escape(articles[index-1].title)}</a>` : '<a href="#overview"><small>← 返回</small>手册概览</a>'}${index < articles.length-1 ? `<a href="#${articles[index+1].id}"><small>下一篇 →</small>${escape(articles[index+1].title)}</a>` : '<a href="#overview"><small>全部章节 →</small>手册概览</a>'}</nav>`;
+      main.querySelectorAll('.article-body figure img').forEach(img => {
+        const source=img.getAttribute('data-image'), asset=article.images[source];
+        if (asset) { img.width=asset.width; img.height=asset.height; }
+        img.decoding='async';
+        const button=document.createElement('button');
+        button.type='button'; button.className='image-open'; button.textContent='正在加载截图…'; button.disabled=true;
+        button.setAttribute('aria-label','查看原图：'+img.alt);
+        const load=async () => {
+          button.disabled=true; button.textContent='正在加载截图…';
+          try {
+            const url=await window.HELP_IMAGES.load(source,asset);
+            if (!img.isConnected) return;
+            // 等待实际解码，避免损坏数据在查看原图时显示空白。
+            img.src=url;
+            await img.decode();
+            button.textContent='查看原图'; button.title='';
+          } catch (error) {
+            window.HELP_IMAGES.forget(asset);
+            img.removeAttribute('src'); button.textContent='截图加载失败，点击重试'; button.title=error.message;
+          } finally { button.disabled=false; }
+        };
+        button.addEventListener('click',() => { if (img.naturalWidth) openImage(img,button); else load(); });
+        img.parentElement.append(button);
+        load();
+      });
       toc.hidden = false;
       toc.innerHTML = '<h2>本篇目录</h2>' + article.sections.map(section => `<a href="#${article.id}/${section.id}${current.query ? '?q='+encodeURIComponent(current.query) : ''}">${escape(section.title)}</a>`).join('');
       main.querySelectorAll('.article-body h2[id]').forEach(heading => {

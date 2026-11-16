@@ -1,0 +1,23 @@
+<article id="site-output" data-title="wxsx / yp / gx / guoxuan / tcgx / lj / tp / szys / qzjd / ydfc / ywxwd" data-category="现场专用功能" data-scope="site" data-summary="wxsx / yp / gx / guoxuan / tcgx / lj / tp / szys / qzjd / ydfc / ywxwd 的专用流程与检查要点，仅适用于对应配置。" data-order="135" data-updated="2026-11-12">
+  <h2 id="wxsx">wxsx</h2>
+  <p>使用专用刻码信号。双面检测配置 AB 面相差笔数后，正数表示 A 面先到，负数表示 B 面先到；等待另一面到齐后合并发送刻码信息。多同步组等待完整批次，核对相差方向与配对超时。</p>
+  <p>在主设备 PLC 通用点位中核对刻码内容与专用 NG 通知地址。内容写入成功后向通知地址写整数 0；内容失败时不发通知。修改料号、换卷、停止或调整相差笔数后重新确认配对状态，按通信日志区分内容与通知写入。</p>
+  <h2 id="yp">yp</h2>
+  <p>总检测结果地址使用布尔量：OK 写 true，其余结果写 false。核对 PLC 地址类型及接收逻辑，勿按其他输出项的数值倍率解释。</p>
+  <h2 id="gx">gx / guoxuan / tcgx</h2>
+  <p>缩写包含 gx 或 guoxuan 的配置，CSV 日期使用 yyyy-MM-dd HH:mm:ss:fff，时间使用 HH:mm:ss:fff，保留毫秒。tcgx 瑕疵过程文件另包含膜卷号、工单、速度及侧别等专用字段；按实际新生成文件核对表头和数据。</p>
+  <h2 id="lj">lj</h2>
+  <p>启用对应状态接口且通信正常时，每 5 分钟上传设备状态；运行用 A、停止用 B。尺寸 CSV 对应位置字段取 A 面测量位置；按本卷文件核对。</p>
+  <h2 id="tp">tp</h2>
+  <p>启用 ccdataPost 接口时，使用专用过程数据格式提交尺寸与区域结果。失败时检查通信结果与相应过程上传记录。</p>
+  <h2 id="szys">szys</h2>
+  <p>对应过程应答检查 errcode；不含成功标志或含 4001 时按失败提示处理。保留原始返回与故障时间，不能只检查 HTTP 是否响应。</p>
+  <h2 id="qzjd">qzjd</h2>
+  <p>启用 MES 且已有对应状态时，小时维护流程会将 MES 通信状态置为待更新。核对随后实际通信结果与“自动MES运行”日志，不将单次状态变化直接判断为设备断线。</p>
+  <h2 id="ydfc">ydfc</h2>
+  <p>该配置建立独立的文件加载记录库。处理文件加载问题时保留当次加载信息与数据库，不与检测结果数据库混淆。</p>
+  <h2 id="ywxwd">ywxwd</h2>
+  <p>MES 瑕疵字段 DefectSide 在相机位置后追加检测区域名称（CoachName）；固定侧别字段仍只取相机位置。配置动态字段映射时，应按接收端要求选择，并核对上传报文中的区域归属。</p>
+  <h2 id="logs">输出检查</h2>
+  <p>按当前膜卷号及时间核对新文件、PLC 应答与业务返回。查看通信、Error 和当日运行日志；输出成功与外部设备实际完成动作分别确认。</p>
+</article>

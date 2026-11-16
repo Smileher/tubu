@@ -1,0 +1,18 @@
+<article id="site-parameters" data-title="cqgy / gzfn / wxls / zl / aprs" data-category="现场专用功能" data-scope="site" data-summary="cqgy / gzfn / wxls / zl / aprs 的专用流程与检查要点，仅适用于对应配置。" data-order="133" data-updated="2026-11-12">
+  <h2 id="cqgy">cqgy</h2>
+  <p>启用 MES 参数接口后，按设备工序、厂部及产品型号请求工艺参数。尺寸工具中的上下偏差按接口结果维护，对应输入只读。尚未取得参数时不能手动开检；先核对取参返回、尺寸编码与保存结果。</p>
+  <figure>
+    <img data-image="assets/screenshots/system/system-options.js" alt="专用设备信息字段示例"/>
+    <figcaption>cqgy、zhgy 等专用设备信息字段。仅供对应配置核对，界面为中文浅色演示。</figcaption>
+  </figure>
+  <h2 id="gzfn">gzfn</h2>
+  <p>按配套参数映射请求并处理 MES 返回。启用参数接口时，启动初始化包含参数获取；未成功时保留故障时间和通信提示，核对接口应答及当前料号，不以连接状态代替取参结果。</p>
+  <h2 id="wxls">wxls</h2>
+  <p>工艺规格参数从主 PLC 按配套点位映射读取，可按流程回传参数。先确认主 PLC 连接，再核对测量项名称、地址、值及回传结果。</p>
+  <h2 id="zl">zl</h2>
+  <p>参数获取与回传依赖主 PLC 和专用映射。检查测量项目匹配、PLC 数据类型及上下限；启用参数接口时启动会执行对应取参流程。</p>
+  <h2 id="aprs">aprs</h2>
+  <p>授权检查请求使用当前登录身份及设备归属信息。核对授权结果中的权限等级；网络返回成功与授权通过分别判断。</p>
+  <h2 id="logs">日志与检查</h2>
+  <p>按取参请求时间，检查通信返回及 Error 日志。请求过程中更换料号、膜卷号或配置后，应重新确认当前对象的取参结果；不要将其他生产对象的应答当作当前配置。</p>
+</article>

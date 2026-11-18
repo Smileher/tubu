@@ -1,4 +1,4 @@
-<article id="diagnostics" data-title="日志、诊断包与问题排查" data-category="数据与系统维护" data-summary="查询参数变更、收集诊断资料，按采集、检测、通信和保存阶段排查。" data-updated="2026-11-13" data-order="119">
+<article id="diagnostics" data-title="日志、诊断包与问题排查" data-category="数据与系统维护" data-summary="查询参数变更、收集诊断资料，按采集、检测、通信和保存阶段排查。" data-updated="2026-11-18" data-order="119">
   <h2 id="common">常见现象从哪里查</h2>
   <table>
     <thead>
@@ -76,7 +76,8 @@
   <h2 id="diagnostic-package">导出诊断包</h2>
   <!-- Modify:软件信息直接启动独立工具，同一工具用于软件正常运行和无法启动时的资料收集。 $saving-ai-agent-tokens -->
   <p>通过“帮助 → 软件信息”核对版本，点击“导出诊断包”，启动独立诊断工具。启动成功后软件信息窗口自动关闭，主软件继续运行。填写故障信息，在“高级设置”核对资料范围、日志日期和输出位置，再点击“导出”；具体步骤见<a href="#diagnostic-tool/steps">填写信息并导出</a>。</p>
-  <p>若提示“未找到诊断工具，请检查软件部署目录。”，检查 <code>App\Bin\UtilityTools\DiagnosticExport\导出诊断包.exe</code> 是否存在；其他启动异常按完整提示检查文件权限和路径，并在 Error 日志中查找“启动诊断工具失败”。启动失败时软件信息窗口保持打开。</p>
+  <!-- Modify:同步实际缺件提示及额外来源说明。$saving-ai-agent-tokens -->
+  <p>若提示“未找到诊断工具”及实际路径，检查 <code>App\Bin\UtilityTools\DiagnosticExport\导出诊断包.exe</code> 是否存在；其他启动异常按完整提示检查文件权限和路径，并在 Error 日志中查找“启动诊断工具失败”。启动失败时软件信息窗口保持打开。工具版本 v1.0.3 会将已存在的额外日志目录按来源编号写入包内，并在“导出说明.txt”记录来源。</p>
   <p>解压后先查看根目录的“导出说明.txt”。说明开头记录填写的现场故障信息，后续记录来源、环境及缺项：</p>
   <table>
     <thead>

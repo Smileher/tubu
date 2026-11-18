@@ -1,7 +1,8 @@
-<article id="diagnostic-tool" data-title="独立诊断工具与故障资料" data-category="数据与系统维护" data-summary="从软件信息或直接运行独立工具，填写故障信息、选择资料并导出诊断包。" data-updated="2026-11-13" data-order="120">
+<article id="diagnostic-tool" data-title="独立诊断工具与故障资料" data-category="数据与系统维护" data-summary="从软件信息或直接运行独立工具，填写故障信息、选择资料并导出诊断包。" data-updated="2026-11-18" data-order="120">
   <h2 id="preparation">工具位置与准备</h2>
   <!-- Modify:明确随包工具位置及主软件内外两种启动方式。 $saving-ai-agent-tokens -->
-  <p>工具随软件部署在 <code>App\Bin\UtilityTools\DiagnosticExport\导出诊断包.exe</code>。主软件可用时，通过“帮助 → 软件信息 → 导出诊断包”启动；软件无法打开时，直接双击这个 EXE，无需先启动主软件。</p>
+  <!-- Modify:按钮传入真实主程序及条件存在的额外日志来源。$saving-ai-agent-tokens -->
+  <p>工具随软件部署在 <code>App\Bin\UtilityTools\DiagnosticExport\导出诊断包.exe</code>。主软件可用时，通过“帮助 → 软件信息 → 导出诊断包”启动；按钮传入当前主程序完整路径和实际日志根目录，已存在的守护桥接及 FreeFileSync 日志目录作为额外来源传入。软件无法打开时，直接双击这个 EXE，无需先启动主软件。</p>
   <p>工具按自身所在位置识别 App、Config 和与 App 同级的 Logs。单独复制工具时，也可放到待诊断软件的 Bin 中；独立放置在其他目录时，可在“高级设置”中手动选择 App 或 Bin。图标已内嵌，运行只需 EXE。</p>
   <h2 id="steps">填写信息并导出</h2>
   <ol>

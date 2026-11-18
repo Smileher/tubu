@@ -1,8 +1,8 @@
 # 涂布检测软件操作手册
 
-在线操作手册更新时间：2026-11-18 09:56:31
+在线操作手册更新时间：2026-11-18 14:53:35
 
-[在线操作手册](https://smileher.github.io/tubu/) | [返回离线手册](index.html)
+[在线操作手册](https://vchenhev.github.io/tubu/) | [返回离线手册](index.html)
 
 ## 生产操作
 
@@ -17,11 +17,11 @@
 - 需要保存的数据与图像已经开启，保存磁盘有可用空间；需要输出的 PLC、MES 和纠偏设备连接正常。
 - 参数页修改已经保存，布局编辑已经结束；不能仅凭输入框里显示新值判断运行参数已更新。
 
-首次建立料号时，先完成[料号配置](https://smileher.github.io/tubu/#recipes/create)、[标定标零](https://smileher.github.io/tubu/#calibration/workflow)和离线试检，再进入正式检测。
+首次建立料号时，先完成[料号配置](https://vchenhev.github.io/tubu/#recipes/create)、[标定标零](https://vchenhev.github.io/tubu/#calibration/workflow)和离线试检，再进入正式检测。
 
 #### 登录后操作
 
-通过主界面用户入口登录，再执行需要权限的操作。账号密码、刷卡、角色权限与会话设置见[用户与权限](https://smileher.github.io/tubu/#users/login)。
+通过主界面用户入口登录，再执行需要权限的操作。账号密码、刷卡、角色权限与会话设置见[用户与权限](https://vchenhev.github.io/tubu/#users/login)。
 
 #### 开始检测
 
@@ -32,7 +32,7 @@
 
 > 启动检查会受当前功能开关影响。启用 AI 分类时，模型未就绪会阻止启动；相机未标定或标定数据无效时也不能开检。运行中出现图像尺寸异常时，按实际提示检查采集、拼图与检测区域。按提示解决原因后重新运行。
 
-[配图：快速操作栏：从运行按钮开始，操作前核对当前状态。](https://smileher.github.io/tubu/#daily/start)
+[配图：快速操作栏：从运行按钮开始，操作前核对当前状态。](https://vchenhev.github.io/tubu/#daily/start)
 
 快速操作栏：从运行按钮开始，操作前核对当前状态。
 
@@ -40,7 +40,7 @@
 
 顶部核对料号与膜卷号；相机画面确认图像持续更新；尺寸表查看测量值和判定；瑕疵列表、局部图与分布图用来定位瑕疵。数据异常时，先确认对应相机、面别和数据集，不混用不同工位的数据。
 
-报警窗口说明异常类型，运行日志说明发生阶段。解除提示并不等于排除了设备故障。人工报警复位的范围见[报警复位](https://smileher.github.io/tubu/#alarms/alarm-reset)，它不会替代重新启动检测。
+报警窗口说明异常类型，运行日志说明发生阶段。解除提示并不等于排除了设备故障。人工报警复位的范围见[报警复位](https://vchenhev.github.io/tubu/#alarms/alarm-reset)，它不会替代重新启动检测。
 
 #### 停止与退出
 
@@ -56,7 +56,7 @@
 
 若提示“软件收尾中断，已停止运行”，本轮后台任务已收到停止通知，不能继续检测。可再次正常关闭软件重试；详细原因见当天 Error 日志。
 
-[配图：关闭进度示例。等待当前阶段结束，再按提示重试。](https://smileher.github.io/tubu/#daily/shutdown)
+[配图：关闭进度示例。等待当前阶段结束，再按提示重试。](https://vchenhev.github.io/tubu/#daily/shutdown)
 
 关闭进度示例。等待当前阶段结束，再按提示重试。
 
@@ -64,9 +64,9 @@
 
 - **按钮不可用：**停止状态下，非主页会锁定全部快速操作，先返回系统主页；运行中的红色“停止”在各页面保留操作入口，原有登录检查仍生效。若仍有锁定标识，再核对初始化、权限和已有提示；启停处理中应等待结束，不通过强制启用按钮恢复运行。
 - **等待遮罩未结束：**查看启停日志中最后一个开始但未返回的阶段，结合相机和控制器日志分析。
-- **状态正常但没有新图：**检查相机是否自动停流、设备是否运动，以及相机采集和触发信号。参见[相机自动取流](https://smileher.github.io/tubu/#cameras/automatic)。
+- **状态正常但没有新图：**检查相机是否自动停流、设备是否运动，以及相机采集和触发信号。参见[相机自动取流](https://vchenhev.github.io/tubu/#cameras/automatic)。
 
-保留故障时间、当时操作和当天日志。日志位置与收集方式见[日志与诊断](https://smileher.github.io/tubu/#diagnostics/logs)。
+保留故障时间、当时操作和当天日志。日志位置与收集方式见[日志与诊断](https://vchenhev.github.io/tubu/#diagnostics/logs)。
 
 #### 遇到开检提示怎样处理
 
@@ -99,7 +99,7 @@
 
 右侧“错误”数字是本次错误日志计数，有记录时显示。双击打开当天错误日志目录，右键可“清空”计数或“本次隐藏”；这些操作不删除日志文件。
 
-[配图：底栏状态示例。图中设备状态为演示值。](https://smileher.github.io/tubu/#daily/footer)
+[配图：底栏状态示例。图中设备状态为演示值。](https://vchenhev.github.io/tubu/#daily/footer)
 
 底栏状态示例。图中设备状态为演示值。
 
@@ -110,13 +110,13 @@
 3. 保存修改，检查所需数据、图像及通信输出已配置。
 4. 开始运行，先观察图像，再观察测量与判定，最后核对保存文件及需要的外部输出。
 
-没有图像先查[采集](https://smileher.github.io/tubu/#cameras/camera-problems)；有图但结果不对先查[测量](https://smileher.github.io/tubu/#sizes/troubleshooting)或[瑕疵](https://smileher.github.io/tubu/#inspection/troubleshooting)，避免同时调整多个环节后失去比较基准。
+没有图像先查[采集](https://vchenhev.github.io/tubu/#cameras/camera-problems)；有图但结果不对先查[测量](https://vchenhev.github.io/tubu/#sizes/troubleshooting)或[瑕疵](https://vchenhev.github.io/tubu/#inspection/troubleshooting)，避免同时调整多个环节后失去比较基准。
 
 #### 日志与异常检查
 
 启停过程在日志中搜索 ` SystemOperation `，按同一轮操作找到最后开始但未完成的阶段；自动停流另查 ` CameraAutoCapture `。保留等待界面显示的阶段文字，不仅记录“卡住”。
 
-资料收集方法见[日志与诊断](https://smileher.github.io/tubu/#diagnostics/logs)。
+资料收集方法见[日志与诊断](https://vchenhev.github.io/tubu/#diagnostics/logs)。
 
 ### 主界面与手册使用
 
@@ -132,7 +132,7 @@
 
 以下画面按不同关注重点展示布局组合。图中名称、数值和设备状态仅供阅读参考；实际显示以当前料号、功能开关和保存的布局为准。同一模块在整个布局中只放置一次，可按需要移动到其他页签。
 
-[配图：主界面整体布局：四路涂布灰度图、尺寸趋势、尺寸统计与过程能力表。](https://smileher.github.io/tubu/#interface/navigation)
+[配图：主界面整体布局：四路涂布灰度图、尺寸趋势、尺寸统计与过程能力表。](https://vchenhev.github.io/tubu/#interface/navigation)
 
 四路图像总览：上方核对料号、膜卷号与生产信息，中部观察相机图像，下方查看尺寸统计和过程能力结果。
 
@@ -140,41 +140,41 @@
 
 | 功能模块 | 主要工作 |
 | --- | --- |
-| 相机与图像 | 配置与连接相机，获取涂布灰度图，检查图像方向、亮度及保存结果。参见[相机配置](https://smileher.github.io/tubu/#cameras)和[图像查看与保存](https://smileher.github.io/tubu/#images)。 |
-| 料号与膜卷 | 按产品维护检测参数，切换料号并核对当前膜卷。参见[料号管理](https://smileher.github.io/tubu/#recipes)和[膜卷号与换卷](https://smileher.github.io/tubu/#rolls)。 |
-| 尺寸与错位 | 建立定位边缘，设置尺寸、公式、标准值及上下限，检查测量值和错位方向。参见[尺寸测量](https://smileher.github.io/tubu/#sizes)和[抓边调参](https://smileher.github.io/tubu/#edges)。 |
-| 瑕疵检测 | 配置检测区域、模板与分类，结合明细、位置和图像检查瑕疵。参见[检测区域与试检](https://smileher.github.io/tubu/#inspection)和[特征分类](https://smileher.github.io/tubu/#classification)。 |
-| 统计与质量 | 查看尺寸、瑕疵、趋势和过程能力，按相机、面别及统计范围核对质量变化。参见[结果统计](https://smileher.github.io/tubu/#statistics)和[过程能力分析](https://smileher.github.io/tubu/#capability)。 |
-| 补偿、纠偏与输出 | 按工艺调整补偿和纠偏，通过 PLC、MES 或喷码输出检测结果。参见[参数补偿](https://smileher.github.io/tubu/#compensation)、[闭环纠偏](https://smileher.github.io/tubu/#correction)和[PLC 输出](https://smileher.github.io/tubu/#communication)。 |
-| 追溯与维护 | 查询历史数据、收集日志和诊断资料，并按角色限制操作。参见[数据查询](https://smileher.github.io/tubu/#data)、[日志诊断](https://smileher.github.io/tubu/#diagnostics)和[用户与权限](https://smileher.github.io/tubu/#users)。 |
+| 相机与图像 | 配置与连接相机，获取涂布灰度图，检查图像方向、亮度及保存结果。参见[相机配置](https://vchenhev.github.io/tubu/#cameras)和[图像查看与保存](https://vchenhev.github.io/tubu/#images)。 |
+| 料号与膜卷 | 按产品维护检测参数，切换料号并核对当前膜卷。参见[料号管理](https://vchenhev.github.io/tubu/#recipes)和[膜卷号与换卷](https://vchenhev.github.io/tubu/#rolls)。 |
+| 尺寸与错位 | 建立定位边缘，设置尺寸、公式、标准值及上下限，检查测量值和错位方向。参见[尺寸测量](https://vchenhev.github.io/tubu/#sizes)和[抓边调参](https://vchenhev.github.io/tubu/#edges)。 |
+| 瑕疵检测 | 配置检测区域、模板与分类，结合明细、位置和图像检查瑕疵。参见[检测区域与试检](https://vchenhev.github.io/tubu/#inspection)和[特征分类](https://vchenhev.github.io/tubu/#classification)。 |
+| 统计与质量 | 查看尺寸、瑕疵、趋势和过程能力，按相机、面别及统计范围核对质量变化。参见[结果统计](https://vchenhev.github.io/tubu/#statistics)和[过程能力分析](https://vchenhev.github.io/tubu/#capability)。 |
+| 补偿、纠偏与输出 | 按工艺调整补偿和纠偏，通过 PLC、MES 或喷码输出检测结果。参见[参数补偿](https://vchenhev.github.io/tubu/#compensation)、[闭环纠偏](https://vchenhev.github.io/tubu/#correction)和[PLC 输出](https://vchenhev.github.io/tubu/#communication)。 |
+| 追溯与维护 | 查询历史数据、收集日志和诊断资料，并按角色限制操作。参见[数据查询](https://vchenhev.github.io/tubu/#data)、[日志诊断](https://vchenhev.github.io/tubu/#diagnostics)和[用户与权限](https://vchenhev.github.io/tubu/#users)。 |
 
 #### 尺寸趋势与统计布局
 
-先了解整体排列，再按[尺寸结果与趋势的查看顺序](https://smileher.github.io/tubu/#sizes/results)逐项检查。
+先了解整体排列，再按[尺寸结果与趋势的查看顺序](https://vchenhev.github.io/tubu/#sizes/results)逐项检查。
 
 关注尺寸稳定性时，可将多个尺寸和错位曲线集中排列，旁边保留实时尺寸、尺寸统计及过程能力表。先按项目名称对应数据源，再比较测量值与标准值、警戒线及规格上下限。曲线平稳只表示当前显示窗口内波动较小，还应检查表格判定和原图。
 
-[配图：尺寸趋势布局：六组尺寸与错位曲线，以及过程能力、尺寸统计和实时结果表。](https://smileher.github.io/tubu/#interface/home-trends)
+[配图：尺寸趋势布局：六组尺寸与错位曲线，以及过程能力、尺寸统计和实时结果表。](https://vchenhev.github.io/tubu/#interface/home-trends)
 
 多曲线与表格组合：同时观察 A/B 面涂布宽、错位和总膜宽，按项目名称核对结果。
 
 #### 瑕疵分布与图像布局
 
-分布图、分类统计和明细的对应关系见[区域融合和图表](https://smileher.github.io/tubu/#statistics/groups)。
+分布图、分类统计和明细的对应关系见[区域融合和图表](https://vchenhev.github.io/tubu/#statistics/groups)。
 
-关注瑕疵位置时，可组合 A/B 面分布图、分类统计、实时明细与相机图像。先看缺陷类别及聚集位置，再从明细核对相机、大小和米数，最后查看对应图像。比较两面结果前确认横向位置、纵向米数及统计范围一致；分布点数、瑕疵个数和 NG 图像次数的口径见[统计范围说明](https://smileher.github.io/tubu/#statistics/counting)。
+关注瑕疵位置时，可组合 A/B 面分布图、分类统计、实时明细与相机图像。先看缺陷类别及聚集位置，再从明细核对相机、大小和米数，最后查看对应图像。比较两面结果前确认横向位置、纵向米数及统计范围一致；分布点数、瑕疵个数和 NG 图像次数的口径见[统计范围说明](https://vchenhev.github.io/tubu/#statistics/counting)。
 
-[配图：瑕疵布局：双面瑕疵分布、分类统计、瑕疵明细及四路相机图像。](https://smileher.github.io/tubu/#interface/home-defects)
+[配图：瑕疵布局：双面瑕疵分布、分类统计、瑕疵明细及四路相机图像。](https://vchenhev.github.io/tubu/#interface/home-defects)
 
 瑕疵分布与明细联看：分布图用于观察位置，表格和相机图像用于进一步核对。
 
 #### 质量综合统计布局
 
-能力表和尺寸曲线的区别，以及结果为空时的检查顺序，见[主页质量与能力结果](https://smileher.github.io/tubu/#capability/display)。
+能力表和尺寸曲线的区别，以及结果为空时的检查顺序，见[主页质量与能力结果](https://vchenhev.github.io/tubu/#capability/display)。
 
 集中查看质量时，可把生产信息、尺寸趋势、过程能力、尺寸统计、瑕疵分类和运行日志放在同一工作区。先核对当前膜卷和统计范围，再查看异常项目及同一时刻的日志。平均值、标准差和 CPK 含义不同，不能仅凭合格率或某一个能力值判断全部结果正常。
 
-[配图：质量综合布局：生产信息、过程能力表、双面尺寸趋势、尺寸和缺陷统计及运行日志。](https://smileher.github.io/tubu/#interface/home-quality)
+[配图：质量综合布局：生产信息、过程能力表、双面尺寸趋势、尺寸和缺陷统计及运行日志。](https://vchenhev.github.io/tubu/#interface/home-quality)
 
 质量综合统计：上方看生产信息，中部看趋势与能力结果，下方结合统计表和运行日志检查变化。
 
@@ -184,13 +184,13 @@
 
 快速操作栏左侧固定显示运行／停止按钮：绿色“运行”用于开始检测，红色“停止”用于停止检测，悬浮时状态色保持一致。锁定图标表示当前不可操作，应先查看提示，颜色本身不代表已经具备启动条件。
 
-纠偏快捷按钮显示“启用纠偏”或“停止纠偏”，用于切换自动纠偏开关，并与纠偏设置窗口同步。开启开关不表示已发送纠偏量，仍需满足权限、功能启用、设备及联锁条件；详见[自动纠偏的运行过程](https://smileher.github.io/tubu/#correction/automatic)。
+纠偏快捷按钮显示“启用纠偏”或“停止纠偏”，用于切换自动纠偏开关，并与纠偏设置窗口同步。开启开关不表示已发送纠偏量，仍需满足权限、功能启用、设备及联锁条件；详见[自动纠偏的运行过程](https://vchenhev.github.io/tubu/#correction/automatic)。
 
 停止状态离开系统主页后，全部快速操作按钮锁定，速度、米数、脉冲和时钟继续显示。切换页面时不额外显示快速操作提示行，顶部栏高度保持一致。返回主页后，各按钮仍按设备、初始化和当前任务状态决定是否可用。若自动运行在非主页启动，红色“停止”按钮仍可用，其他快速操作保持锁定；启停处理中仍需等待。
 
 运行时侧边栏自动隐藏，工作区扩展到原侧栏位置；停止或启动失败后恢复显示，原侧栏宽度设置保留。停止按钮固定在快速操作栏左侧，不随其他快捷按钮横向滚动。
 
-[配图：快速操作栏局部。运行、取图、存图等操作受当前状态和权限控制。](https://smileher.github.io/tubu/#interface/navigation-state)
+[配图：快速操作栏局部。运行、取图、存图等操作受当前状态和权限控制。](https://vchenhev.github.io/tubu/#interface/navigation-state)
 
 快速操作栏局部。运行、取图、存图等操作受当前状态和权限控制。
 
@@ -222,7 +222,7 @@
 
 启动时首页模块未完整初始化，会跳过历史布局加载并禁止保存，保留布局原文件和备份，避免将暂时不可用的相机图像或统计模块误删。此时先处理启动加载提示和 Error 日志，恢复正常后再检查布局，不反复覆盖保存。
 
-[配图：布局管理窗口。核对页签和模块位置后保存。](https://smileher.github.io/tubu/#interface/layout)
+[配图：布局管理窗口。核对页签和模块位置后保存。](https://vchenhev.github.io/tubu/#interface/layout)
 
 布局管理窗口。核对页签和模块位置后保存。
 
@@ -232,7 +232,7 @@
 
 切换功能页面、主页页签或停靠模块使显示区域隐藏后，实时表格、曲线、瑕疵局部图、瑕疵分布图、虚拟图、统计及主页日志暂停显示刷新。后台检测、统计、报警、存储和运行日志继续；返回时恢复最新显示窗口，不逐条回放隐藏期间的画面。尺寸曲线保留最近 50 点，实时尺寸表最多 100 行，瑕疵列表最多 500 行；分布图保留每类最近 9999 个点，虚拟图只显示最新绑定值；局部图按已设置的行列数显示最近图像，完整追溯仍使用已保存数据与图像。
 
-需要调整统计列、区域融合或显示顺序时，参见[结果统计](https://smileher.github.io/tubu/#statistics/defect)；需要编辑示意图时，参见[虚拟图](https://smileher.github.io/tubu/#virtual-graphs/edit)。
+需要调整统计列、区域融合或显示顺序时，参见[结果统计](https://vchenhev.github.io/tubu/#statistics/defect)；需要编辑示意图时，参见[虚拟图](https://vchenhev.github.io/tubu/#virtual-graphs/edit)。
 
 #### 检测结果指示
 
@@ -240,7 +240,7 @@
 
 红色 NG 从最后一次 NG 起保持 3 秒，期间再次检出 NG 会重新计时；收到 OK 会记录最新结果，但不会提前覆盖红色。保持结束后按最新有效结果更新，超过 3 秒没有有效新结果时显示灰色空白，不自动变成 OK。未开始检测、停止或切换料号时也显示灰色空白。空结果包不会延长显示时间；实际执行瑕疵检测且未检出瑕疵属于正常结果。
 
-检测结果显示不受“尺寸声光报警”“瑕疵声光报警”开关控制。关闭声光报警后仍会正常显示 NG；这些开关只控制对应三色灯和蜂鸣器，详见[检测声光报警](https://smileher.github.io/tubu/#alarms/detection-sound-light)。
+检测结果显示不受“尺寸声光报警”“瑕疵声光报警”开关控制。关闭声光报警后仍会正常显示 NG；这些开关只控制对应三色灯和蜂鸣器，详见[检测声光报警](https://vchenhev.github.io/tubu/#alarms/detection-sound-light)。
 
 #### 语言、主题和显示大小
 
@@ -280,11 +280,11 @@
 
 删除料号前确认选择正确。当前正在使用的料号不能删除。复制料号后，应重新检查模板注册状态；软件内复制的新副本需要重新注册瑕疵模板。
 
-[配图：料号管理的列表与保存应用入口](https://smileher.github.io/tubu/#recipes/create)
+[配图：料号管理的列表与保存应用入口](https://vchenhev.github.io/tubu/#recipes/create)
 
 料号管理。先核对选中料号，再执行应用、保存或导出。
 
-[配图：新建料号窗口。填写名称并按当前工艺选择模板。](https://smileher.github.io/tubu/#recipes/create)
+[配图：新建料号窗口。填写名称并按当前工艺选择模板。](https://vchenhev.github.io/tubu/#recipes/create)
 
 新建料号窗口。填写名称并按当前工艺选择模板。
 
@@ -292,7 +292,7 @@
 
 引导中的相机选择仅决定为哪些相机生成检测参数，保留原有单／双面及拼接校验。即使只选择部分相机生成参数，创建后的料号仍使用全部本机运行相机。
 
-未关联相机可使用默认左端线，无需单独标零；关联相机及多相机拼接应先核对[手动标零直线](https://smileher.github.io/tubu/#calibration/workflow)。运行允许缺省左端线，不代表引导可以跳过实际拼接基准校验。
+未关联相机可使用默认左端线，无需单独标零；关联相机及多相机拼接应先核对[手动标零直线](https://vchenhev.github.io/tubu/#calibration/workflow)。运行允许缺省左端线，不代表引导可以跳过实际拼接基准校验。
 
 1. 点击“料号创建引导”，选择工位检测能力、料号名称、来料工艺、碳膜数量、双面及陶瓷选项，并选择“参与参数生成的相机”。
 2. 按工艺填写极耳、碳膜、陶瓷或涂料宽度，检查 A/B 面的对应关系。
@@ -345,7 +345,7 @@
 
 料号参数中的双面检测、涂布模式和自定义虚拟图会影响后续使用。修改后点击“保存料号”，并在对应功能页检查结果。通用 MES 使用独立的主配置，不在料号中配置，切换料号不切换 MES 配置。系统级设备配置仍使用系统设置中的独立保存入口。
 
-间隔涂布选择“间涂”并保存后，从“瑕疵工具 → 间涂配置”设置各相机的拼图检测或屏蔽间隙模式，详见[间隔涂布设置](https://smileher.github.io/tubu/#intermittent-coating/setup)。连涂模式下这两个功能关闭，入口隐藏。
+间隔涂布选择“间涂”并保存后，从“瑕疵工具 → 间涂配置”设置各相机的拼图检测或屏蔽间隙模式，详见[间隔涂布设置](https://vchenhev.github.io/tubu/#intermittent-coating/setup)。连涂模式下这两个功能关闭，入口隐藏。
 
 #### 保存失败、冲突与部分成功
 
@@ -362,7 +362,7 @@
 
 加载料号失败时，在 Error 中查“加载料号异常”，核对目标料号与提示的失败阶段。保存冲突、料号部分保存成功和系统配置保存失败应分别处理；参数历史从审计入口核对。
 
-资料收集方法见[日志与诊断](https://smileher.github.io/tubu/#diagnostics/logs)。
+资料收集方法见[日志与诊断](https://vchenhev.github.io/tubu/#diagnostics/logs)。
 
 ### 膜卷号与换卷
 
@@ -374,7 +374,7 @@
 
 “查看获取结果”只预览来源值，不执行换卷。部分项目支持 MES 共享文件等专用来源，按项目配置使用即可。
 
-[配图：手动膜卷号输入应用和膜卷号记录](https://smileher.github.io/tubu/#rolls/number)
+[配图：手动膜卷号输入应用和膜卷号记录](https://vchenhev.github.io/tubu/#rolls/number)
 
 手动膜卷号示例。当前膜卷号、待录入膜卷号和历史记录分别查看。
 
@@ -391,11 +391,11 @@
 
 > 新膜卷号已显示，不代表后台文件输出和 PLC 写入全部成功。发现计米未清零或旧卷报表缺失时，查看同一次“换卷\#”的阶段记录，分别确认失败环节。软件写入返回成功也不等于设备已经完成机械动作。
 
-手动、PLC 等来源统一经过换卷入口，实际膜卷号未变化时不重复清计数。规格牌与详细报警中的五项报警计数在换卷边界归零，已安排的 PLC 定时复位继续执行；参见[检测报警计数](https://smileher.github.io/tubu/#alarms/alarm-counts)。
+手动、PLC 等来源统一经过换卷入口，实际膜卷号未变化时不重复清计数。规格牌与详细报警中的五项报警计数在换卷边界归零，已安排的 PLC 定时复位继续执行；参见[检测报警计数](https://vchenhev.github.io/tubu/#alarms/alarm-counts)。
 
 #### 换卷后的检查
 
-核对主页新膜卷号、计米状态和上一卷输出文件。若新膜卷号已经显示，但报表或 PLC 点位不符合预期，查看同一次“换卷\#”记录，定位具体失败阶段。参见[日志与诊断](https://smileher.github.io/tubu/#diagnostics/logs)。
+核对主页新膜卷号、计米状态和上一卷输出文件。若新膜卷号已经显示，但报表或 PLC 点位不符合预期，查看同一次“换卷\#”记录，定位具体失败阶段。参见[日志与诊断](https://vchenhev.github.io/tubu/#diagnostics/logs)。
 
 #### 测试读取与正式应用
 
@@ -428,7 +428,7 @@
 
 按同一次“换卷\#”关联日志，依次核对膜卷号应用、计米、旧卷输出及设备写入。当前膜卷号已经更新不能证明所有后续步骤完成。
 
-资料收集方法见[日志与诊断](https://smileher.github.io/tubu/#diagnostics/logs)。
+资料收集方法见[日志与诊断](https://vchenhev.github.io/tubu/#diagnostics/logs)。
 
 ## 相机与采集
 
@@ -442,7 +442,7 @@
 
 相机配置决定本次启动使用的设备、连接参数和测量数据集。新增或修改后须保存并按提示重启；运行中的连接与释放使用“相机连接管理”。两者用途不同。
 
-[配图：相机配置列表：区分显示顺序、数据集、关联相机与实际驱动。](https://smileher.github.io/tubu/#cameras/configuration)
+[配图：相机配置列表：区分显示顺序、数据集、关联相机与实际驱动。](https://vchenhev.github.io/tubu/#cameras/configuration)
 
 相机配置列表：区分显示顺序、数据集、关联相机与实际驱动。
 
@@ -456,7 +456,7 @@
 
 更换相机、分辨率或安装位置后，继续检查标定标零、定位区域和注册模板。软件显示名称与物理设备名称的用途因驱动不同，不能随意互换。
 
-[配图：新增或修改相机窗口的设备及图像配置](https://smileher.github.io/tubu/#cameras/setup)
+[配图：新增或修改相机窗口的设备及图像配置](https://vchenhev.github.io/tubu/#cameras/setup)
 
 相机参数窗口。图中设备名称和地址为演示值。
 
@@ -487,7 +487,7 @@
 
 手动和自动启动都会检查全部相机。未配置相机、任一相机未连接、连接异常或正在操作时均禁止启动；关闭普通配置检查也不能跳过此要求。连接管理使用本次启动的配置，相机配置的新增、修改和删除仍需保存并重启软件生效。
 
-[配图：相机连接管理的状态列表与连接按钮](https://smileher.github.io/tubu/#cameras/connections)
+[配图：相机连接管理的状态列表与连接按钮](https://vchenhev.github.io/tubu/#cameras/connections)
 
 相机连接管理。演示状态用于说明正常与异常相机的显示位置。
 
@@ -501,7 +501,7 @@
 
 测量数据集尚未配置时，相机表格显示“未配置，请设置”；详细相机名称写入 Error 日志，启动时不弹窗。请配置正确的数据集、保存并重启软件。
 
-不同相机按 IP、名称或索引连接，所需字段和配置文件各不相同。按[相机类型与连接参数](https://smileher.github.io/tubu/#camera-drivers/selection)选择驱动，逐项填写实际使用的字段。
+不同相机按 IP、名称或索引连接，所需字段和配置文件各不相同。按[相机类型与连接参数](https://vchenhev.github.io/tubu/#camera-drivers/selection)选择驱动，逐项填写实际使用的字段。
 
 进入尺寸或瑕疵设置时，先选择当前相机，再获取或加载图像。没有有效图像时先解决采集或图片加载问题，不用其他相机的图像代替当前相机。
 
@@ -547,7 +547,7 @@
 
 普通连接失败先看管理窗口中的相机名称、状态和原因，再查当天 Error 中的相机、SDK 阶段与错误码。自动启停搜索 ` CameraAutoCapture `；界面加载与相机真实出图应分开判断。
 
-资料收集方法见[日志与诊断](https://smileher.github.io/tubu/#diagnostics/logs)。
+资料收集方法见[日志与诊断](https://vchenhev.github.io/tubu/#diagnostics/logs)。
 
 ### 相机类型与连接参数
 
@@ -564,7 +564,7 @@
 | CXP、板卡及 INS/CIS | CXPITEKCamera、GigEVisionBoard、InsCHVSCLCameraTool、CamlinkCISGigeCamera |
 | 本地仿真 | LocalCamera |
 
-以下配置图均为中文浅色主题的演示状态。驱动名称保留软件中的真实英文标识；设备名称和路径需替换为实际值。索引从 0 开始，重新插拔、增减设备后须重新核对；显示顺序不等于设备索引。配置保存后按提示重启，详情见[新增或修改相机](https://smileher.github.io/tubu/#cameras/setup)。
+以下配置图均为中文浅色主题的演示状态。驱动名称保留软件中的真实英文标识；设备名称和路径需替换为实际值。索引从 0 开始，重新插拔、增减设备后须重新核对；显示顺序不等于设备索引。配置保存后按提示重启，详情见[新增或修改相机](https://vchenhev.github.io/tubu/#cameras/setup)。
 
 #### 网口及按名称选择的相机
 
@@ -572,7 +572,7 @@
 
 填写“相机 IP”，按 IPv4 地址精确匹配枚举设备。相机显示名称用于软件识别，不代替 IP。设备名称、板卡索引和配置文件不用于此驱动连接。先核对网卡网段、供电及相机 IP。
 
-[配图：海康 GigE相机驱动的配置字段与文件选项](https://smileher.github.io/tubu/#camera-drivers/network)
+[配图：海康 GigE相机驱动的配置字段与文件选项](https://vchenhev.github.io/tubu/#camera-drivers/network)
 
 海康 GigE 配置演示。核对当前驱动、连接字段与图像配置，示例值不对应真实设备。
 
@@ -580,7 +580,7 @@
 
 填写“设备名称”，须与 Sapera 枚举的 AcqDevice 资源名称一致；并选择适用于该设备的 Sapera 配置文件。连接使用设备名称，不使用 IP 或板卡索引。
 
-[配图：DALSA GigE相机驱动的配置字段与文件选项](https://smileher.github.io/tubu/#camera-drivers/network)
+[配图：DALSA GigE相机驱动的配置字段与文件选项](https://vchenhev.github.io/tubu/#camera-drivers/network)
 
 DALSA GigE 配置演示。核对当前驱动、连接字段与图像配置，示例值不对应真实设备。
 
@@ -588,7 +588,7 @@ DALSA GigE 配置演示。核对当前驱动、连接字段与图像配置，示
 
 填写“用户自定义名称”，与 SDK 中的设备用户名称一致；选择对应配置文件。此驱动按名称选择设备，不使用窗口中的 IP 和板卡索引。
 
-[配图：ITEK GigE相机驱动的配置字段与文件选项](https://smileher.github.io/tubu/#camera-drivers/network)
+[配图：ITEK GigE相机驱动的配置字段与文件选项](https://vchenhev.github.io/tubu/#camera-drivers/network)
 
 ITEK GigE 配置演示。核对当前驱动、连接字段与图像配置，示例值不对应真实设备。
 
@@ -596,7 +596,7 @@ ITEK GigE 配置演示。核对当前驱动、连接字段与图像配置，示�
 
 填写“用户自定义名称”，与 DVP SDK 显示的名称一致。使用所选像素格式核对图像输出；不使用 IP、板卡索引或配置文件选择设备。
 
-[配图：DVP相机驱动的配置字段与文件选项](https://smileher.github.io/tubu/#camera-drivers/network)
+[配图：DVP相机驱动的配置字段与文件选项](https://vchenhev.github.io/tubu/#camera-drivers/network)
 
 DVP 配置演示。核对当前驱动、连接字段与图像配置，示例值不对应真实设备。
 
@@ -604,7 +604,7 @@ DVP 配置演示。核对当前驱动、连接字段与图像配置，示例值�
 
 在“设备名称”中填写 SDK 枚举的 cameraName，字段存储名虽为 CamIP，实际按设备名称匹配，不能填 IP 代替。其余板卡和配置文件字段不用于此驱动连接。
 
-[配图：大华 GigE相机驱动的配置字段与文件选项](https://smileher.github.io/tubu/#camera-drivers/network)
+[配图：大华 GigE相机驱动的配置字段与文件选项](https://vchenhev.github.io/tubu/#camera-drivers/network)
 
 大华 GigE 配置演示。核对当前驱动、连接字段与图像配置，示例值不对应真实设备。
 
@@ -614,7 +614,7 @@ DVP 配置演示。核对当前驱动、连接字段与图像配置，示例值�
 
 “采集卡名称”（采集服务器）填写 Sapera 采集服务器名称，“采集资源索引”填写其采集通道索引，并选择采集配置文件。Mono8P2 需要单独相机控制时，再填写“设备名称”（相机控制服务器）和“相机控制资源索引”；它们与采集服务器和采集通道不是同一对象。控制不可用时须查看控制命令日志，不能只看采集卡返回。
 
-[配图：DALSA CameraLink相机驱动的配置字段与文件选项](https://smileher.github.io/tubu/#camera-drivers/cameralink)
+[配图：DALSA CameraLink相机驱动的配置字段与文件选项](https://vchenhev.github.io/tubu/#camera-drivers/cameralink)
 
 DALSA CameraLink 配置演示。核对当前驱动、连接字段与图像配置，示例值不对应真实设备。
 
@@ -622,7 +622,7 @@ DALSA CameraLink 配置演示。核对当前驱动、连接字段与图像配置
 
 填写“板卡索引”（通道索引所在字段），选择对应的采集卡配置文件。当前驱动以板卡索引和配置文件建立采集，不用 IP、设备名称或另一板卡编号选择相机。Mono8P2 图像还须核对像素格式和分时/多重曝光布局。
 
-[配图：ITEK CameraLink相机驱动的配置字段与文件选项](https://smileher.github.io/tubu/#camera-drivers/cameralink)
+[配图：ITEK CameraLink相机驱动的配置字段与文件选项](https://vchenhev.github.io/tubu/#camera-drivers/cameralink)
 
 ITEK CameraLink 配置演示。核对当前驱动、连接字段与图像配置，示例值不对应真实设备。
 
@@ -630,7 +630,7 @@ ITEK CameraLink 配置演示。核对当前驱动、连接字段与图像配置�
 
 分别填写“板卡索引”和“设备索引”，与厂商工具中的板卡及其设备枚举对应；两者均从 0 开始。不使用 IP、设备名称或配置文件。
 
-[配图：海康 CameraLink相机驱动的配置字段与文件选项](https://smileher.github.io/tubu/#camera-drivers/cameralink)
+[配图：海康 CameraLink相机驱动的配置字段与文件选项](https://vchenhev.github.io/tubu/#camera-drivers/cameralink)
 
 海康 CameraLink 配置演示。核对当前驱动、连接字段与图像配置，示例值不对应真实设备。
 
@@ -638,7 +638,7 @@ ITEK CameraLink 配置演示。核对当前驱动、连接字段与图像配置�
 
 填写“设备索引”，按当前 MVS 枚举列表选择设备；“板卡编号”虽可编辑，不用于此版本的设备选择。配置文件为可选的 MVS 相机特征配置；不填写则沿用设备参数，加载失败时保留设备当前参数并记录原因。
 
-[配图：海康 CameraLink V2相机驱动的配置字段与文件选项](https://smileher.github.io/tubu/#camera-drivers/cameralink)
+[配图：海康 CameraLink V2相机驱动的配置字段与文件选项](https://vchenhev.github.io/tubu/#camera-drivers/cameralink)
 
 海康 CameraLink V2 配置演示。核对当前驱动、连接字段与图像配置，示例值不对应真实设备。
 
@@ -646,7 +646,7 @@ ITEK CameraLink 配置演示。核对当前驱动、连接字段与图像配置�
 
 “采集卡名称”填写 SDK 的 interfaceName，“设备名称”填写相机的 cameraName。两个名称分别精确匹配，不使用板卡索引；此驱动不加载窗口中的配置文件。
 
-[配图：大华 CameraLink相机驱动的配置字段与文件选项](https://smileher.github.io/tubu/#camera-drivers/cameralink)
+[配图：大华 CameraLink相机驱动的配置字段与文件选项](https://vchenhev.github.io/tubu/#camera-drivers/cameralink)
 
 大华 CameraLink 配置演示。核对当前驱动、连接字段与图像配置，示例值不对应真实设备。
 
@@ -656,7 +656,7 @@ ITEK CameraLink 配置演示。核对当前驱动、连接字段与图像配置�
 
 “相机显示名称”必须与设备 UserDefinedName 一致，并选择对应配置文件。当前驱动不按设备名称、IP 或窗口中的板卡编号筛选设备；不要仅凭这些字段可编辑就认为它们参与连接。
 
-[配图：ITEK CXP相机驱动的配置字段与文件选项](https://smileher.github.io/tubu/#camera-drivers/board)
+[配图：ITEK CXP相机驱动的配置字段与文件选项](https://vchenhev.github.io/tubu/#camera-drivers/board)
 
 ITEK CXP 配置演示。核对当前驱动、连接字段与图像配置，示例值不对应真实设备。
 
@@ -664,7 +664,7 @@ ITEK CXP 配置演示。核对当前驱动、连接字段与图像配置，示�
 
 填写“设备索引”，并选择相应采集卡配置文件。此驱动按设备索引选择对象，不按软件显示名称、设备名称、IP 或另一板卡编号匹配。
 
-[配图：GigE Vision 板卡相机驱动的配置字段与文件选项](https://smileher.github.io/tubu/#camera-drivers/board)
+[配图：GigE Vision 板卡相机驱动的配置字段与文件选项](https://vchenhev.github.io/tubu/#camera-drivers/board)
 
 GigE Vision 板卡 配置演示。核对当前驱动、连接字段与图像配置，示例值不对应真实设备。
 
@@ -672,7 +672,7 @@ GigE Vision 板卡 配置演示。核对当前驱动、连接字段与图像配�
 
 填写“设备索引”，选择由配套工具生成的配置文件。软件显示名称用于日志识别；连接使用设备索引，不使用 IP 或设备名称。配置加载失败时保留 SDK 原始错误及文件路径。
 
-[配图：INS 采集卡相机驱动的配置字段与文件选项](https://smileher.github.io/tubu/#camera-drivers/board)
+[配图：INS 采集卡相机驱动的配置字段与文件选项](https://vchenhev.github.io/tubu/#camera-drivers/board)
 
 INS 采集卡 配置演示。核对当前驱动、连接字段与图像配置，示例值不对应真实设备。
 
@@ -680,7 +680,7 @@ INS 采集卡 配置演示。核对当前驱动、连接字段与图像配置，
 
 填写“设备索引”（窗口的通道索引字段），选择匹配的配置文件。当前驱动实际按该索引打开设备，其他名称及 IP 不用于选择；先核对 SDK 枚举数量和索引范围。
 
-[配图：CIS 采集接入相机驱动的配置字段与文件选项](https://smileher.github.io/tubu/#camera-drivers/board)
+[配图：CIS 采集接入相机驱动的配置字段与文件选项](https://vchenhev.github.io/tubu/#camera-drivers/board)
 
 CIS 采集接入 配置演示。核对当前驱动、连接字段与图像配置，示例值不对应真实设备。
 
@@ -690,7 +690,7 @@ CIS 采集接入 配置演示。核对当前驱动、连接字段与图像配置
 
 选择“图片加载路径”，填写“采集间隔”，单位毫秒；有效范围 200～5000，未设置或无效时使用 1000。文件按名称排序后循环出图；不需要 IP、设备名称、板卡索引或相机配置文件。连接成功仅说明本地图片可加载，不能代替真实相机通信验证。
 
-[配图：本地相机相机驱动的配置字段与文件选项](https://smileher.github.io/tubu/#camera-drivers/local)
+[配图：本地相机相机驱动的配置字段与文件选项](https://vchenhev.github.io/tubu/#camera-drivers/local)
 
 本地相机 配置演示。核对当前驱动、连接字段与图像配置，示例值不对应真实设备。
 
@@ -701,7 +701,7 @@ CIS 采集接入 配置演示。核对当前驱动、连接字段与图像配置
 3. 全部相机就绪后获取图像，核对方向、宽高、像素格式、曝光、触发及分时布局。
 4. 再检查测量数据集、标定、定位区域与模板，不用另一台相机的正常图像代替本机验证。
 
-设备名称不匹配时以厂商工具和日志列出的资源为准；按索引连接时核对枚举数量。更多检查顺序见[没有图像或图像顺序异常](https://smileher.github.io/tubu/#cameras/camera-problems)。
+设备名称不匹配时以厂商工具和日志列出的资源为准；按索引连接时核对枚举数量。更多检查顺序见[没有图像或图像顺序异常](https://vchenhev.github.io/tubu/#cameras/camera-problems)。
 
 ### 图像查看、取图与保存
 
@@ -722,7 +722,7 @@ CIS 采集接入 配置演示。核对当前驱动、连接字段与图像配置
 
 保存路径采用已配置模板，输出为 JPG，沿用质量设置。复制、排队和保存中的图像合计最多 50 张，达到上限时跳过新任务而不等待磁盘。图像缺失时同时检查采样间隔、缓存丢弃日志、磁盘空间与写入速度。
 
-[配图：文件保存设置。分别启用保存类型并核对输出路径。](https://smileher.github.io/tubu/#images/all-images)
+[配图：文件保存设置。分别启用保存类型并核对输出路径。](https://vchenhev.github.io/tubu/#images/all-images)
 
 文件保存设置。分别启用保存类型并核对输出路径。
 
@@ -743,9 +743,23 @@ CIS 采集接入 配置演示。核对当前驱动、连接字段与图像配置
 
 尺寸与瑕疵页在获取图像、加载图像及切换相机后，默认将完整图像拉伸铺满图像控件。点击“等比例显示”可保持原始宽高比例，完整显示图像；点击“铺满显示”或在图像上左键双击恢复拉伸铺满。两页均支持滚轮缩放、左键拖动平移；尺寸页的 ROI 图形及调整点保留原有单击、拖动编辑操作，双击仅恢复视图，不改变区域坐标。尺寸页不提供右键菜单，显示与导出操作使用图像左下按钮。瑕疵主图按原图分辨率显示，ROI、灰度位置和结果定位均使用原图坐标；算法内部工作图的缩放不影响页面坐标。原图导出不包含检测框、刻度和文字。
 
-[配图：尺寸与瑕疵共用图像栏。选择相机后加载单张图像，或获取全部相机图像。](https://smileher.github.io/tubu/#images/parameter-images)
+[配图：尺寸与瑕疵共用图像栏。选择相机后加载单张图像，或获取全部相机图像。](https://vchenhev.github.io/tubu/#images/parameter-images)
 
 共用图像栏。图中相机及路径仅供阅读参考。
+
+#### 主页相机图像状态
+
+主页相机图像默认拉伸铺满控件，窗口切换、大小变化和最小化恢复后继续铺满；图像上左键双击也恢复铺满。右键“显示”组可选择“铺满显示”或“等比例显示”。手动等比例、滚轮缩放和左键拖动后的视图会在新图到来时保留；每台相机独立计时，最后一次手动调整后连续 3 分钟无操作自动恢复铺满，新图不会延长计时。隐藏或最小化期间继续计时，超时后重新显示时恢复铺满。
+
+右键“保存”组中，“保存原图”保存当前完整显示源图为无损 BMP，不包含检测标注和数字浮层，也不受当前缩放影响；“保存截图”保存点击时相机控件内的可见画面为 PNG，包含当前缩放位置、检测标注和数字浮层，不包含右键菜单。两者均可选择保存位置，无图时不可用。“调试”组的“在线抓边参数调整”沿用现有权限校验，操作参见[在线抓边参数调整](https://vchenhev.github.io/tubu/#sizes/edges)。
+
+主页相机窗口左下角贴边显示当前图像的宽×高像素分辨率，无图时隐藏，不显示刻度。拼图模式在左上角显示附加数字状态；两种模式均在右下角显示数字状态。浮层不显示名称或单位，也不改变图像尺寸。
+
+数字状态会合并刷新，高速出图或检测积压时降低刷新频率；隐藏窗口暂停刷新，重新显示时恢复最新值。换卷或清屏会清零计数和耗时。浮层不会写入主页“存图”保存的原图，鼠标缩放、拖动和右键菜单仍可正常使用。
+
+[配图：主页相机窗口状态浮层示例：左上、左下和右下显示无单位数字状态。](https://vchenhev.github.io/tubu/#images/camera-window-status)
+
+主页相机窗口状态浮层。图中图像和数字仅供阅读参考。
 
 #### 图像刻度与坐标
 
@@ -786,7 +800,7 @@ CIS 采集接入 配置演示。核对当前驱动、连接字段与图像配置
 
 没有新图先查相机连接与采集阶段；图像没有保存则查保存开关、队列、路径和磁盘。按同一相机及故障时间查看 Debug、Error，保留原图，不用截图替代算法输入图像。
 
-资料收集方法见[日志与诊断](https://smileher.github.io/tubu/#diagnostics/logs)。
+资料收集方法见[日志与诊断](https://vchenhev.github.io/tubu/#diagnostics/logs)。
 
 ## 标定与光源
 
@@ -809,11 +823,11 @@ CIS 采集接入 配置演示。核对当前驱动、连接字段与图像配置
 
 每台相机最多配置一条标零直线。“删除标零直线”只修改当前页面草稿，点击保存后才生效。没有标零配置时，软件使用图像左端 X=0、实际位置 0 mm 作为默认线，默认线不写入配置；无标零配置不阻止启动检测，相机仍须具有有效标定。
 
-图像刻度、单位及缩放说明见[图像查看与坐标](https://smileher.github.io/tubu/#images/coordinates)。
+图像刻度、单位及缩放说明见[图像查看与坐标](https://vchenhev.github.io/tubu/#images/coordinates)。
 
 标零直线的位置由已保存的像素位置和实际位置确定。多相机料号创建引导仍需有效标零直线校验实际拼接关系；默认左端线不能替代这项校验。未关联相机可不单独配置标零。
 
-[配图：标定操作界面。左侧核对参数和标零，右侧检查图像及结果。](https://smileher.github.io/tubu/#calibration/workflow)
+[配图：标定操作界面。左侧核对参数和标零，右侧检查图像及结果。](https://vchenhev.github.io/tubu/#calibration/workflow)
 
 标定操作界面。左侧核对参数和标零，右侧检查图像及结果。
 
@@ -829,7 +843,7 @@ CIS 采集接入 配置演示。核对当前驱动、连接字段与图像配置
 
 没有有效分区、无有效边缘或结果无效时不能保存。部分合理性提醒允许保存和使用，但应先确认提醒的实际原因。
 
-[配图：局部精度页签：检查标定明细与质量信息，再决定是否保存。](https://smileher.github.io/tubu/#calibration/quality)
+[配图：局部精度页签：检查标定明细与质量信息，再决定是否保存。](https://vchenhev.github.io/tubu/#calibration/quality)
 
 局部精度页签：检查标定明细与质量信息，再决定是否保存。
 
@@ -868,7 +882,7 @@ CIS 采集接入 配置演示。核对当前驱动、连接字段与图像配置
 
 失败时先保留标定提示、原图、当前相机与分区参数，再查同一时刻的 Error。结果不合理时先检查图像、区域、标准尺寸和单位；刻度显示只能辅助定位，不能代替标定结果。
 
-资料收集方法见[日志与诊断](https://smileher.github.io/tubu/#diagnostics/logs)。
+资料收集方法见[日志与诊断](https://vchenhev.github.io/tubu/#diagnostics/logs)。
 
 ### 光源控制与触发
 
@@ -880,7 +894,7 @@ CIS 采集接入 配置演示。核对当前驱动、连接字段与图像配置
 
 光源控制提供三台控制器，每台两路。各路可以选择相机和区域，设置目标灰度及公差。调整后观察图像亮度和区域选择，避免只凭整图观感判断测量区域的照明。
 
-[配图：光源控制的型号通道和自适应操作区](https://smileher.github.io/tubu/#lights/light)
+[配图：光源控制的型号通道和自适应操作区](https://vchenhev.github.io/tubu/#lights/light)
 
 光源控制演示界面。参数和状态不代表真实设备已连接。
 
@@ -956,11 +970,11 @@ Debug日志中的“【光源通信】”记录型号、串口及波特率或UDP
 
 设置尺寸前，先核对相机图像、标定和定位边缘，再建立测量尺寸及判定上下限。使用离线尺寸仿真时，为全部运行相机加载对应图像后执行测量；离线图片结果不能代替真实采集验收。
 
-图像刻度、单位及缩放说明见[图像查看与坐标](https://smileher.github.io/tubu/#images/coordinates)。
+图像刻度、单位及缩放说明见[图像查看与坐标](https://vchenhev.github.io/tubu/#images/coordinates)。
 
-直线工具的整体图像、搜索框、结果线与抓边参数位置见[尺寸抓边整体界面](https://smileher.github.io/tubu/#edges/setup)。先在原图上确认边缘，再设置尺寸标准与判定范围。
+直线工具的整体图像、搜索框、结果线与抓边参数位置见[尺寸抓边整体界面](https://vchenhev.github.io/tubu/#edges/setup)。先在原图上确认边缘，再设置尺寸标准与判定范围。
 
-运行中需要调整抓边时，可在相机画面右键选择“调整抓边”。选择目标边、修改参数或搜索区域，点击“抓边”核对结果，最后点击“保存”。“更新图像”只替换检查用的图像副本，保留当前未保存参数。
+运行中需要调整抓边时，可在相机画面右键选择“调试 → 在线抓边参数调整”。选择目标边、修改参数或搜索区域，点击“抓边”核对结果，最后点击“保存”。“更新图像”只替换检查用的图像副本，保留当前未保存参数。
 
 在线窗口只提交当前相机实际修改的抓边参数，不修改其他相机。保存冲突或失败时保留输入。当前在线抓边入口使用 HALCON；搜索框是查找范围，结果线才是算法实际找到的边。
 
@@ -973,7 +987,7 @@ Debug日志中的“【光源通信】”记录型号、串口及波特率或UDP
 5. 点击“执行检测”核对测量值，再建立需要的错位项目。
 6. 完成后点击“参数保存”。需要限制算子顺序时，先确认各抓边检测坐标顺序正确。
 
-[配图：尺寸工具页签：维护当前尺寸项目，确认名称及标准范围。](https://smileher.github.io/tubu/#sizes/workflow)
+[配图：尺寸工具页签：维护当前尺寸项目，确认名称及标准范围。](https://vchenhev.github.io/tubu/#sizes/workflow)
 
 尺寸工具页签：维护当前尺寸项目，确认名称及标准范围。
 
@@ -987,19 +1001,19 @@ Debug日志中的“【光源通信】”记录型号、串口及波特率或UDP
 
 算子列表出现“已失效”时，先确认是否为已删除相机的残留。删除选中或批量清理前核对列表，避免删除当前仍在使用的边缘。
 
-[配图：添加尺寸窗口。选择数据集、两条边和判定范围。](https://smileher.github.io/tubu/#sizes/dimensions)
+[配图：添加尺寸窗口。选择数据集、两条边和判定范围。](https://vchenhev.github.io/tubu/#sizes/dimensions)
 
 添加尺寸窗口。选择数据集、两条边和判定范围。
 
-[配图：公式编辑器。插入实际测量值与运算符后校验。](https://smileher.github.io/tubu/#sizes/dimensions)
+[配图：公式编辑器。插入实际测量值与运算符后校验。](https://vchenhev.github.io/tubu/#sizes/dimensions)
 
 公式编辑器。插入实际测量值与运算符后校验。
 
-[配图：错位设置页签：核对错位项目与数据归属。](https://smileher.github.io/tubu/#sizes/dimensions)
+[配图：错位设置页签：核对错位项目与数据归属。](https://vchenhev.github.io/tubu/#sizes/dimensions)
 
 错位设置页签：核对错位项目与数据归属。
 
-[配图：错位编辑窗口。分别选择两条测量线及偏差范围。](https://smileher.github.io/tubu/#sizes/dimensions)
+[配图：错位编辑窗口。分别选择两条测量线及偏差范围。](https://vchenhev.github.io/tubu/#sizes/dimensions)
 
 错位编辑窗口。分别选择两条测量线及偏差范围。
 
@@ -1011,21 +1025,21 @@ Debug日志中的“【光源通信】”记录型号、串口及波特率或UDP
 
 离线测量使用当前页面未保存的参数，调用正式抓边、尺寸和错位计算。需要历史帧的累计公式、标准片累计补偿、同工位延迟对齐或缺少外部工位数据的项目，会显示“未完成”及原因，不使用生产历史，不以零值或 OK 替代。
 
-结果区分别显示执行情况、测量判定、阶段耗时和整体实际耗时。参数或图像变化后应重新检测；切换页签本身保留图像。取图方式和图像保留范围见[参数页图像](https://smileher.github.io/tubu/#images/parameter-images)。
+结果区分别显示执行情况、测量判定、阶段耗时和整体实际耗时。参数或图像变化后应重新检测；切换页签本身保留图像。取图方式和图像保留范围见[参数页图像](https://vchenhev.github.io/tubu/#images/parameter-images)。
 
 仿真用于检查当前图像、抓边及尺寸计算关系，不写入生产采集队列、生产计数或 PLC 输出，也不执行生产闭环。它不能确认真实触发、连续采集或现场 PLC 输出正确。
 
-[配图：离线检测页签。准备图像后执行检测，并核对结果。](https://smileher.github.io/tubu/#sizes/simulation)
+[配图：离线检测页签。准备图像后执行检测，并核对结果。](https://vchenhev.github.io/tubu/#sizes/simulation)
 
 离线检测页签。准备图像后执行检测，并核对结果。
 
 #### 在主页查看尺寸与趋势
 
-完成参数保存后，在系统主页组合尺寸实时表、尺寸统计及曲线。按相机、面别和项目名称对应查看 A/B 面涂布宽、总膜宽与错位，先确认是否有新结果，再检查数值及判定。布局调整方法见[调整显示布局](https://smileher.github.io/tubu/#interface/layout)。
+完成参数保存后，在系统主页组合尺寸实时表、尺寸统计及曲线。按相机、面别和项目名称对应查看 A/B 面涂布宽、总膜宽与错位，先确认是否有新结果，再检查数值及判定。布局调整方法见[调整显示布局](https://vchenhev.github.io/tubu/#interface/layout)。
 
 实时表用于核对单次测量，曲线用于观察最近一段数据的变化，统计表用于查看所选范围的汇总。标准值、警戒线和规格上下限应与当前项目对应；不同量纲或标准值的曲线不能直接比较高度。图中接近水平的曲线用于说明查看位置，实际波动以采集结果为准，不通过调整显示掩盖异常。
 
-[配图：主页尺寸结果：六组尺寸与错位曲线，左侧为过程能力、尺寸统计和实时尺寸表。](https://smileher.github.io/tubu/#sizes/results)
+[配图：主页尺寸结果：六组尺寸与错位曲线，左侧为过程能力、尺寸统计和实时尺寸表。](https://vchenhev.github.io/tubu/#sizes/results)
 
 尺寸结果与趋势：先核对左侧表格中的项目和数值，再查看对应曲线的变化及参考线。
 
@@ -1037,7 +1051,7 @@ Debug日志中的“【光源通信】”记录型号、串口及波特率或UDP
 | --- | --- | --- |
 | 始终抓不到边 | 原图是否存在真实亮暗边；ROI 是否覆盖该边；搜索方向、极性和阈值是否合适。 | 对单条边检测，确认结果线后再做尺寸测试。 |
 | 抓到邻近错误边 | 搜索范围是否过宽，区域内是否包含反光或多条相近边。 | 收窄有效范围，核对第一条／最后一条选择，不先用补偿抵消错抓。 |
-| 尺寸整体固定偏差 | 标定、标零、两端对象、单位及人工测量基准是否一致。 | 先确认测量关系正确，再按[参数补偿](https://smileher.github.io/tubu/#compensation)处理稳定差异。 |
+| 尺寸整体固定偏差 | 标定、标零、两端对象、单位及人工测量基准是否一致。 | 先确认测量关系正确，再按[参数补偿](https://vchenhev.github.io/tubu/#compensation)处理稳定差异。 |
 | 尺寸持续抖动 | 原图亮度、材料位置、结果线和噪声是否随帧变化。 | 用相同条件的多张图比较，每次只调整一类参数，避免反复加大补偿。 |
 | 错位正负方向相反 | 面别、数据集、参与计算的对象顺序与反转配置。 | 先核对物理方向和公式，再改配置，不直接取绝对值掩盖方向问题。 |
 
@@ -1047,7 +1061,7 @@ Debug日志中的“【光源通信】”记录型号、串口及波特率或UDP
 
 尺寸异常先区分抓边失败、公式或判定异常、输出异常。保存当前相机、数据集、测量名称、原图与实际测量值，结合试检提示及同一时刻的 Error 检查，不先用补偿掩盖边缘错误。
 
-资料收集方法见[日志与诊断](https://smileher.github.io/tubu/#diagnostics/logs)。
+资料收集方法见[日志与诊断](https://vchenhev.github.io/tubu/#diagnostics/logs)。
 
 ### 抓边参数与灰度分析
 
@@ -1057,17 +1071,17 @@ Debug日志中的“【光源通信】”记录型号、串口及波特率或UDP
 
 从直线、尺寸相关工具进入对应相机的抓边设置，先准备图像并确认标定、定位和待测边缘。调整前保留同一组原图，便于比较参数变化。
 
-建立尺寸及错位的完整步骤见[尺寸测量与错位](https://smileher.github.io/tubu/#sizes/workflow)；图像刻度、缩放和原图保存见[图像查看](https://smileher.github.io/tubu/#images/coordinates)。
+建立尺寸及错位的完整步骤见[尺寸测量与错位](https://vchenhev.github.io/tubu/#sizes/workflow)；图像刻度、缩放和原图保存见[图像查看](https://vchenhev.github.io/tubu/#images/coordinates)。
 
 直线工具上方选择相机并获取或加载图像，下方切换“边缘设置”“尺寸设置”“错位设置”或“离线检测”。图像区高度固定，切换页签及选择边缘不会改变图像区高度。在抓边参数页先选择图像中的目标区域，或在算子列表选择当前相机的有效边缘，再确认搜索区域覆盖待测边缘并点击“测试抓边”。绿色搜索框表示查找范围，红色结果线表示找到的边缘；两者不能混为同一位置。边缘名称显示在区域外上方，区域边框与名称使用相同颜色；“当前边缘”与图像选择一致，未选中区域时不能调整抓边参数，固定边也不使用这些参数。核对当前边缘、抓边结果和参数后，再点击“参数保存”。
 
-[配图：直线工具整体界面：三组竖直边缘的搜索区域、区域外名称、结果线及抓边参数。](https://smileher.github.io/tubu/#edges/setup)
+[配图：直线工具整体界面：三组竖直边缘的搜索区域、区域外名称、结果线及抓边参数。](https://vchenhev.github.io/tubu/#edges/setup)
 
 尺寸抓边整体界面：上方对照原图和边缘位置，下方核对阈值、方向、极性及边缘选择。
 
 图示中的名称、数值与状态仅供阅读参考。
 
-[配图：算子列表页签：选择当前算子，再检查位置与有效状态。](https://smileher.github.io/tubu/#edges/setup)
+[配图：算子列表页签：选择当前算子，再检查位置与有效状态。](https://vchenhev.github.io/tubu/#edges/setup)
 
 算子列表页签：选择当前算子，再检查位置与有效状态。
 
@@ -1081,7 +1095,7 @@ Debug日志中的“【光源通信】”记录型号、串口及波特率或UDP
 
 取样使用当前原始灰度图，不平滑、不归一化，也不修改图像和料号。切换相机、图像或方向后默认取中间行列，离开灰度页清除取样线和曲线。
 
-[配图：定位边缘页签：独立检测与自动定位分别核对。](https://smileher.github.io/tubu/#edges/gray)
+[配图：定位边缘页签：独立检测与自动定位分别核对。](https://vchenhev.github.io/tubu/#edges/gray)
 
 定位边缘页签：独立检测与自动定位分别核对。
 
@@ -1106,7 +1120,7 @@ Debug日志中的“【光源通信】”记录型号、串口及波特率或UDP
 | 检出位置 | 当前边缘的检测坐标，单位为 px，只供查看。水平搜索显示 X 坐标，垂直搜索显示 Y 坐标。 |
 | 显示线宽 | 只调整结果线显示粗细，不改变搜索区域与测量结果。 |
 
-[配图：抓边参数局部。按方向、极性与边缘选择依次核对。](https://smileher.github.io/tubu/#edges/parameters)
+[配图：抓边参数局部。按方向、极性与边缘选择依次核对。](https://vchenhev.github.io/tubu/#edges/parameters)
 
 抓边参数局部。按方向、极性与边缘选择依次核对。
 
@@ -1124,7 +1138,7 @@ Debug日志中的“【光源通信】”记录型号、串口及波特率或UDP
 
 抓边失败先保存当前原图、ROI、极性、方向及阈值，再查看试检提示和当天 Error。灰度曲线只帮助分析图像，需在相同图像和同一条边上比较调整结果。
 
-资料收集方法见[日志与诊断](https://smileher.github.io/tubu/#diagnostics/logs)。
+资料收集方法见[日志与诊断](https://vchenhev.github.io/tubu/#diagnostics/logs)。
 
 ## 瑕疵检测
 
@@ -1154,11 +1168,11 @@ Debug日志中的“【光源通信】”记录型号、串口及波特率或UDP
 
 固定位置是检测图中的绝对位置，不表示距图像底部或右侧的距离。改变图像尺寸或使用不同高度的拼图后，应重新检查固定位置、检测范围和注册图。
 
-[配图：检测区域列表。选择区域后核对四边定位与启用状态。](https://smileher.github.io/tubu/#inspection/regions)
+[配图：检测区域列表。选择区域后核对四边定位与启用状态。](https://vchenhev.github.io/tubu/#inspection/regions)
 
 检测区域列表。选择区域后核对四边定位与启用状态。
 
-[配图：区域校正设置窗口。按当前工艺选择边缘及内缩距离。](https://smileher.github.io/tubu/#inspection/regions)
+[配图：区域校正设置窗口。按当前工艺选择边缘及内缩距离。](https://vchenhev.github.io/tubu/#inspection/regions)
 
 区域校正设置窗口。按当前工艺选择边缘及内缩距离。
 
@@ -1197,13 +1211,13 @@ Debug日志中的“【光源通信】”记录型号、串口及波特率或UDP
 
 特征分类的等效椭圆主半径、次半径和最大内圆半径以mm设置，使用横纵平均分辨率换算。启用半径特征时，使用已知瑕疵样本核对阈值。
 
-[配图：涂膜检测参数局部。数值仅用于展示控件位置，需按样本调整。](https://smileher.github.io/tubu/#inspection/detection)
+[配图：涂膜检测参数局部。数值仅用于展示控件位置，需按样本调整。](https://vchenhev.github.io/tubu/#inspection/detection)
 
 涂膜检测参数局部。数值仅用于展示控件位置，需按样本调整。
 
 #### 推荐的试检顺序
 
-特征分类使用页面底部的“整图检测”验证。根据主图标注的最终类别核对规则；未命中任何规则的候选按“未知缺陷最小检出”决定是否保留，二次分类还可能改名。任一阶段名称为 OK（忽略大小写及全部空白）即停止该候选，在线完全忽略，离线用绿色注明忽略来源。页面底部显示简短结果图例，悬停可查看完整 OK 忽略规则。绿色诊断的覆盖范围见[过滤结果显示范围](https://smileher.github.io/tubu/#classification/filter-display)。
+特征分类使用页面底部的“整图检测”验证。根据主图标注的最终类别核对规则；未命中任何规则的候选按“未知缺陷最小检出”决定是否保留，二次分类还可能改名。任一阶段名称为 OK（忽略大小写及全部空白）即停止该候选，在线完全忽略，离线用绿色注明忽略来源。页面底部显示简短结果图例，悬停可查看完整 OK 忽略规则。绿色诊断的覆盖范围见[过滤结果显示范围](https://vchenhev.github.io/tubu/#classification/filter-display)。
 
 1. 用标准图检查定位和注册是否正常。
 2. 用已知瑕疵图执行对应分项测试，核对瑕疵位置、类别、大小及灰度。
@@ -1213,7 +1227,7 @@ Debug日志中的“【光源通信】”记录型号、串口及波特率或UDP
 
 “整图检测”针对当前相机，按配置执行已启用的正式检测阶段，沿用底涂过滤、定位依赖、ROI 重构／回退和后续跳过规则，同帧定位只执行一次。拼图不参与试检。分项试检调用相同的正式阶段并自动执行必要定位；底涂已启用时仍先过滤。手动试跑不改变正式启用开关。
 
-试检使用本页草稿及待保存模板，保存前不影响在线配置或正式模板。原图及共享取图说明见[参数页图像](https://smileher.github.io/tubu/#images/parameter-images)。小图分类测试只检查分类器，参见[模型测试](https://smileher.github.io/tubu/#ai/model-test)。
+试检使用本页草稿及待保存模板，保存前不影响在线配置或正式模板。原图及共享取图说明见[参数页图像](https://vchenhev.github.io/tubu/#images/parameter-images)。小图分类测试只检查分类器，参见[模型测试](https://vchenhev.github.io/tubu/#ai/model-test)。
 
 碳膜上方“本项检测”执行正式碳膜流程，包括已启用的亮暗预检、候选提取、特征或 AI 分类、筛选和二次分类；“整图检测”还执行当前相机其余已启用检测项。普通碳膜检测需要注册标准模板。灰度补偿失败、候选裁剪或边缘屏蔽异常、AI推理失败、返回空标签或标签未配置时按检测异常处理；试检查看错误提示，在线查看Error日志，不能据此认定本帧无瑕疵。
 
@@ -1221,7 +1235,7 @@ Debug日志中的“【光源通信】”记录型号、串口及波特率或UDP
 
 “最大检出个数”表示每个检测区域中，亮、暗瑕疵各自的最大检出数量，悬停输入框可查看相应说明。取值范围为1～100的整数。两类瑕疵分别计数，按连通域实际面积从大到小保留前N个；面积相同时按原连通域顺序选取，严格不超过上限。例如两个区域、上限为2时，在线最多返回4个边缘漏金属结果。选取依据为连通域实际面积，结果表中的尺寸与面积仍按原边缘检测口径显示。
 
-页面“本项检测”使用当前相机的参数和区域草稿，执行与正式在线相同的边缘漏金属检测；参数统一保存后在线生效。不因分时频闪设置切换为涂胶沾料算法，多重曝光相关的其他精度换算、喷码规则及光源控制仍按项目配置生效。
+页面“本项检测”使用当前相机的参数和区域草稿，与正式在线共同执行亮瑕疵（边缘漏金属）和暗瑕疵（边缘破损）检测。两类分别按各自的灰度范围、面积范围和最小长度筛选，分别应用最大检出个数，再合并结果；参数统一保存后在线生效。不因分时频闪设置切换为涂胶沾料算法，多重曝光相关的其他精度换算、喷码规则及光源控制仍按项目配置生效。
 
 漏箔检测需配置并启用边缘区域，在区域亮暗瑕疵检测页设置参数，完成试检后保存。
 
@@ -1229,11 +1243,11 @@ Debug日志中的“【光源通信】”记录型号、串口及波特率或UDP
 
 单击检出结果添加定位框，双击结果放大到该范围，点击图像左下的“铺满显示”恢复全图。定位框不替代原有红绿判定和预检测轮廓。悬停结果表可查看选中项的类别、区域和测量值；“过滤/保留说明”显示完整来源与原因，绿色记录表示过滤或忽略，红色记录表示保留瑕疵。说明记录不计入正式瑕疵表。
 
-[配图：非涂膜区域亮暗检测。分别设置亮暗瑕疵条件后试检。](https://smileher.github.io/tubu/#inspection/testing)
+[配图：非涂膜区域亮暗检测。分别设置亮暗瑕疵条件后试检。](https://vchenhev.github.io/tubu/#inspection/testing)
 
 非涂膜区域亮暗检测。分别设置亮暗瑕疵条件后试检。
 
-[配图：极耳检测页签。核对检测范围与最小长度。](https://smileher.github.io/tubu/#inspection/testing)
+[配图：极耳检测页签。核对检测范围与最小长度。](https://vchenhev.github.io/tubu/#inspection/testing)
 
 极耳检测页签。核对检测范围与最小长度。
 
@@ -1256,7 +1270,7 @@ Debug日志中的“【光源通信】”记录型号、串口及波特率或UDP
 
 界面按工艺提供区域亮暗瑕疵检测、虚边、特定瑕疵预检测、间涂拼图或屏蔽间隙等选项。仅配置当前工艺实际使用的功能，先核对区域、图像尺寸和配套模型，再逐项试检。
 
-间隔涂布的两种进图方式均在“瑕疵工具 → 其他检测配置 → 间涂配置”中设置。完整操作、参数含义和无法拼图的判断见[间隔涂布：拼图与间隙过滤](https://smileher.github.io/tubu/#intermittent-coating/setup)；过滤命中会跳过当前整帧的尺寸与瑕疵检测。
+间隔涂布的两种进图方式均在“瑕疵工具 → 其他检测配置 → 间涂配置”中设置。完整操作、参数含义和无法拼图的判断见[间隔涂布：拼图与间隙过滤](https://vchenhev.github.io/tubu/#intermittent-coating/setup)；过滤命中会跳过当前整帧的尺寸与瑕疵检测。
 
 检测区域无效、越界或定位失败时，优先处理区域与图像条件，不先通过放宽面积或灰度阈值掩盖问题。
 
@@ -1268,21 +1282,21 @@ Debug日志中的“【光源通信】”记录型号、串口及波特率或UDP
 4. 有候选但最终结果没有时，查长宽面积筛选、边缘／底涂过滤；有结果但名称不同则查模型标签和二次分类。
 5. 保存后再确认正式配置，记录修改前后参数和同一组图像的结果。
 
-正常图通过与瑕疵图检出都需要确认。只降低阈值让某张图检出，可能同时增加其他图像的误报。小图分类结果不代表整图业务结果，参见[筛选与分类顺序](https://smileher.github.io/tubu/#classification/sequence)。
+正常图通过与瑕疵图检出都需要确认。只降低阈值让某张图检出，可能同时增加其他图像的误报。小图分类结果不代表整图业务结果，参见[筛选与分类顺序](https://vchenhev.github.io/tubu/#classification/sequence)。
 
 #### 模板、预检测与分类
 
-区域准备完成后，参见[模板注册与 AI](https://smileher.github.io/tubu/#ai/registration)。需要按测量特征调整最终类别时，参见[二次分类](https://smileher.github.io/tubu/#classification/classification)。
+区域准备完成后，参见[模板注册与 AI](https://vchenhev.github.io/tubu/#ai/registration)。需要按测量特征调整最终类别时，参见[二次分类](https://vchenhev.github.io/tubu/#classification/classification)。
 
 相关功能：
 
-区域准备完成后，按需要进入[模板注册](https://smileher.github.io/tubu/#ai/registration)、[亮暗瑕疵预检测](https://smileher.github.io/tubu/#pre-detection/workflow)或[筛选与分类](https://smileher.github.io/tubu/#classification/sequence)。这些设置属于同一检测流程的不同阶段，分项结果需通过整图试检共同核对。
+区域准备完成后，按需要进入[模板注册](https://vchenhev.github.io/tubu/#ai/registration)、[亮暗瑕疵预检测](https://vchenhev.github.io/tubu/#pre-detection/workflow)或[筛选与分类](https://vchenhev.github.io/tubu/#classification/sequence)。这些设置属于同一检测流程的不同阶段，分项结果需通过整图试检共同核对。
 
 #### 日志与异常检查
 
 分项或整图试检失败时保留具体提示；在线失败查看当天 Error，并关联同一相机、区域和图像。绿色过滤说明不等于异常日志，未完成、失败和正常过滤应分别判断。
 
-资料收集方法见[日志与诊断](https://smileher.github.io/tubu/#diagnostics/logs)。
+资料收集方法见[日志与诊断](https://vchenhev.github.io/tubu/#diagnostics/logs)。
 
 ### 模板注册与 AI 模型
 
@@ -1309,7 +1323,7 @@ HALCON 注册允许区域部分超出图像边界，均值、波动及左右边�
 
 > 试检优先使用当前页面候选，正式在线检测继续使用已保存模板。放弃页面修改不会替换正式模板。质量提示不能识别所有整体一致但选错位置的图像，仍需核对实际取图内容。
 
-[配图：模板注册入口位于对应检出参数页。准备正常图后执行注册。](https://smileher.github.io/tubu/#ai/registration)
+[配图：模板注册入口位于对应检出参数页。准备正常图后执行注册。](https://vchenhev.github.io/tubu/#ai/registration)
 
 模板注册入口位于对应检出参数页。准备正常图后执行注册。
 
@@ -1327,7 +1341,7 @@ HALCON 注册允许区域部分超出图像边界，均值、波动及左右边�
 
 参数页“整图检测”中的绿色框和文字表示被过滤或忽略候选，图上使用简短标记，完整的原始 OK、尺寸筛选、边缘屏蔽或最终 OK 等原因可在“过滤/保留说明”中查看，只用于离线参数检查，不进入正式 NG、统计、PLC 或后续二次分类。AI 兜底产生的未知若最终保留，按红色瑕疵显示并注明来源。“小图分类测试”只验证当前分类器输出，不经过业务筛选，不能用整张小图尺寸代替瑕疵测量值。
 
-[配图：目标检测页签。选择检测区域，核对数量上限及模型文件。](https://smileher.github.io/tubu/#ai/ai)
+[配图：目标检测页签。选择检测区域，核对数量上限及模型文件。](https://vchenhev.github.io/tubu/#ai/ai)
 
 目标检测页签。选择检测区域，核对数量上限及模型文件。
 
@@ -1358,7 +1372,7 @@ HALCON 注册允许区域部分超出图像边界，均值、波动及左右边�
 
 模型加载或推理失败时，保留页面提示、模型路径对应的文件、相机与标签配置，再查当天 Error。小图分类测试成功只说明分类器可处理该样本，不代表整图检测完成。
 
-资料收集方法见[日志与诊断](https://smileher.github.io/tubu/#diagnostics/logs)。
+资料收集方法见[日志与诊断](https://vchenhev.github.io/tubu/#diagnostics/logs)。
 
 ### 亮暗瑕疵预检测
 
@@ -1387,7 +1401,7 @@ HALCON 注册允许区域部分超出图像边界，均值、波动及左右边�
 
 需要预检测时，在碳膜检测入口添加并启用碳膜区域，再配置并保存本页参数。两个预检测开关均关闭时，执行普通碳膜检测流程。
 
-[配图：特定瑕疵预检测页签。亮暗开关、范围与数量分别配置。](https://smileher.github.io/tubu/#pre-detection/specific-defect-pre-detection)
+[配图：特定瑕疵预检测页签。亮暗开关、范围与数量分别配置。](https://vchenhev.github.io/tubu/#pre-detection/specific-defect-pre-detection)
 
 特定瑕疵预检测页签。亮暗开关、范围与数量分别配置。
 
@@ -1395,7 +1409,7 @@ HALCON 注册允许区域部分超出图像边界，均值、波动及左右边�
 
 使用试检的“过滤/保留说明”查看面积、长度、数量筛选及最终忽略原因；在线异常查同一帧的 Error。参数无效或预检测异常与“没有检出缺陷”不同，应先核对区域和原始提示。
 
-资料收集方法见[日志与诊断](https://smileher.github.io/tubu/#diagnostics/logs)。
+资料收集方法见[日志与诊断](https://vchenhev.github.io/tubu/#diagnostics/logs)。
 
 ### 特征分类、筛选与二次分类
 
@@ -1431,7 +1445,7 @@ OK 判断统一忽略大小写及名称中全部空白字符，包括普通空�
 
 在线忽略的 OK 不显示、不保存、不统计、不输出，也不逐项记录；已创建的瑕疵小图立即释放。离线仅保留绿色诊断，例如“OK（AI名称映射忽略）”“OK（二次分类忽略）”，可在“过滤/保留说明”查看忽略阶段、区域和测量值。未知若最终保留，仍是红色瑕疵，不等同于 OK。
 
-[配图：瑕疵页面底部红色OK自动忽略提示与试检操作栏](https://smileher.github.io/tubu/#classification/classification)
+[配图：瑕疵页面底部红色OK自动忽略提示与试检操作栏](https://vchenhev.github.io/tubu/#classification/classification)
 
 瑕疵页的 OK 提示与操作栏。演示布局，不代表真实设备检测结果。
 
@@ -1439,7 +1453,7 @@ OK 判断统一忽略大小写及名称中全部空白字符，包括普通空�
 
 改名不重新计算测量值，原分类编码和 PLC 地址等字段保留。被最终过滤的候选不能通过二次分类找回。
 
-[配图：二次分类规则列表。按规则顺序维护来源、目标与条件。](https://smileher.github.io/tubu/#classification/classification)
+[配图：二次分类规则列表。按规则顺序维护来源、目标与条件。](https://vchenhev.github.io/tubu/#classification/classification)
 
 二次分类规则列表。按规则顺序维护来源、目标与条件。
 
@@ -1452,7 +1466,7 @@ OK 判断统一忽略大小写及名称中全部空白字符，包括普通空�
 
 长度与宽度单位为 mm，面积为 mm²，长宽比无单位，灰度为 0～255。长度/宽度或宽度/长度的分母为 0 或无效值时条件不命中。条件中的 0 是真实数值；不限制某项时省略该比较，不填写其他算术、函数或不支持的字段。
 
-[配图：二次分类条件输入验证与示例区](https://smileher.github.io/tubu/#classification/editor)
+[配图：二次分类条件输入验证与示例区](https://vchenhev.github.io/tubu/#classification/editor)
 
 二次分类条件编辑器。表达式有效后仍需整图试检并保存。
 
@@ -1460,7 +1474,7 @@ OK 判断统一忽略大小写及名称中全部空白字符，包括普通空�
 
 “过滤底涂 → 识别区域”可选择当前相机的命名区域，留空使用全图。判定只统计选区与图像交集中的像素；判为底涂后清空该相机当前结果、跳过后续检测并参与同步。修改后需保存料号。
 
-[配图：底涂过滤页签。先选择区域，再调整灰度范围与形态参数。](https://smileher.github.io/tubu/#classification/undercoat)
+[配图：底涂过滤页签。先选择区域，再调整灰度范围与形态参数。](https://vchenhev.github.io/tubu/#classification/undercoat)
 
 底涂过滤页签。先选择区域，再调整灰度范围与形态参数。
 
@@ -1492,11 +1506,11 @@ OK 判断统一忽略大小写及名称中全部空白字符，包括普通空�
 
 先在整图试检中核对候选来源及“过滤/保留说明”，再判断结果在哪一层被过滤或改名。在线只输出最终结果，不为每个过滤候选生成单独日志；检测异常另外查看 Error。
 
-资料收集方法见[日志与诊断](https://smileher.github.io/tubu/#diagnostics/logs)。
+资料收集方法见[日志与诊断](https://vchenhev.github.io/tubu/#diagnostics/logs)。
 
 ### 间隔涂布：拼图与间隙过滤
 
-选择拼图或过滤间隙模式，设置识别区域与工艺参数，判断等待、输出和失败原因。
+设置拼图或间隙过滤参数，离线测试连续图像并保存拼图结果，判断等待、输出和失败原因。
 
 #### 两种模式怎样选择
 
@@ -1524,9 +1538,27 @@ OK 判断统一忽略大小写及名称中全部空白字符，包括普通空�
 
 保存成功后，后续进图读取正式配置。建议停止检测后修改并重新运行，避免把已有拼图缓存和新参数混在一起。运行中人工点击停止会清理拼图缓存；已经停止时重复点击停止不保证再次清缓存。重新开始后，需要等待新的起始间隙。
 
-[配图：间涂配置页签。选择模式和识别区域后设置拼图、间隙参数。](https://smileher.github.io/tubu/#intermittent-coating/setup)
+[配图：间涂配置页签。选择模式和识别区域后设置拼图、间隙参数。](https://vchenhev.github.io/tubu/#intermittent-coating/setup)
 
 间涂配置页签。选择模式和识别区域后设置拼图、间隙参数。
+
+#### 用本地连续图像测试拼图
+
+在“间涂配置”页选择相机并勾选“拼图检测模式”，页面底部右侧显示“拼图测试”。连涂模式、屏蔽间隙模式或未勾选拼图时不显示该按钮。
+
+1. 先保存需要使用的拼图参数和识别区域。测试使用当前生产生效料号中所选相机的配置及该相机的纵向精度，页面尚未保存的修改不参与测试。
+2. 点击“拼图测试”，在第一行点击“选择图像”。可按 Ctrl 一次选择多张 BMP、PNG、JPEG 或 TIFF 图像。
+3. 按窗口中显示的编号核对图像顺序。测试采用文件选择器返回的列表顺序；鼠标停留在列表上可查看完整路径。
+4. 点击第二行“测试拼图”。软件逐张处理，得到首张完整拼图后停止，其余文件不再读取。
+5. 成功后选择保存目录、文件名和格式。默认 BMP，也可保存 JPEG、PNG 或 TIFF。取消保存时显示“拼图成功，未保存”；保存失败会显示具体原因。
+
+[配图：拼图测试窗口。第一行选择图像，第二行查看处理数量、最后阶段及测试结果。](https://vchenhev.github.io/tubu/#intermittent-coating/stitching-test)
+
+拼图测试窗口。图中名称、数量及结果为阅读参考，不代表设备运行状态。
+
+结果区显示成功、未完成或失败、已处理数量及算法最后阶段原文。“未完成”表示本次选图没有形成完整输出，可结合“需要继续拼图”“第二个间隙被截断”等日志检查连续图像及参数。纵向精度无效、ROI 无效、读取失败或裁剪校验失败时，先按具体错误检查，不把未完成状态当成完整拼图。
+
+测试图像缓存和相机锁与生产处理独立。测试结束会释放未完成残图及完整拼图剩余尾图，保存成功、取消或失败后释放结果图；再次测试从空测试缓存开始。运行中关闭窗口会等待当前处理退出并清理。当前生产料号或该相机纵向精度改变时须重新测试。
 
 #### 各项参数的含义与影响
 
@@ -1608,7 +1640,7 @@ OK 判断统一忽略大小写及名称中全部空白字符，包括普通空�
 | “CropPart区域越界”“拼图参数，输入图像为空”或“拼图失败” | 保留对应帧的原图、尺寸、区域和完整错误。检查识别范围及连续图像尺寸；结合相机采集与裁图日志定位。 |
 | 连续显示“空箔过滤”，尺寸和瑕疵没有新结果 | 先核对是否选择过滤模式，再检查是否把涂布区误识别成间隙，同时查看错误日志。该状态下没有检测结果不等于全部产品合格。 |
 
-详细日志收集方法见[日志与诊断](https://smileher.github.io/tubu/#diagnostics/logs)。保留当前料号配置、连续原图、相机名称、故障时间、帧号和全部拼图参数，有助于区分正常等待、识别失败与采集异常。
+详细日志收集方法见[日志与诊断](https://vchenhev.github.io/tubu/#diagnostics/logs)。保留当前料号配置、连续原图、相机名称、故障时间、帧号和全部拼图参数，有助于区分正常等待、识别失败与采集异常。
 
 ## 补偿与纠偏
 
@@ -1639,13 +1671,13 @@ OK 判断统一忽略大小写及名称中全部空白字符，包括普通空�
 
 “导出表单”为手动导出，可能包含尚未保存的值；当前数据集保存成功后也会自动导出。两种方式都会同时生成 PDF 和 Excel（.xlsx），文件同名、在同一目录，成功提示会列出完整路径。手动表单标题标有“手动导出”。
 
-两种格式的九列顺序和数值一致：类型、现补偿值、下限、标准值、上限、软件测量值、软件显示值、人工测量值、差异值。页面、PDF 和 Excel 按系统已保存的“数据小数点位数”固定补零，默认三位，例如12.34显示为12.340。编辑控件继续使用原三位小数规则；显示及报告格式不回写测量值或补偿参数，计算确认的三位舍入规则保持不变。Excel 以数值保存，显示格式按所选位数设置。生效步骤见[保存与生效](https://smileher.github.io/tubu/#system/saving)。
+两种格式的九列顺序和数值一致：类型、现补偿值、下限、标准值、上限、软件测量值、软件显示值、人工测量值、差异值。页面、PDF 和 Excel 按系统已保存的“数据小数点位数”固定补零，默认三位，例如12.34显示为12.340。编辑控件继续使用原三位小数规则；显示及报告格式不回写测量值或补偿参数，计算确认的三位舍入规则保持不变。Excel 以数值保存，显示格式按所选位数设置。生效步骤见[保存与生效](https://vchenhev.github.io/tubu/#system/saving)。
 
 若一种格式导出失败，仍会尝试另一种，提示会分别说明结果。导出失败不会撤回已经保存的补偿参数，请按提示核对文件占用、目录及权限后重试。
 
 下图中的名称、数值和状态仅供阅读参考，不作为真实设备运行结果。
 
-[配图：参数补偿工作区。核对当前数据集与表格，再进行导入或保存。](https://smileher.github.io/tubu/#compensation/compensation)
+[配图：参数补偿工作区。核对当前数据集与表格，再进行导入或保存。](https://vchenhev.github.io/tubu/#compensation/compensation)
 
 参数补偿工作区的已确认状态。CSV输入已清空并锁定；保存前可核对表格，录错时通过“重新录入”恢复当前数据集。
 
@@ -1681,7 +1713,7 @@ OK 判断统一忽略大小写及名称中全部空白字符，包括普通空�
 
 #### 确认与保存范围
 
-计算后先核对数据集和人工测量值，再确认补偿。当前页保存与离开页面时保存的范围不同；未保存的输入仍属于页面草稿。参见[保存与放弃修改](https://smileher.github.io/tubu/#recipes/discard)。
+计算后先核对数据集和人工测量值，再确认补偿。当前页保存与离开页面时保存的范围不同；未保存的输入仍属于页面草稿。参见[保存与放弃修改](https://vchenhev.github.io/tubu/#recipes/discard)。
 
 #### 动态补偿
 
@@ -1694,7 +1726,7 @@ OK 判断统一忽略大小写及名称中全部空白字符，包括普通空�
 
 补偿差值为基准值减目标值；绝对值不超过 0.02 时不调整，每轮最多调整 0.10，累计默认补偿仍受正负限值限制。使用工位数据反转时，先核对映射含义再启用。
 
-[配图：动态补偿规则与目标基准尺寸映射](https://smileher.github.io/tubu/#compensation/dynamic)
+[配图：动态补偿规则与目标基准尺寸映射](https://vchenhev.github.io/tubu/#compensation/dynamic)
 
 动态补偿配置。规则与尺寸映射应按物理意义对应。
 
@@ -1708,7 +1740,7 @@ OK 判断统一忽略大小写及名称中全部空白字符，包括普通空�
 
 人工修改从“补偿日志”核对批次和各项变更；动态补偿先核对运行状态、有效样本、距离跳过和限制。“计算完成，默认补偿未变化”可能属于死区或限幅，不直接认定为故障。
 
-资料收集方法见[日志与诊断](https://smileher.github.io/tubu/#diagnostics/logs)。
+资料收集方法见[日志与诊断](https://vchenhev.github.io/tubu/#diagnostics/logs)。
 
 ### 闭环纠偏与手动微调
 
@@ -1722,7 +1754,7 @@ OK 判断统一忽略大小写及名称中全部空白字符，包括普通空�
 
 首次配置时，纠偏功能默认不启用。重新启动软件后，自动纠偏默认暂停。
 
-[配图：纠偏基础参数与手动微调设置](https://smileher.github.io/tubu/#correction/settings)
+[配图：纠偏基础参数与手动微调设置](https://vchenhev.github.io/tubu/#correction/settings)
 
 基础页配置偏移公式、采样及限制。图中为停止状态下的演示参数。
 
@@ -1738,7 +1770,7 @@ AiBo 电眼最终写入位置允许500～4500，包含两端；该范围是设�
 
 点击“保存并应用”提交配置。切换实际发送设备要求停止检测且没有发送任务。未保存的设备选择不会改变后台发送目标。
 
-[配图：纠偏高级页的数据过滤设备连接与联锁设置](https://smileher.github.io/tubu/#correction/device-settings)
+[配图：纠偏高级页的数据过滤设备连接与联锁设置](https://vchenhev.github.io/tubu/#correction/device-settings)
 
 高级页设置过滤、通信及联锁。演示地址不代表实际现场点位。
 
@@ -1782,7 +1814,7 @@ AiBo 电眼最终写入位置允许500～4500，包含两端；该范围是设�
 
 先通过“添加尺寸”选择实际参与计算的数据，再填写和校验偏移公式。平均笔数决定一个独立采样批次，发送后跳过笔数用于等待材料或设备响应，最低纠偏速度用于排除低速过程。
 
-最近记录中的平均偏移、结果发送量以及纠偏 CSV 按系统已保存的“数据小数点位数”固定补零，默认三位。记录显示和文本输出不改变公式计算、死区、限幅或设备协议量化规则；生效步骤见[保存与生效](https://smileher.github.io/tubu/#system/saving)。
+最近记录中的平均偏移、结果发送量以及纠偏 CSV 按系统已保存的“数据小数点位数”固定补零，默认三位。记录显示和文本输出不改变公式计算、死区、限幅或设备协议量化规则；生效步骤见[保存与生效](https://vchenhev.github.io/tubu/#system/saving)。
 
 偏移绝对值不超过下限时不发，超过上限时也不发；单次最大纠偏量则限制一次实际发送幅度并保留方向。它们分别用于死区、异常保护和单次动作约束，不应当作同一个参数。
 
@@ -1804,7 +1836,7 @@ AiBo 电眼最终写入位置允许500～4500，包含两端；该范围是设�
 
 操作记录可搜索“新版纠偏：”，结合页面最近记录、膜卷号、采样结果和设备返回判断。设备连接、允许信号、有效样本、发送返回与实际机构动作应逐项核对。
 
-资料收集方法见[日志与诊断](https://smileher.github.io/tubu/#diagnostics/logs)。
+资料收集方法见[日志与诊断](https://vchenhev.github.io/tubu/#diagnostics/logs)。
 
 ## PLC 与设备通信
 
@@ -1820,7 +1852,7 @@ AiBo 电眼最终写入位置允许500～4500，包含两端；该范围是设�
 
 > “调用结束”“写入已调度”“写入成功”和“设备实际动作完成”不是同一结果。排查时应逐层核对软件返回、PLC 点位和设备动作。
 
-[配图：系统控制器连接与点位设置局部。连接参数与主设备 PLC 分别维护。](https://smileher.github.io/tubu/#communication/plc)
+[配图：系统控制器连接与点位设置局部。连接参数与主设备 PLC 分别维护。](https://vchenhev.github.io/tubu/#communication/plc)
 
 系统控制器连接与点位设置局部。连接参数与主设备 PLC 分别维护。
 
@@ -1842,9 +1874,9 @@ AiBo 电眼最终写入位置允许500～4500，包含两端；该范围是设�
 
 测量值与分类瑕疵分别在“尺寸输出”和“瑕疵输出”页签维护独立配置。控制器断连状态量继续同步“故障 1、正常 0”，与详细报警的断连事件地址独立，不使用报警保持时间。数据更新完成和点检超时停机等业务点位继续保留。
 
-规格牌和详细报警的事件输出支持“地址\|bool”“地址\|int”“地址\|float”，省略类型按 float 写入；人工复位命令在详细报警公共设置中单独选择类型。保持和复位行为参见[PLC 报警保持时间](https://smileher.github.io/tubu/#alarms/alarm-hold)。
+规格牌和详细报警的事件输出支持“地址\|bool”“地址\|int”“地址\|float”，省略类型按 float 写入；人工复位命令在详细报警公共设置中单独选择类型。保持和复位行为参见[PLC 报警保持时间](https://vchenhev.github.io/tubu/#alarms/alarm-hold)。
 
-[配图：通用点位按业务分组展示，逐项核对读写方向和数据类型。](https://smileher.github.io/tubu/#communication/points)
+[配图：通用点位按业务分组展示，逐项核对读写方向和数据类型。](https://vchenhev.github.io/tubu/#communication/points)
 
 通用点位按业务分组展示，逐项核对读写方向和数据类型。
 
@@ -1858,7 +1890,7 @@ AiBo 电眼最终写入位置允许500～4500，包含两端；该范围是设�
 
 地址支持“地址\|float”或“地址\|int”；不写类型时按 float 发送测量值。int 将测量值乘以 100 后四舍五入，接收端需按比例还原。此页不输出标准值、上下限、补偿值、状态、均值或方差。
 
-[配图：尺寸输出页签。按数据集、名称和地址建立映射。](https://smileher.github.io/tubu/#communication/output)
+[配图：尺寸输出页签。按数据集、名称和地址建立映射。](https://vchenhev.github.io/tubu/#communication/output)
 
 尺寸输出页签。按数据集、名称和地址建立映射。
 
@@ -1870,7 +1902,7 @@ AiBo 电眼最终写入位置允许500～4500，包含两端；该范围是设�
 
 重复通知可能合并，PLC 繁忙时允许丢弃部分待发送通知；断连期间不保留历史通知，单次失败记录日志后继续。此功能用于瑕疵出现提示，不作为逐个瑕疵的可靠计数。保存配置、切换料号及关闭软件时清除等待请求；已进入驱动的写入可能在其超时前结束。
 
-[配图：瑕疵输出页签。按最终瑕疵名称与地址配置。](https://smileher.github.io/tubu/#communication/defect-output)
+[配图：瑕疵输出页签。按最终瑕疵名称与地址配置。](https://vchenhev.github.io/tubu/#communication/defect-output)
 
 瑕疵输出页签。按最终瑕疵名称与地址配置。
 
@@ -1880,7 +1912,7 @@ AiBo 电眼最终写入位置允许500～4500，包含两端；该范围是设�
 
 #### 控制器读写与通信排查
 
-喷码使用独立的 TCP 连接和喷码配置页，设备参数在喷码配置页维护。类型仅支持依玛士 NG16 结果式与多米诺 ASCII 坐标协议；两种机型参数分别维护；区域表自动列出全部相机及区域，可逐行启停。配置与应答排查见[独立喷码配置](https://smileher.github.io/tubu/#inkjet/inkjet)。喷码 IO 使用系统控制器，TCP 测试通过后仍需确认控制器连接及输出点位。
+喷码使用独立的 TCP 连接和喷码配置页，设备参数在喷码配置页维护。类型仅支持依玛士 NG16 结果式与多米诺 ASCII 坐标协议；两种机型参数分别维护；区域表自动列出全部相机及区域，可逐行启停。配置与应答排查见[独立喷码配置](https://vchenhev.github.io/tubu/#inkjet/inkjet)。喷码 IO 使用系统控制器，TCP 测试通过后仍需确认控制器连接及输出点位。
 
 在“系统设置 → 系统控制器”检查型号、IP 或串口，再检查各点位的读写方向。读写测试使用“地址\|类型”，类型为 int、bool 或 float，并填写与类型一致的值。
 
@@ -1904,7 +1936,7 @@ MES 上传失败时，分别核对功能启用、网络连接、接口请求与�
 
 连接测试成功后仍需检查本笔输出条件、地址、数据类型及实际写入返回。保留设备类型、目标点位、故障时间和同一笔结果，按 Debug 与 Error 定位通信阶段。
 
-资料收集方法见[日志与诊断](https://smileher.github.io/tubu/#diagnostics/logs)。
+资料收集方法见[日志与诊断](https://vchenhev.github.io/tubu/#diagnostics/logs)。
 
 ### 工位数据交互
 
@@ -1925,7 +1957,7 @@ MES 上传失败时，分别核对功能启用、网络连接、接口请求与�
 
 同名工位的新连接会接替旧连接。各工控机应配置正确的工位名称；两台正在生产的工控机使用同一工位名称时，仍会相互接管。交互工具监听启动失败或运行中出现监听异常时显示原因，由现场人员检查地址、端口和进程，不自动重启工具。
 
-[配图：工位交互设置。核对服务器、端口和方向选项后保存。](https://smileher.github.io/tubu/#station-interaction/connection)
+[配图：工位交互设置。核对服务器、端口和方向选项后保存。](https://vchenhev.github.io/tubu/#station-interaction/connection)
 
 工位交互设置。核对服务器、端口和方向选项后保存。
 
@@ -1962,7 +1994,7 @@ MES 上传失败时，分别核对功能启用、网络连接、接口请求与�
 
 交互工具在同一日志日期目录的 Info、Error 下记录 ` 日期_CoatingDataHub.txt `。按“工位连接”“同名工位接管”“工位连接关闭”“发送失败”“接收或解析失败”“监听异常”关联工位、端点和连接编号。先比较两端时间，再区分正常接管、对端关闭及实际通信故障。
 
-资料收集方法见[日志与诊断](https://smileher.github.io/tubu/#diagnostics/logs)。
+资料收集方法见[日志与诊断](https://vchenhev.github.io/tubu/#diagnostics/logs)。
 
 ## MES 与文件传输
 
@@ -1986,15 +2018,15 @@ MES 上传失败时，分别核对功能启用、网络连接、接口请求与�
 | TCP | 普通正文用 UTF-8；“专用报文封装”用 GB2312，格式为 STX + 消息序号 + TAB + 设备名称 + TAB + 命令标识 + TAB + 正文 + ETX。STX 为 0x02，TAB 为 0x09，ETX 为 0x03；勾选封装后才显示设备名称及当前接口的命令，尺寸与瑕疵命令分别设置。 |
 | MQTT | 填写客户端标识、认证信息和发布主题；发布主题不能含 + 或 \# 通配符。仅发布上传报文，不配置订阅。 |
 
-[配图：通用 MES 接口连接模板与测试区域](https://smileher.github.io/tubu/#mes/mes)
+[配图：通用 MES 接口连接模板与测试区域](https://vchenhev.github.io/tubu/#mes/mes)
 
 通用 MES 配置。先设置接口与报文，再检查配置和测试。
 
-[配图：通用 MES 选择 TCP 后的主机端口及专用封装选项](https://smileher.github.io/tubu/#mes/mes)
+[配图：通用 MES 选择 TCP 后的主机端口及专用封装选项](https://vchenhev.github.io/tubu/#mes/mes)
 
 TCP 配置示例。填写主机和端口；仅在接收方要求时启用专用报文封装。
 
-[配图：通用 MES 选择 MQTT 后的客户端标识发布主题和认证字段](https://smileher.github.io/tubu/#mes/mes)
+[配图：通用 MES 选择 MQTT 后的客户端标识发布主题和认证字段](https://vchenhev.github.io/tubu/#mes/mes)
 
 MQTT 配置示例。分别核对客户端标识、发布主题与认证信息，演示配置未发送请求。
 
@@ -2004,7 +2036,7 @@ MQTT 配置示例。分别核对客户端标识、发布主题与认证信息，
 
 首个选项只影响明细上传，不减少参与检测与计数的瑕疵。按工艺选择首个或全部明细并保存；共享文件结束状态和膜卷号归属也会影响是否发送。
 
-[配图：MES 切换为瑕疵过程上传后的启用与首个瑕疵选项](https://smileher.github.io/tubu/#mes/mes-frequency)
+[配图：MES 切换为瑕疵过程上传后的启用与首个瑕疵选项](https://vchenhev.github.io/tubu/#mes/mes-frequency)
 
 切换到瑕疵过程上传后，核对该接口的启用状态、首个瑕疵选项及报文。此处为布局演示。
 
@@ -2032,7 +2064,7 @@ TCP 写入完成、MQTT 发布完成、HTTP 成功状态和 MES 业务接受是�
 
 先查看当前接口的目标、耗时、HTTP 状态及业务返回，再查同一接口与膜卷号的日志。测试请求、生产发送和业务接受分别判断；不能用网络连通或历史成功记录代替本次上传结果。
 
-资料收集方法见[日志与诊断](https://smileher.github.io/tubu/#diagnostics/logs)。
+资料收集方法见[日志与诊断](https://vchenhev.github.io/tubu/#diagnostics/logs)。
 
 ### MES 报文与变量绑定
 
@@ -2042,7 +2074,7 @@ TCP 写入完成、MQTT 发布完成、HTTP 成功状态和 MES 业务接受是�
 
 先选择需要编辑的上传接口，再选择“模板替换”或“固定格式”。模板替换直接编辑报文正文，固定格式按字段配置结构；两种方式都需要绑定实际数据来源，并在停止检测后保存应用。
 
-[配图：MES 模板替换：左侧绑定变量，中间编辑正文，右侧填写测试值并检查配置。](https://smileher.github.io/tubu/#mes-payload/mes-payload)
+[配图：MES 模板替换：左侧绑定变量，中间编辑正文，右侧填写测试值并检查配置。](https://vchenhev.github.io/tubu/#mes-payload/mes-payload)
 
 模板替换按变量绑定、正文、测试值三个区域操作。
 
@@ -2052,11 +2084,11 @@ TCP 写入完成、MQTT 发布完成、HTTP 成功状态和 MES 业务接受是�
 
 尺寸与错位的“测量值”为原始测量值加默认补偿；“现补偿值”对应尺寸配置中的现补偿参数，原“补偿值／错位值”和“第二补偿值”来源均按现补偿取值。“结果值”读取检测完成后的实际最终结果，保留表达式、标准片缩放等处理结果，不在 MES 中重新计算。
 
-通用上传中的尺寸与错位测量值、结果值、补偿、标准值和上下偏差按系统已保存的“数据小数点位数”固定补零，默认三位，例如12.34输出为12.340；模板与固定格式共用该规则，字符型仍为字符串，数值型仍为数字。格式仅作用于本笔上传快照，不回写检测对象。状态、代码、像素比例、固定值、缺省值及手动测试值仍按各自来源或输入处理。已入队报文保留入队时格式；生效步骤见[保存与生效](https://smileher.github.io/tubu/#system/saving)。
+通用上传中的尺寸与错位测量值、结果值、补偿、标准值和上下偏差按系统已保存的“数据小数点位数”固定补零，默认三位，例如12.34输出为12.340；模板与固定格式共用该规则，字符型仍为字符串，数值型仍为数字。格式仅作用于本笔上传快照，不回写检测对象。状态、代码、像素比例、固定值、缺省值及手动测试值仍按各自来源或输入处理。已入队报文保留入队时格式；生效步骤见[保存与生效](https://vchenhev.github.io/tubu/#system/saving)。
 
 #### 添加变量与编辑正文
 
-[配图：选择变量后，在下方选择数据范围、具体数据和可选缺省值。](https://smileher.github.io/tubu/#mes-payload/variables)
+[配图：选择变量后，在下方选择数据范围、具体数据和可选缺省值。](https://vchenhev.github.io/tubu/#mes-payload/variables)
 
 变量绑定局部：先选变量，再核对它对应的数据来源。
 
@@ -2080,7 +2112,7 @@ TCP 写入完成、MQTT 发布完成、HTTP 成功状态和 MES 业务接受是�
 
 固定格式可配置普通字段、嵌套数组和嵌套 JSON，选中嵌套字段后编辑下方子字段。普通字段与子字段只选择“字符型”或“数值型”：字符型自动加双引号并转义，数值型必须是有效数字且不加双引号。键值数组沿用 Param\_Code、Param\_Value 格式。嵌套 JSON 的父字段选择字符型时，整个对象作为 JSON 字符串输出；其它方式按嵌套结构生成对象。
 
-[配图：MES 固定格式：选中字段后，在字段表右侧设置名称、数据来源、值类型和结构。](https://smileher.github.io/tubu/#mes-payload/fixed-format)
+[配图：MES 固定格式：选中字段后，在字段表右侧设置名称、数据来源、值类型和结构。](https://vchenhev.github.io/tubu/#mes-payload/fixed-format)
 
 固定格式通过字段表及右侧选中项设置组织报文。
 
@@ -2104,7 +2136,7 @@ TCP 写入完成、MQTT 发布完成、HTTP 成功状态和 MES 业务接受是�
 
 使用“检查配置”定位未绑定变量、来源缺参、数值类型与报文结构问题；该操作不发送请求。使用缺省值时生产日志会列出接口、膜卷号、字段或变量及原因，不能据此掩盖通信失败。
 
-资料收集方法见[日志与诊断](https://smileher.github.io/tubu/#diagnostics/logs)。
+资料收集方法见[日志与诊断](https://vchenhev.github.io/tubu/#diagnostics/logs)。
 
 ### FTP 上传与文件同步
 
@@ -2124,7 +2156,7 @@ TCP 写入完成、MQTT 发布完成、HTTP 成功状态和 MES 业务接受是�
 4. 按需要启用 FTP、换卷自动上传和跨天自动上传，点击“保存”。脚本导入后已立即保存。
 5. 在本地文件准备好后执行“手动上传测试”，检查本次执行记录和 FFS 日志。
 
-[配图：FTP 上传开关程序路径脚本检查和保存](https://smileher.github.io/tubu/#ftp/setup)
+[配图：FTP 上传开关程序路径脚本检查和保存](https://vchenhev.github.io/tubu/#ftp/setup)
 
 FTP 配置关键区域。示例中未执行真实上传。
 
@@ -2165,7 +2197,7 @@ FTP 配置关键区域。示例中未执行真实上传。
 
 从“查看 FFS 日志”核对本次同步；软件操作记录可搜索“FTP手动上传测试”。先看脚本是否通过检查，再看进程退出结果和目标文件的本次时间，不把“完成（有警告）”当成无警告成功。
 
-资料收集方法见[日志与诊断](https://smileher.github.io/tubu/#diagnostics/logs)。
+资料收集方法见[日志与诊断](https://vchenhev.github.io/tubu/#diagnostics/logs)。
 
 ## 报警与喷码
 
@@ -2179,7 +2211,7 @@ FTP 配置关键区域。示例中未执行真实上传。
 
 “详细报警”使用同页分组布局：页首集中设置 PLC 输出与人工复位的公共参数；左侧为常用检测报警、开检与运行提示，右侧为设备与采集监控，页底按位置与尺寸、文字与颜色、显示与预览配置报警弹窗。每项的启用、阈值和 PLC 地址保持在同一行，使用固定在底部的“保存详细报警”统一保存。设备断连报警按故障类型和监控对象分别跟踪，同一次持续故障只通知一次，恢复后再次故障可重新触发；原有故障停止流程继续执行。
 
-[配图：详细报警中的检测计数运行提示与监控配置](https://smileher.github.io/tubu/#alarms/alarms)
+[配图：详细报警中的检测计数运行提示与监控配置](https://vchenhev.github.io/tubu/#alarms/alarms)
 
 详细报警配置页面。不同报警的计数、提示和 PLC 输出分别设置。
 
@@ -2222,7 +2254,7 @@ FTP 配置关键区域。示例中未执行真实上传。
 
 瑕疵区域按“相机名称＋区域名称”匹配，名称由配置人员保证唯一。调整区域名称后，应重新核对规格牌范围和喷码区域映射。
 
-“写入 PLC”沿用“详细报警”页首公共参数中的自动复位与保持时间，不为每条规格牌规则单独设置。默认关闭自动复位；开启后，例如保持 100 毫秒，在首次成功写入 1 后的第 80 毫秒再次触发同一地址，仍在首次计时约第 100 毫秒写入 0，不延后到第 180 毫秒。不同地址独立计时，详见[PLC 报警保持时间](https://smileher.github.io/tubu/#alarms/alarm-hold)。声光输出使用独立保持逻辑，不受此 PLC 参数控制。
+“写入 PLC”沿用“详细报警”页首公共参数中的自动复位与保持时间，不为每条规格牌规则单独设置。默认关闭自动复位；开启后，例如保持 100 毫秒，在首次成功写入 1 后的第 80 毫秒再次触发同一地址，仍在首次计时约第 100 毫秒写入 0，不延后到第 180 毫秒。不同地址独立计时，详见[PLC 报警保持时间](https://vchenhev.github.io/tubu/#alarms/alarm-hold)。声光输出使用独立保持逻辑，不受此 PLC 参数控制。
 
 #### 详细报警怎样配置
 
@@ -2256,7 +2288,7 @@ FTP 配置关键区域。示例中未执行真实上传。
 
 保存详细报警失败时，在 Error 中查“详细报警设置保存失败”。运行报警另按提示类型、当前计数、PLC 保持时间及实际写入返回检查，关闭报警窗口不能代替故障恢复。
 
-资料收集方法见[日志与诊断](https://smileher.github.io/tubu/#diagnostics/logs)。
+资料收集方法见[日志与诊断](https://vchenhev.github.io/tubu/#diagnostics/logs)。
 
 ### 喷码设置与发送记录
 
@@ -2285,23 +2317,23 @@ FTP 配置关键区域。示例中未执行真实上传。
 
 仅同帧、同面、同喷头、同 5 mm 偏移区间的结果发生冲突时合并，瑕疵优先级数值越小越优先；瑕疵优先于尺寸，同优先级保留先到项。其它喷头和偏移的结果均保留，不再因整面存在瑕疵而屏蔽尺寸。页面右侧按机型显示报文格式、发送顺序和示例。
 
-[配图：独立喷码的设备触发和瑕疵编码设置](https://smileher.github.io/tubu/#inkjet/inkjet)
+[配图：独立喷码的设备触发和瑕疵编码设置](https://vchenhev.github.io/tubu/#inkjet/inkjet)
 
 独立喷码配置。按当前协议核对设备、触发与编码映射。
 
-[配图：区域与喷头映射局部。演示区域仅用于说明配置位置。](https://smileher.github.io/tubu/#inkjet/inkjet)
+[配图：区域与喷头映射局部。演示区域仅用于说明配置位置。](https://vchenhev.github.io/tubu/#inkjet/inkjet)
 
 区域与喷头映射局部。演示区域仅用于说明配置位置。
 
-[配图：瑕疵编码页签。逐行启用并维护喷码编码。](https://smileher.github.io/tubu/#inkjet/inkjet)
+[配图：瑕疵编码页签。逐行启用并维护喷码编码。](https://vchenhev.github.io/tubu/#inkjet/inkjet)
 
 瑕疵编码页签。逐行启用并维护喷码编码。
 
-[配图：尺寸编码页签。尺寸、面别及喷码编码分别核对。](https://smileher.github.io/tubu/#inkjet/inkjet)
+[配图：尺寸编码页签。尺寸、面别及喷码编码分别核对。](https://vchenhev.github.io/tubu/#inkjet/inkjet)
 
 尺寸编码页签。尺寸、面别及喷码编码分别核对。
 
-[配图：尺寸喷码范围页签。按工艺确认上下限。](https://smileher.github.io/tubu/#inkjet/inkjet)
+[配图：尺寸喷码范围页签。按工艺确认上下限。](https://vchenhev.github.io/tubu/#inkjet/inkjet)
 
 尺寸喷码范围页签。按工艺确认上下限。
 
@@ -2309,7 +2341,7 @@ FTP 配置关键区域。示例中未执行真实上传。
 
 “开启喷码”保持绿色，开启后显示红色“关闭喷码”，悬浮时保持对应颜色。“最近发送”表格只保留本次运行最近 200 次发送尝试，不保存到磁盘；按时间倒序显示发送摘要与报文预览，选中后可在下方查看、复制完整报文。依玛士报文显示十六进制，多米诺显示 ASCII；同一条报文的应答结果更新到原记录，TCP 写入成功不代表设备已执行喷码。
 
-[配图：最近发送记录示例。图中为未发送的演示记录。](https://smileher.github.io/tubu/#inkjet/inkjet-history)
+[配图：最近发送记录示例。图中为未发送的演示记录。](https://vchenhev.github.io/tubu/#inkjet/inkjet-history)
 
 最近发送记录示例。图中为未发送的演示记录。
 
@@ -2338,7 +2370,7 @@ FTP 配置关键区域。示例中未执行真实上传。
 
 搜索“【喷码】”并核对测试 TCP 连接结果、最近发送记录和失败原因。网络连接、发送完成及喷码机实际动作分别确认；配置读取失败时保留错误提示并核对配置文件。
 
-资料收集方法见[日志与诊断](https://smileher.github.io/tubu/#diagnostics/logs)。
+资料收集方法见[日志与诊断](https://vchenhev.github.io/tubu/#diagnostics/logs)。
 
 ## 统计与质量
 
@@ -2364,7 +2396,7 @@ FTP 配置关键区域。示例中未执行真实上传。
 
 每个尺寸独立计算：NG 率 = NG 个数 ÷ 检测次数，优率 = 100% - NG 率。没有有效检测时，不能把空值当作实际优率。
 
-[配图：尺寸统计的范围显示项排序与预览](https://smileher.github.io/tubu/#statistics/size)
+[配图：尺寸统计的范围显示项排序与预览](https://vchenhev.github.io/tubu/#statistics/size)
 
 尺寸统计设置。图中名称和统计选项为演示数据。
 
@@ -2374,7 +2406,7 @@ FTP 配置关键区域。示例中未执行真实上传。
 
 勾选需要的面别、相机和瑕疵名称并调整顺序，按需要启用直方图和分布图。预览中的数值是演示数据，不能用于判断本卷真实质量。
 
-[配图：瑕疵统计设置的显示选项区域融合与预览](https://smileher.github.io/tubu/#statistics/defect)
+[配图：瑕疵统计设置的显示选项区域融合与预览](https://vchenhev.github.io/tubu/#statistics/defect)
 
 瑕疵统计设置。表格范围、显示项与区域融合分别配置。
 
@@ -2386,7 +2418,7 @@ FTP 配置关键区域。示例中未执行真实上传。
 
 主页可将双面分布图、分类统计、实时明细与相机图像放在同一布局。先按图例辨认瑕疵类别，再按坐标轴标注查看横向位置和纵向米数；发现某处集中分布时，结合明细中的相机、类别、长宽、面积和位置核对，再查看对应记录与保存图像。分类表为汇总结果，不能用当前可见的几条明细反推全部累计个数。
 
-[配图：瑕疵统计整体界面：A/B 面分布图、分类数量、实时瑕疵明细和四路灰度图。](https://smileher.github.io/tubu/#statistics/groups)
+[配图：瑕疵统计整体界面：A/B 面分布图、分类数量、实时瑕疵明细和四路灰度图。](https://vchenhev.github.io/tubu/#statistics/groups)
 
 瑕疵分布、统计与图像：按面别、相机和统计范围对应查看，位置聚集时再追溯具体记录。
 
@@ -2416,7 +2448,7 @@ FTP 配置关键区域。示例中未执行真实上传。
 
 显示或导出不符时先核对按卷／按天范围、料号、相机和区域融合，再关联实际输出文件及当天 Error。统一瑕疵统计缓存保存异常可搜索“保存统一瑕疵统计缓存失败”。
 
-资料收集方法见[日志与诊断](https://smileher.github.io/tubu/#diagnostics/logs)。
+资料收集方法见[日志与诊断](https://vchenhev.github.io/tubu/#diagnostics/logs)。
 
 ### 过程能力与趋势分析
 
@@ -2433,7 +2465,7 @@ FTP 配置关键区域。示例中未执行真实上传。
 
 同一宽度要同时观察平均数和标准差时，应新增两行并选择不同指标，不用一组限值混合解释两个指标。
 
-[配图：过程能力项目指标和统计周期设置](https://smileher.github.io/tubu/#capability/setup)
+[配图：过程能力项目指标和统计周期设置](https://vchenhev.github.io/tubu/#capability/setup)
 
 过程能力配置。先选择数据来源和指标，再核对统计条件。
 
@@ -2445,9 +2477,9 @@ FTP 配置关键区域。示例中未执行真实上传。
 
 保存配置后，在主页放置过程能力分析表，并按需要搭配尺寸曲线、尺寸统计、瑕疵统计和运行日志。表格先看数据名称及“数据分析类型”，再看结果值和更新时间；同一数据源的平均数、标准差和 CPK 分别占用项目，不能把其中一行当作全部质量结果。
 
-下图右侧 A/B 面曲线为尺寸曲线，左侧为过程能力结果表；它们用途不同。需要查看统计指标随时间的变化时，另按[集中趋势图](https://smileher.github.io/tubu/#capability/trends)配置对应指标。比较数值前确认膜卷、统计窗口、样本数及规格过滤一致，结果为空时先检查采集中、样本不足或数据源状态。
+下图右侧 A/B 面曲线为尺寸曲线，左侧为过程能力结果表；它们用途不同。需要查看统计指标随时间的变化时，另按[集中趋势图](https://vchenhev.github.io/tubu/#capability/trends)配置对应指标。比较数值前确认膜卷、统计窗口、样本数及规格过滤一致，结果为空时先检查采集中、样本不足或数据源状态。
 
-[配图：主页质量布局：过程能力表、A/B 面尺寸曲线、尺寸统计、缺陷分类及运行日志。](https://smileher.github.io/tubu/#capability/display)
+[配图：主页质量布局：过程能力表、A/B 面尺寸曲线、尺寸统计、缺陷分类及运行日志。](https://vchenhev.github.io/tubu/#capability/display)
 
 质量综合查看：结合能力结果、尺寸变化、分类统计和同一时刻的运行日志检查异常。
 
@@ -2494,7 +2526,7 @@ CPK 使用组内波动，需要合理子组和至少两个完整子组。样本�
 
 实时保存由项目“启用”决定，不受“显示表格”“显示趋势图”、当前页面是否可见影响；只在产生新统计结果的数据源写行，不重复保存其他来源。每个指标继续使用其自己的窗口、最少样本和过滤设置，不因CSV合并而改变计算口径、统计报警或停机行为。
 
-两种文件均放在宽度过程CSV模板解析出的目录。实时文件名含“过程能力统计-实时”和本次统计周期标识；软件重启、保存配置、换卷、换料号或重新统计后使用新文件，历史文件保留。实时模式不再额外生成汇总快照。实时文件和最终快照中的数值均按系统已保存的“数据小数点位数”固定补零，默认三位，例如0输出为0.000，仅对写入文本进行舍入，内部统计和报警继续使用原始精度。已入队实时行保留原格式；生效步骤见[保存与生效](https://smileher.github.io/tubu/#system/saving)。
+两种文件均放在宽度过程CSV模板解析出的目录。实时文件名含“过程能力统计-实时”和本次统计周期标识；软件重启、保存配置、换卷、换料号或重新统计后使用新文件，历史文件保留。实时模式不再额外生成汇总快照。实时文件和最终快照中的数值均按系统已保存的“数据小数点位数”固定补零，默认三位，例如0输出为0.000，仅对写入文本进行舍入，内部统计和报警继续使用原始精度。已入队实时行保留原格式；生效步骤见[保存与生效](https://vchenhev.github.io/tubu/#system/saving)。
 
 实时数据在后台批量追加，正常退出前写完已接收的待写记录；未满时间段不补算。文件被占用或写入失败时记录错误，保留待写队列并重试，队列积压会记录警告。应检查磁盘空间、目录权限及文件占用。异常终止或退出时仍无法写入的内存记录可能无法保留，正常退出也不生成尚未完成的统计结果。
 
@@ -2560,7 +2592,7 @@ CPK 使用组内波动，需要合理子组和至少两个完整子组。样本�
 
 没有结果时先核对项目来源、指标、采样点数、规格过滤和统计周期。保留当前窗口状态、实际输入样本与当天 Error；采集中、样本不足和计算异常不能混为一类。
 
-资料收集方法见[日志与诊断](https://smileher.github.io/tubu/#diagnostics/logs)。
+资料收集方法见[日志与诊断](https://vchenhev.github.io/tubu/#diagnostics/logs)。
 
 ### 点检与标准样检查
 
@@ -2580,11 +2612,11 @@ CPK 使用组内波动，需要合理子组和至少两个完整子组。样本�
 
 图像缺失、区域无效和实际测量超差应分别处理。更换料号后重新打开配置核对当前上下文，不沿用错误料号的检查结果。
 
-[配图：标准块点检窗口。加载样本后核对标准与误差。](https://smileher.github.io/tubu/#point-check/standard)
+[配图：标准块点检窗口。加载样本后核对标准与误差。](https://vchenhev.github.io/tubu/#point-check/standard)
 
 标准块点检窗口。加载样本后核对标准与误差。
 
-[配图：尺寸点检参数示例。核对标准、上下偏差与检测次数；下方结果区尚未执行点检。](https://smileher.github.io/tubu/#point-check/standard)
+[配图：尺寸点检参数示例。核对标准、上下偏差与检测次数；下方结果区尚未执行点检。](https://vchenhev.github.io/tubu/#point-check/standard)
 
 尺寸点检参数示例。核对标准、上下偏差与检测次数；下方结果区尚未执行点检。
 
@@ -2598,11 +2630,11 @@ CPK 使用组内波动，需要合理子组和至少两个完整子组。样本�
 
 圆点提取面积单位是像素，直径、距离和公差单位是 mm。灰度范围为 0～255，最小值不能大于最大值。
 
-[配图：标准片与双圆标参数。尺寸与瑕疵规则分区维护。](https://smileher.github.io/tubu/#point-check/dot)
+[配图：标准片与双圆标参数。尺寸与瑕疵规则分区维护。](https://vchenhev.github.io/tubu/#point-check/dot)
 
 标准片与双圆标参数。尺寸与瑕疵规则分区维护。
 
-[配图：瑕疵规则编辑器示例。使用字段和运算符构造条件后校验。](https://smileher.github.io/tubu/#point-check/dot)
+[配图：瑕疵规则编辑器示例。使用字段和运算符构造条件后校验。](https://vchenhev.github.io/tubu/#point-check/dot)
 
 瑕疵规则编辑器示例。使用字段和运算符构造条件后校验。
 
@@ -2632,7 +2664,7 @@ CPK 使用组内波动，需要合理子组和至少两个完整子组。样本�
 
 先保留点检方式、标准样、当前计划状态和完整提示，再检查 CSV 与当天 Error。“已完成”与“合格”分开核对；停机提示还须检查 PLC 连接和地址。
 
-资料收集方法见[日志与诊断](https://smileher.github.io/tubu/#diagnostics/logs)。
+资料收集方法见[日志与诊断](https://vchenhev.github.io/tubu/#diagnostics/logs)。
 
 ### MSA 与重复测量
 
@@ -2644,7 +2676,7 @@ CPK 使用组内波动，需要合理子组和至少两个完整子组。样本�
 
 使用同一图像及同一参数比较重复结果；更换图像、ROI 或相机后，应重新确认比较基准。离线重复检测不能代替包含真实采集、材料及人工差异的完整测量系统评估。
 
-[配图：MSA 的瑕疵尺寸页签和重复测量参数](https://smileher.github.io/tubu/#msa/start)
+[配图：MSA 的瑕疵尺寸页签和重复测量参数](https://vchenhev.github.io/tubu/#msa/start)
 
 MSA 操作窗口，当前未加载图像。准备原图和 ROI 后再执行检测与重复测量。
 
@@ -2662,7 +2694,7 @@ MSA 操作窗口，当前未加载图像。准备原图和 ROI 后再执行检�
 
 执行检测后核对边缘选择与测量值，再导出 CSV。ROI 数量决定测量含义，比较不同次数结果前应保持一致。
 
-[配图：MSA 切换到尺寸页签后的抓边参数和结果表](https://smileher.github.io/tubu/#msa/size)
+[配图：MSA 切换到尺寸页签后的抓边参数和结果表](https://vchenhev.github.io/tubu/#msa/size)
 
 尺寸 MSA 页签。与瑕疵页不同，使用平滑系数、边缘阈值及最多两个 ROI，图中尚未加载原图。
 
@@ -2695,7 +2727,7 @@ MSA 操作窗口，当前未加载图像。准备原图和 ROI 后再执行检�
 
 保留当前相机、图像、ROI、参数与导出 CSV，再结合页面提示和当天 Error 检查。相同图像重复点击可能复用结果，不能据此证明真实采集重复性。
 
-资料收集方法见[日志与诊断](https://smileher.github.io/tubu/#diagnostics/logs)。
+资料收集方法见[日志与诊断](https://vchenhev.github.io/tubu/#diagnostics/logs)。
 
 ## 数据与系统维护
 
@@ -2717,7 +2749,7 @@ MSA 操作窗口，当前未加载图像。准备原图和 ROI 后再执行检�
 
 尺寸 NG 大图的“连续上限”用于限制连续 NG 期间的存图，不是后台存图队列容量。计数由符合尺寸 NG 存图条件的相机共用，尺寸与错位综合结果为 OK 时清零；当前规则在计数达到上限时即跳过本次保存，因此允许入队的图片数可能少于所设上限。日志“尺寸NG大图已按连续上限设置跳过保存”只表示该相机本次尺寸 NG 大图未入队，不表示检测结果处理停止。
 
-[配图：保存设置示例。数据库、CSV 与图像分别选择，不以界面显示代替文件保存。](https://smileher.github.io/tubu/#data/settings)
+[配图：保存设置示例。数据库、CSV 与图像分别选择，不以界面显示代替文件保存。](https://vchenhev.github.io/tubu/#data/settings)
 
 保存设置示例。数据库、CSV 与图像分别选择，不以界面显示代替文件保存。
 
@@ -2737,7 +2769,7 @@ MSA 操作窗口，当前未加载图像。准备原图和 ROI 后再执行检�
 
 查询的是所选数据库中已保存的记录，不是实时画面的所有数据。没有记录时先检查数据库选择、时间范围和保存开关，再逐步减少筛选条件。
 
-[配图：生产数据查询窗口的数据库筛选与结果表](https://smileher.github.io/tubu/#data/query)
+[配图：生产数据查询窗口的数据库筛选与结果表](https://vchenhev.github.io/tubu/#data/query)
 
 查询条件与结果区。图中尚未连接真实数据库。
 
@@ -2749,7 +2781,7 @@ MSA 操作窗口，当前未加载图像。准备原图和 ROI 后再执行检�
 
 #### 过程 CSV 表头与字段
 
-在系统设置中分别开启尺寸／瑕疵 CSV 保存，并检查对应路径。输出语言从“基本参数”独立选择，详见[输出语言](https://smileher.github.io/tubu/#system/output-language)。非简体中文时，外文和中文位于同一单元格；含逗号、引号或换行的字段按 CSV 规则加引号。字段自身换行仍属于同一条记录，建议使用支持标准 CSV 的工具打开。
+在系统设置中分别开启尺寸／瑕疵 CSV 保存，并检查对应路径。输出语言从“基本参数”独立选择，详见[输出语言](https://vchenhev.github.io/tubu/#system/output-language)。非简体中文时，外文和中文位于同一单元格；含逗号、引号或换行的字段按 CSV 规则加引号。字段自身换行仍属于同一条记录，建议使用支持标准 CSV 的工具打开。
 
 尺寸及错位测量值、标准值、公差偏差、补偿值的单位均为 mm。“上偏差／下偏差”保留原公差偏差数值，不代表标准值加公差后的绝对规格上限／下限；标准值、公差及补偿列仍由各自保存开关控制。英文采用 ` Std `、` Upper Dev `、` Lower Dev `、` Comp ` 等短表头。
 
@@ -2802,7 +2834,7 @@ CSV、数据库、统计报表和原图各有独立保存条件。应逐项核�
 
 查询失败时在 Error 中搜索“查询测量数据库异常”或“读取数据查询检测项异常”；导出操作记录可查“用户导出数据查询结果”。先核对数据库、日期、料号、膜卷号和筛选，再判断是否缺失数据。
 
-资料收集方法见[日志与诊断](https://smileher.github.io/tubu/#diagnostics/logs)。
+资料收集方法见[日志与诊断](https://vchenhev.github.io/tubu/#diagnostics/logs)。
 
 ### 虚拟图与显示名称
 
@@ -2824,7 +2856,7 @@ CSV、数据库、统计报表和原图各有独立保存条件。应逐项核�
 
 编辑预览用于检查布局，不能作为真实在线检测值。运行时“保持比例”可能留白，“拉伸填充”可能改变外观比例；编辑预览始终按比例显示。
 
-[配图：虚拟图编辑区。上方选择控件与排列方式，下方配置选中项属性。](https://smileher.github.io/tubu/#virtual-graphs/edit)
+[配图：虚拟图编辑区。上方选择控件与排列方式，下方配置选中项属性。](https://vchenhev.github.io/tubu/#virtual-graphs/edit)
 
 虚拟图编辑区。上方选择控件与排列方式，下方配置选中项属性。
 
@@ -2846,9 +2878,9 @@ Ctrl 加单击可多选或取消选择。对齐作用于全部选中控件；复
 
 主页尺寸／错位过程表、尺寸统计名称及尺寸曲线标题：简体中文界面显示原名称，其他界面语言显示同一个外文名称。切换语言或保存外文名称只刷新显示，不清空过程数据、统计计数和曲线点；用户自行重命名的布局模块标题保留。原名称、Code、业务关联及虚拟图文字不随之改写。
 
-界面语言和输出语言分别决定对应场景是否使用外文名称：主页名称只跟随界面语言，过程 CSV 表头只跟随已保存的输出语言。非简体中文输出语言的过程 CSV 使用外文名称加原名称，例如 ` Tab Width（A面极耳1）(mm) `。外文名称不会随语言再次翻译，所有非简体中文语言共用一列，建议按现场主要交付语言维护。固定字段使用所选输出语言加中文，参见[输出语言](https://smileher.github.io/tubu/#system/output-language)。
+界面语言和输出语言分别决定对应场景是否使用外文名称：主页名称只跟随界面语言，过程 CSV 表头只跟随已保存的输出语言。非简体中文输出语言的过程 CSV 使用外文名称加原名称，例如 ` Tab Width（A面极耳1）(mm) `。外文名称不会随语言再次翻译，所有非简体中文语言共用一列，建议按现场主要交付语言维护。固定字段使用所选输出语言加中文，参见[输出语言](https://vchenhev.github.io/tubu/#system/output-language)。
 
-[配图：预设尺寸与错位名称和数据集范围设置](https://smileher.github.io/tubu/#virtual-graphs/names)
+[配图：预设尺寸与错位名称和数据集范围设置](https://vchenhev.github.io/tubu/#virtual-graphs/names)
 
 显示名称设置。名称、Code 与适用数据集分别核对。
 
@@ -2866,13 +2898,13 @@ Ctrl 加单击可多选或取消选择。对齐作用于全部选中控件；复
 4. 调整层级与对齐，检查字号和正常／异常颜色；保存。
 5. 在当前料号选择该虚拟图，并核对主页布局中的显示模块，再运行观察。
 
-示意图只负责展示。控件上写“宽度1”不代表已绑定宽度1；需要检查实际数据源。尺寸改名或工位反转后，重新核对绑定和显示含义，参见[名称与 Code 反转](https://smileher.github.io/tubu/#station-interaction/identity)。
+示意图只负责展示。控件上写“宽度1”不代表已绑定宽度1；需要检查实际数据源。尺寸改名或工位反转后，重新核对绑定和显示含义，参见[名称与 Code 反转](https://vchenhev.github.io/tubu/#station-interaction/identity)。
 
 #### 日志与异常检查
 
 显示异常先核对当前料号、虚拟图、绑定名称及数据集，检查主页是否确实有对应新数据。保留布局和当前提示，再关联同一时刻的 Error；不要通过改业务名称试探性修复显示。
 
-资料收集方法见[日志与诊断](https://smileher.github.io/tubu/#diagnostics/logs)。
+资料收集方法见[日志与诊断](https://vchenhev.github.io/tubu/#diagnostics/logs)。
 
 ### 系统设置与文件清理
 
@@ -2888,7 +2920,7 @@ Ctrl 加单击可多选或取消选择。对齐作用于全部选中控件；复
 | 系统控制器、相机管理 | 连接、点位、采集门控、相机配置、标定和标零。 |
 | 尺寸统计设置、瑕疵统计设置 | 配置统计范围、展示内容和顺序。 |
 
-FTP 和工艺专用项按当前配置显示，优先维护当前生产实际使用的功能。报警规则从独立的[报警设置](https://smileher.github.io/tubu/#alarms/alarms)入口配置。
+FTP 和工艺专用项按当前配置显示，优先维护当前生产实际使用的功能。报警规则从独立的[报警设置](https://vchenhev.github.io/tubu/#alarms/alarms)入口配置。
 
 #### 系统设置中的基础参数与显示
 
@@ -2902,9 +2934,9 @@ FTP 和工艺专用项按当前配置显示，优先维护当前生产实际使�
 
 系统设置按功能集中展示，数值、文本和下拉输入采用紧凑宽度，各分组提供用途说明。编码器脉冲数为整数，辊周长显示两位小数。过程 CSV 的品种字段使用当前料号。“瑕疵详情图布局设置”中的详情图行数与列数每项可设 1～8，槽位总数为两者乘积；修改行列后当前主页立即重排并释放多余槽位，不需要等待下一次检测结果。检测结果按尺寸工具的有效性与规格判定。
 
-点检工具、在线点检、尺寸点检与点检数据保存按各自配置使用，参见[点检功能](https://smileher.github.io/tubu/#point-check/entry)。
+点检工具、在线点检、尺寸点检与点检数据保存按各自配置使用，参见[点检功能](https://vchenhev.github.io/tubu/#point-check/entry)。
 
-[配图：系统基础设置。按分组核对设备、显示、编码器和性能参数。](https://smileher.github.io/tubu/#system/basic)
+[配图：系统基础设置。按分组核对设备、显示、编码器和性能参数。](https://vchenhev.github.io/tubu/#system/basic)
 
 系统基础设置。按分组核对设备、显示、编码器和性能参数。
 
@@ -2914,7 +2946,7 @@ FTP 和工艺专用项按当前配置显示，优先维护当前生产实际使�
 
 输出语言目前仅控制新建尺寸、错位过程 CSV（含数据交互分组）和瑕疵过程 CSV 的表头。简体中文只显示中文；其他语言在同一单元格使用“外文（中文）”，单位位于末尾。始终只有一条表头记录，例如 ` Web Position（跑带位置）(m) `、` Roll Number（膜卷号） `。尺寸及错位名称使用预设配置中的同一个外文名称，固定字段按所选语言输出；自定义瑕疵名称保持原文。
 
-保存成功后，配置只影响随后按原保存流程新建文件的表头，已有同名文件继续追加，不检查、不重写表头，也不自动新增文件、增加语言后缀或改名。要采用新的表头或字段结构，请按生产流程选择新的保存文件。PDF、Excel、统计、点检、像素诊断、独立纠偏 CSV 及图像叠加文字不使用此配置。字段含义参见[过程 CSV 字段](https://smileher.github.io/tubu/#data/process-csv)。
+保存成功后，配置只影响随后按原保存流程新建文件的表头，已有同名文件继续追加，不检查、不重写表头，也不自动新增文件、增加语言后缀或改名。要采用新的表头或字段结构，请按生产流程选择新的保存文件。PDF、Excel、统计、点检、像素诊断、独立纠偏 CSV 及图像叠加文字不使用此配置。字段含义参见[过程 CSV 字段](https://vchenhev.github.io/tubu/#data/process-csv)。
 
 #### 保存与生效
 
@@ -2933,7 +2965,7 @@ FTP 和工艺专用项按当前配置显示，优先维护当前生产实际使�
 
 本机存在且就绪的 C、D、E 固定磁盘为必选，可增加其他磁盘。固定保护规则为剩余空间低于 10 GB 时预警，低于 5 GB 时自动停止运行。性能监控开关不关闭磁盘保护。
 
-[配图：自动清理设置。确认目录与保留天数后保存。](https://smileher.github.io/tubu/#system/cleanup)
+[配图：自动清理设置。确认目录与保留天数后保存。](https://vchenhev.github.io/tubu/#system/cleanup)
 
 自动清理设置。确认目录与保留天数后保存。
 
@@ -2959,7 +2991,7 @@ FTP 和工艺专用项按当前配置显示，优先维护当前生产实际使�
 
 保存、文件清理或磁盘异常时，先保留页面提示、目标目录、磁盘余量及时间，再查看当天 Error 与清理记录。界面显示、文件落盘和后台清理是不同阶段。
 
-资料收集方法见[日志与诊断](https://smileher.github.io/tubu/#diagnostics/logs)。
+资料收集方法见[日志与诊断](https://vchenhev.github.io/tubu/#diagnostics/logs)。
 
 ### 日志、诊断包与问题排查
 
@@ -2969,12 +3001,12 @@ FTP 和工艺专用项按当前配置显示，优先维护当前生产实际使�
 
 | 现象 | 优先检查 |
 | --- | --- |
-| 没有图像 | 相机连接、启用状态、触发方式、编码器信号和采集日志；参见[相机与采集](https://smileher.github.io/tubu/#cameras)。 |
-| 尺寸偏差或抓不到边 | 原图、标定、区域、方向、极性、阈值与补偿；参见[直线与尺寸](https://smileher.github.io/tubu/#sizes)。 |
-| 瑕疵少检、误检或类别不对 | 检测区域、模板、模型、面积过滤及二次分类；参见[分类与过滤](https://smileher.github.io/tubu/#classification)。 |
-| 报警后 PLC 没动作 | 触发条件、事件开关、连接、地址、类型与写入结果；参见[报警设置](https://smileher.github.io/tubu/#alarms)。 |
-| 纠偏没有输出 | 设备连接、启用、有效样本、死区、输出限制及实际发送记录；参见[闭环纠偏](https://smileher.github.io/tubu/#correction)。 |
-| 查不到数据或文件 | 保存开关、筛选、数据库、路径、膜卷号、空间与清理记录；参见[数据保存与查询](https://smileher.github.io/tubu/#data)。 |
+| 没有图像 | 相机连接、启用状态、触发方式、编码器信号和采集日志；参见[相机与采集](https://vchenhev.github.io/tubu/#cameras)。 |
+| 尺寸偏差或抓不到边 | 原图、标定、区域、方向、极性、阈值与补偿；参见[直线与尺寸](https://vchenhev.github.io/tubu/#sizes)。 |
+| 瑕疵少检、误检或类别不对 | 检测区域、模板、模型、面积过滤及二次分类；参见[分类与过滤](https://vchenhev.github.io/tubu/#classification)。 |
+| 报警后 PLC 没动作 | 触发条件、事件开关、连接、地址、类型与写入结果；参见[报警设置](https://vchenhev.github.io/tubu/#alarms)。 |
+| 纠偏没有输出 | 设备连接、启用、有效样本、死区、输出限制及实际发送记录；参见[闭环纠偏](https://vchenhev.github.io/tubu/#correction)。 |
+| 查不到数据或文件 | 保存开关、筛选、数据库、路径、膜卷号、空间与清理记录；参见[数据保存与查询](https://vchenhev.github.io/tubu/#data)。 |
 
 通用说明不能替代项目专用协议或外部设备确认。先收集可以对应同一时刻和同一对象的证据，再判断问题在哪个阶段。
 
@@ -2993,7 +3025,7 @@ FTP 和工艺专用项按当前配置显示，优先维护当前生产实际使�
 
 “软件信息 → 导出诊断包”可生成诊断资料；“建议与反馈”可打开反馈入口。参数变更审计与 TXT 运行日志属于不同记录，查看参数历史时使用软件审计入口。
 
-[配图：日志查询窗口。按故障时间、类别与操作对象缩小范围。](https://smileher.github.io/tubu/#diagnostics/logs)
+[配图：日志查询窗口。按故障时间、类别与操作对象缩小范围。](https://vchenhev.github.io/tubu/#diagnostics/logs)
 
 日志查询窗口。按故障时间、类别与操作对象缩小范围。
 
@@ -3007,9 +3039,9 @@ FTP 和工艺专用项按当前配置显示，优先维护当前生产实际使�
 
 #### 导出诊断包
 
-通过“帮助 → 软件信息”核对版本，点击“导出诊断包”，启动独立诊断工具。启动成功后软件信息窗口自动关闭，主软件继续运行。填写故障信息，在“高级设置”核对资料范围、日志日期和输出位置，再点击“导出”；具体步骤见[填写信息并导出](https://smileher.github.io/tubu/#diagnostic-tool/steps)。
+通过“帮助 → 软件信息”核对版本，点击“导出诊断包”，启动独立诊断工具。启动成功后软件信息窗口自动关闭，主软件继续运行。填写故障信息，在“高级设置”核对资料范围、日志日期和输出位置，再点击“导出”；具体步骤见[填写信息并导出](https://vchenhev.github.io/tubu/#diagnostic-tool/steps)。
 
-若提示“未找到诊断工具，请检查软件部署目录。”，检查 ` App\Bin\UtilityTools\DiagnosticExport\导出诊断包.exe ` 是否存在；其他启动异常按完整提示检查文件权限和路径，并在 Error 日志中查找“启动诊断工具失败”。启动失败时软件信息窗口保持打开。
+若提示“未找到诊断工具”及实际路径，检查 ` App\Bin\UtilityTools\DiagnosticExport\导出诊断包.exe ` 是否存在；其他启动异常按完整提示检查文件权限和路径，并在 Error 日志中查找“启动诊断工具失败”。启动失败时软件信息窗口保持打开。工具版本 v1.0.3 会将已存在的额外日志目录按来源编号写入包内，并在“导出说明.txt”记录来源。
 
 解压后先查看根目录的“导出说明.txt”。说明开头记录填写的现场故障信息，后续记录来源、环境及缺项：
 
@@ -3026,13 +3058,13 @@ FTP 和工艺专用项按当前配置显示，优先维护当前生产实际使�
 
 提交问题时补充发生时间、当时操作、当前料号和膜卷号、涉及相机或设备，以及能否稳定重现。提示窗口应保留完整原文，不只记录“失败”。
 
-[配图：软件信息窗口底部的导出诊断包按钮](https://smileher.github.io/tubu/#diagnostics/diagnostic-package)
+[配图：软件信息窗口底部的导出诊断包按钮](https://vchenhev.github.io/tubu/#diagnostics/diagnostic-package)
 
 点击“导出诊断包”启动独立工具。界面数据为演示。
 
 #### 软件打不开时导出诊断包
 
-软件无法启动时，可使用 ` 导出诊断包.exe ` 收集已保存资料。工具位置、故障信息填写、截图附件及导出步骤见[独立诊断工具与故障资料](https://smileher.github.io/tubu/#diagnostic-tool/preparation)。
+软件无法启动时，可使用 ` 导出诊断包.exe ` 收集已保存资料。工具位置、故障信息填写、截图附件及导出步骤见[独立诊断工具与故障资料](https://vchenhev.github.io/tubu/#diagnostic-tool/preparation)。
 
 #### 按阶段分析问题
 
@@ -3063,7 +3095,7 @@ FTP 和工艺专用项按当前配置显示，优先维护当前生产实际使�
 - **原始资料：**完整提示、故障当天日志、原始图像或对应结果文件；参数问题同时保留相关配置。
 - **已经确认的事实：**例如有回调图但没有检测结果、写入返回失败、某卷报表缺失，分别记录。
 
-用同一时间和同一对象关联资料。只说“没有反应”难以区分未触发、正在等待、已失败还是外部设备没有动作；可从[通信检查顺序](https://smileher.github.io/tubu/#communication/troubleshooting)或[开检提示](https://smileher.github.io/tubu/#daily/startup-messages)进入。
+用同一时间和同一对象关联资料。只说“没有反应”难以区分未触发、正在等待、已失败还是外部设备没有动作；可从[通信检查顺序](https://vchenhev.github.io/tubu/#communication/troubleshooting)或[开检提示](https://vchenhev.github.io/tubu/#daily/startup-messages)进入。
 
 ### 独立诊断工具与故障资料
 
@@ -3071,7 +3103,7 @@ FTP 和工艺专用项按当前配置显示，优先维护当前生产实际使�
 
 #### 工具位置与准备
 
-工具随软件部署在 ` App\Bin\UtilityTools\DiagnosticExport\导出诊断包.exe `。主软件可用时，通过“帮助 → 软件信息 → 导出诊断包”启动；软件无法打开时，直接双击这个 EXE，无需先启动主软件。
+工具随软件部署在 ` App\Bin\UtilityTools\DiagnosticExport\导出诊断包.exe `。主软件可用时，通过“帮助 → 软件信息 → 导出诊断包”启动；按钮传入当前主程序完整路径和实际日志根目录，已存在的守护桥接及 FreeFileSync 日志目录作为额外来源传入。软件无法打开时，直接双击这个 EXE，无需先启动主软件。
 
 工具按自身所在位置识别 App、Config 和与 App 同级的 Logs。单独复制工具时，也可放到待诊断软件的 Bin 中；独立放置在其他目录时，可在“高级设置”中手动选择 App 或 Bin。图标已内嵌，运行只需 EXE。
 
@@ -3114,7 +3146,7 @@ Windows 事件或环境信息读取失败时，在结果和说明中记录原因
 
 注销后人工操作需要重新登录，自动采集与检测继续运行。登录、注销或身份确认期间，主窗口及已打开的弹窗会显示等待遮罩，身份和权限更新完成后恢复，请等待结束。
 
-[配图：账号密码登录示例。使用自己的登录名与密码。](https://smileher.github.io/tubu/#users/login)
+[配图：账号密码登录示例。使用自己的登录名与密码。](https://vchenhev.github.io/tubu/#users/login)
 
 账号密码登录示例。使用自己的登录名与密码。
 
@@ -3134,7 +3166,7 @@ Windows 事件或环境信息读取失败时，在结果和说明中记录原因
 
 角色集中定义模块访问能力，多个账号可以使用同一角色。修改账号或角色后点击“保存配置”，只修改表格草稿不等于已生效。删除正在被账号引用的角色前，先调整账号所属角色。
 
-[配图：用户页签：核对登录名、卡号与所属角色。示例账号不代表真实人员。](https://smileher.github.io/tubu/#users/accounts)
+[配图：用户页签：核对登录名、卡号与所属角色。示例账号不代表真实人员。](https://vchenhev.github.io/tubu/#users/accounts)
 
 用户页签：核对登录名、卡号与所属角色。示例账号不代表真实人员。
 
@@ -3142,7 +3174,7 @@ Windows 事件或环境信息读取失败时，在结果和说明中记录原因
 
 “角色”页签按模块设置权限。参数类页面分为禁止访问、只读和可保存；操作类模块按允许或禁止控制。只读页面可调整当前草稿，但保存或受保护操作会提示“当前账号没有保存权限”。无法操作时，先核对当前身份、模块权限及是否正在启停或检测。
 
-[配图：角色页签示例：按模块设置访问与保存权限。](https://smileher.github.io/tubu/#users/roles)
+[配图：角色页签示例：按模块设置访问与保存权限。](https://vchenhev.github.io/tubu/#users/roles)
 
 角色页签示例：按模块设置访问与保存权限。
 
@@ -3152,11 +3184,11 @@ Windows 事件或环境信息读取失败时，在结果和说明中记录原因
 
 启用保存确认时，需要当前账号再次输入密码；刷卡会话需再次刷同一张卡。确认期间若会话已下线，本次保存会被拒绝，应重新登录后操作。修改这些选项后保存配置。
 
-[配图：高级设置示例：自动登录、定时下线与保存前确认。](https://smileher.github.io/tubu/#users/session)
+[配图：高级设置示例：自动登录、定时下线与保存前确认。](https://vchenhev.github.io/tubu/#users/session)
 
 高级设置示例：自动登录、定时下线与保存前确认。
 
-[配图：保存前身份确认示例。应由当前操作账号完成验证。](https://smileher.github.io/tubu/#users/session)
+[配图：保存前身份确认示例。应由当前操作账号完成验证。](https://vchenhev.github.io/tubu/#users/session)
 
 保存前身份确认示例。应由当前操作账号完成验证。
 
@@ -3166,4 +3198,4 @@ Windows 事件或环境信息读取失败时，在结果和说明中记录原因
 
 #### 登录与权限问题排查
 
-依次核对登录名、密码或卡号、账号所属角色、模块权限和当前会话。出现“用户管理操作失败”或保存校验提示时，记录故障时间及完整提示，在当天 Error 与 Records 日志中关联检查。日志收集见[日志与诊断](https://smileher.github.io/tubu/#diagnostics/logs)。
+依次核对登录名、密码或卡号、账号所属角色、模块权限和当前会话。出现“用户管理操作失败”或保存校验提示时，记录故障时间及完整提示，在当天 Error 与 Records 日志中关联检查。日志收集见[日志与诊断](https://vchenhev.github.io/tubu/#diagnostics/logs)。

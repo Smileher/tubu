@@ -142,8 +142,8 @@ jobs:
             $log = git -C source log "$prevSha..$currentSha" --pretty=format:'- %s (%an)' 2>$null
           }
           if (-not $log) { $log = git -C source log -15 --pretty=format:'- %s (%an)' 2>$null }
-          $commits = ($log | Where-Object { $_ -and $_ -notmatch '知识问答库' }) -join "`n"
-          if (-not $commits) { $commits = "- 维护性提交 $currentSha" }
+          $commits = ($log | Where-Object { $_ -and $_ -notmatch '知识问答库|\[skip changelog\]' }) -join "`n"
+          if (-not $commits) { $commits = '- 本次无面向用户的功能变更。' }
 
           $summary = $null
           if ($env:LLM_BASE_URL -and $env:LLM_API_KEY) {
@@ -174,7 +174,9 @@ jobs:
           $stamp = [DateTime]::UtcNow.AddHours(8).ToString('yyyy-MM-dd')
           $tag = "build-{0}-{1}" -f $stamp, $currentShortSha
           $entry = "## $tag（$stamp）`n`n$summary`n"
-          $changelogPath = 'CHANGELOG.md'
+          $month = $stamp.Substring(0, 7)
+          New-Item -ItemType Directory -Path changelog -Force | Out-Null
+          $changelogPath = "changelog/$month.md"
           if (Test-Path $changelogPath) {
             $old = Get-Content $changelogPath -Raw -Encoding UTF8
             if ($old -match [regex]::Escape("## $tag（$stamp）")) {
@@ -187,9 +189,12 @@ jobs:
               } else { $newContent = $old + "`n" + $entry }
             }
           } else {
-            $newContent = "# 更新日志`n`n自动生成，每次发版追加。包内不含文档，变更内容以本文件与 Release 说明为准。`n`n$entry"
+            $newContent = "# $month 更新日志`n`n$entry"
           }
           [IO.File]::WriteAllText($changelogPath, $newContent, (New-Object Text.UTF8Encoding($true)))
+          $monthLinks = Get-ChildItem changelog -Filter "????-??.md" | Sort-Object Name -Descending | ForEach-Object { "- [$($_.BaseName)](changelog/$($_.Name))" }
+          $index = "# 更新日志`n`n按年月查看发布记录，具体安装包及校验值见对应 Release。`n`n" + ($monthLinks -join "`n") + "`n"
+          [IO.File]::WriteAllText('CHANGELOG.md', $index, (New-Object Text.UTF8Encoding($true)))
 
           # 写入临时文件供 Release 步骤引用
           [IO.File]::WriteAllText('changelog-body.md', $summary, (New-Object Text.UTF8Encoding($true)))
@@ -206,7 +211,8 @@ jobs:
           if (Test-Path CHANGELOG.md) { Copy-Item CHANGELOG.md docs/ -Force }
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add docs CHANGELOG.md
+          Copy-Item changelog docs/changelog -Recurse
+          git add docs CHANGELOG.md changelog
           $changed = git diff --cached --name-only
           if ($changed) {
             git commit -m "更新 Pages：$env:SOURCE_BRANCH ${{ steps.check.outputs.sha_short }}"
@@ -241,11 +247,3 @@ jobs:
           [IO.File]::WriteAllText('release-notes.md', $notes + [IO.File]::ReadAllText('changelog-body.md'), (New-Object Text.UTF8Encoding($true)))
           gh release create $tag "${{ steps.package.outputs.archive_path }}" --title $tag --notes-file release-notes.md
           if ($LASTEXITCODE -ne 0) { throw "gh release create failed, exit code $LASTEXITCODE" }
-
-      # ============================================================
-      # V2 预留：钉钉上传步骤。
-      # 触发条件示例：每周五或距上次上传满 10 天。
-      #   if: github.event.schedule != '' && [DateTime]::Now.DayOfWeek -eq 'Friday'
-      # 做法：用 gh api 取最新 Release 资产 -> Tools/Upload-DingDrive.ps1
-      # 凭证：secrets.DINGTALK_APP_KEY / DINGTALK_APP_SECRET / 钉盘 spaceId 与目录 id。
-      # ============================================================

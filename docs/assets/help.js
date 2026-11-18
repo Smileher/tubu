@@ -7,9 +7,6 @@
   const toc = document.getElementById('contents');
   const search = document.getElementById('search');
   const navigation = document.getElementById('navigation');
-  const manualVersion = document.querySelector('meta[name=manual-version]')?.content || '';
-  const formatVersion = value => { const match = /^(\d{4})(\d{2})(\d{2})(\d{2})(\d{2})(\d{2})$/.exec(value); return match ? `${match[1]}-${match[2]}-${match[3]} ${match[4]}:${match[5]}:${match[6]}` : value; };
-  const manualVersionLabel = formatVersion(manualVersion);
   const escape = text => String(text).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   // File URLs may deny browser storage. Reading settings still works for the current tab.
   function readSetting(key) { try { return localStorage.getItem('help-' + key); } catch (_) { return null; } }
@@ -140,7 +137,7 @@
     const introductionHtml = overviewFigure ? `<section><div class="section-caption"><h2>软件整体界面与功能</h2><span>从图像到质量追溯</span></div><div class="article-body">${preview.querySelector('p')?.outerHTML || ''}${overviewFigure.outerHTML}</div><div class="quick-links">${[
       ['interface','navigation','完整界面与原图'],['interface','functions','软件功能总览'],['interface','home-trends','尺寸趋势布局'],['interface','home-defects','瑕疵分布布局'],['interface','home-quality','质量统计布局'],['edges','setup','尺寸抓边界面']
     ].map(args => chapterLink(...args)).join('')}</div></section>` : '';
-    return `<div class="overview"><section class="overview-hero"><p class="eyebrow">VISIONMEASURE / HELP CENTER</p><div class="hero-heading"><h1>涂布检测软件<br /><em>操作手册</em></h1><span class="hero-seal" aria-hidden="true">V<span>操作手册</span></span></div><p class="intro">查找操作方法、理解运行过程，快速定位生产中的问题。</p>${searchForm('home-search', '', true)}${resume ? `<div class="resume-link">${resume}</div>` : ''}<div class="popular-searches"><span>常用搜索</span>${popular.map(word => `<a href="${queryLink(word)}">${word}</a>`).join('')}</div><div class="hero-meta"><span>${articles.length} 个功能主题</span>${manualVersionLabel ? `<time class="manual-updated" datetime="${escape(manualVersionLabel.replace(' ', 'T'))}">手册更新 ${escape(manualVersionLabel.slice(0,10))}</time>` : ''}</div></section>
+    return `<div class="overview"><section class="overview-hero"><p class="eyebrow">VISIONMEASURE / HELP CENTER</p><div class="hero-heading"><h1>涂布检测软件<br /><em>操作手册</em></h1><span class="hero-seal" aria-hidden="true">V<span>操作手册</span></span></div><p class="intro">查找操作方法、理解运行过程，快速定位生产中的问题。</p>${searchForm('home-search', '', true)}${resume ? `<div class="resume-link">${resume}</div>` : ''}<div class="popular-searches"><span>常用搜索</span>${popular.map(word => `<a href="${queryLink(word)}">${word}</a>`).join('')}</div><div class="hero-meta"><span>${articles.length} 个功能主题</span><span>按任务快速查阅</span></div></section>
       ${introductionHtml}
       <section><div class="section-caption"><h2>从你要完成的事开始</h2><span>按步骤查阅</span></div><div class="task-grid">${paths.map(([number,title,description,links]) => `<section class="task-card"><span class="task-number">${number}</span><h3>${title}</h3><p>${description}</p><div>${links.map(args => chapterLink(...args)).join('')}</div></section>`).join('')}</div></section>
       <section><div class="section-caption"><h2>常见问题</h2><span>从现象查找</span></div><div class="faq-links">${[

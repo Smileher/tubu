@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 360" role="img" aria-labelledby="title desc">
+  <title id="title">TuBu VisionMeasure</title>
+  <desc id="desc">Abstract industrial vision inspection banner with a camera lens and measurement grid.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#07152f"/><stop offset=".55" stop-color="#123b72"/><stop offset="1" stop-color="#0ea5a8"/></linearGradient>
+    <linearGradient id="glow" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#6ee7f2" stop-opacity="0"/><stop offset=".5" stop-color="#d9fbff" stop-opacity=".9"/><stop offset="1" stop-color="#6ee7f2" stop-opacity="0"/></linearGradient>
+    <radialGradient id="lens" cx="35%" cy="30%"><stop offset="0" stop-color="#dffcff"/><stop offset=".28" stop-color="#67e8f9"/><stop offset=".7" stop-color="#2563eb"/><stop offset="1" stop-color="#0b1b45"/></radialGradient>
+    <pattern id="grid" width="34" height="34" patternUnits="userSpaceOnUse"><path d="M34 0H0V34" fill="none" stroke="#b7eff4" stroke-opacity=".12"/></pattern>
+  </defs>
+  <rect width="1200" height="360" rx="28" fill="url(#bg)"/><rect x="34" y="34" width="1132" height="292" rx="22" fill="url(#grid)"/>
+  <path d="M0 280C180 210 280 320 470 240S820 90 1200 170" fill="none" stroke="url(#glow)" stroke-width="3"/>
+  <g transform="translate(100 82)"><circle cx="92" cy="92" r="82" fill="#07152f" fill-opacity=".55" stroke="#b8f7ff" stroke-opacity=".65" stroke-width="3"/><circle cx="92" cy="92" r="58" fill="url(#lens)" stroke="#d9fbff" stroke-opacity=".8" stroke-width="4"/><circle cx="73" cy="70" r="13" fill="#fff" fill-opacity=".6"/><path d="M92 10V0M92 184v10M10 92H0m184 0h10" stroke="#d9fbff" stroke-width="3" stroke-linecap="round"/></g>
+  <g fill="#e9feff" font-family="Segoe UI, Arial, sans-serif"><text x="330" y="150" font-size="54" font-weight="700" letter-spacing="2">TuBu</text><text x="334" y="198" font-size="25" fill="#b9f5f5" letter-spacing="5">VISIONMEASURE</text><text x="334" y="246" font-size="20" fill="#d5f7ff">Industrial coating inspection, made clear.</text></g>
+  <g fill="#bdf8ff" fill-opacity=".9"><circle cx="1010" cy="86" r="5"/><circle cx="1040" cy="118" r="3"/><circle cx="1080" cy="72" r="4"/><circle cx="1128" cy="142" r="6"/></g>
+</svg>

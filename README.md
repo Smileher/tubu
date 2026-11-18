@@ -1,58 +1,73 @@
-# TuBu Release 发布仓库
+<div align="center">
+  <img src="assets/tubu-hero.svg" alt="TuBu VisionMeasure" width="100%" />
 
-涂布 CCD 软件的自动发布仓库。源码托管在云效 Codeup（私有），本仓库公开，承担以下任务：
+  <p><strong>Industrial coating inspection, made clear.</strong></p>
 
-1. **每日自动构建发版**：GitHub Actions 在 `windows-latest` 托管 runner 上浅克隆 Codeup 源码、执行 `Build.ps1` + `Package.ps1`，把安装包发布到 Releases。
-2. **Pages 手册站点**：每次发版把源码仓库的 `Help/` 静态手册原样部署到本仓库 Pages。
-3. **周五钉盘上传**：独立任务每周五北京时间 09:00 上传最新 Release 安装包。
-4. **每日知识库同步**：独立任务每天北京时间 03:00 同步已提交的正式手册和 QA，不依赖构建。
+  <p>
+    <a href="README.zh-CN.md">简体中文</a> ·
+    <a href="https://vchenhev.github.io/tubu/">Online manual</a> ·
+    <a href="https://github.com/vchenhev/tubu/releases/latest">Latest release</a> ·
+    <a href="CHANGELOG.md">Release history</a>
+  </p>
 
-源码不进入本仓库；凭证只放在 Secrets 中。
+  <p>
+    <a href="https://github.com/vchenhev/tubu/actions/workflows/release.yml"><img src="https://img.shields.io/github/actions/workflow/status/vchenhev/tubu/release.yml?label=release" alt="Release workflow status" /></a>
+    <a href="https://vchenhev.github.io/tubu/"><img src="https://img.shields.io/badge/manual-GitHub%20Pages-2563eb" alt="Online manual" /></a>
+    <a href="CHANGELOG.md"><img src="https://img.shields.io/badge/history-monthly-0f766e" alt="Monthly release history" /></a>
+  </p>
+</div>
 
-## 首次配置（做一次即可）
+## What is TuBu?
 
-1. **配置 Secrets**（Settings → Secrets and variables → Actions → New repository secret）：
-   - `CODEUP_USER`：Codeup HTTPS 克隆用户名
-   - `CODEUP_TOKEN`：Codeup HTTPS 克隆密码 / 个人访问令牌（需要仓库读取权限）
-2. **开启 Pages**（Settings → Pages）：
-   - Source: `Deploy from a branch`
-   - Branch: `main`，目录 `/docs`
-3. 首次运行：Actions → daily-release → **Run workflow** 手动触发一次，验证全流程；失败恢复可勾选 `force`。
-4. 手册站点地址：`https://vchenhev.github.io/tubu/`
+TuBu VisionMeasure is an industrial vision platform for continuous coating inspection. It brings camera acquisition, measurement, defect review, process feedback and production records into one focused workspace.
 
-## 运行逻辑
+The public release repository provides the software entry points that matter to users: the latest installer, the online manual and a clear record of product changes.
 
-- 每日 UTC 21:00（北京时间次日凌晨 05:00）定时触发，也可手动触发。
-- 先用 `git ls-remote` 检测 Codeup `Develop` 分支最新 commit，与最近一次 Release 的 commit 一致则跳过（秒级结束）。
-- 有新提交才：浅克隆（`--depth 1`）→ NuGet 缓存还原 → 构建 Debug x64 → `Package.ps1` 打包 → 发布 Release（tag 形如 `build-2026.10.29-a1b2c3d`，附 SHA256）→ 更新 `docs/` 并推送 Pages。
-- 产物命名：`App-TuBu-<时间戳>_<commit短哈希>.7z`。
+## Built for the production line
 
-## 每日知识库同步
+| Capability | What it helps with |
+| --- | --- |
+| **Live inspection** | Monitor coating quality with camera-based measurement and defect classification. |
+| **Recipe-driven setup** | Keep products, regions, calibration and inspection parameters organized. |
+| **Operational clarity** | Use the manual to move from a screen, parameter or alarm to an actionable next step. |
+| **Release continuity** | Follow stable releases, verified packages and a monthly change history. |
 
-- 执行位置：本仓库 `.github/workflows/daily-knowledge-sync.yml`，GitHub 托管 Ubuntu runner / Node.js 22；整轮 20 分钟，同一任务串行，定时启动可能因 GitHub 排队延迟。
-- 来源：Codeup `Develop` 本轮固定 SHA；`Help/ai-knowledge.md` → 目标父目录现有同名 Markdown；`KnowledgeQA/*.md`（包括 README）→ 现有 `KnowledgeQA` 子目录。
-- 目标 workspace：`YRBGvgKbpvp0KzDA`；父目录 UUID：`ydxXB52LJqA1O6onF2e4kbwMJqjMp697`。通过知识库逻辑目录树与 UUID 存储映射核对归属，按逻辑标题匹配文件；底层存储名可能是内部数字，不能用它匹配知识源。完整读取分页后复用原节点，同 UUID 的旧目录重复记录去重，不同 UUID 的同名文件停止写入。手册固定复用 `Y1OQX0akWmEYO6oxcNd0qYALWGlDd3mE`，缺失或映射不符时停止该项；缺少 QA 子目录时使用 Document 接口创建并确认注册。
-- 使用既有 `CODEUP_USER`、`CODEUP_TOKEN`、`DINGTALK_APP_KEY`、`DINGTALK_APP_SECRET`、`DINGTALK_OPERATOR_ID` Secrets。运行期间的源码、QA、Git 认证 helper 仅放临时目录，结束清理；不提交、不上传 Actions 附件。
-- 文档目录、workspace、目标父目录和预览开关使用工作流中的 `KNOWLEDGE_*` 环境变量配置。执行脚本为 `Tools/Sync-Knowledge.mjs`，与安装包上传脚本分开。
-- 当前 Storage 元信息无可比内容哈希，因此仅下载小体积 Markdown（单文件上限 8 MiB）比较 SHA256；内容相同跳过，变化覆盖原节点，缺少则新建，不删除远端额外文件。同名冲突或类型不符停止该项。写后只核对节点和元信息，不重复下载全文或安装包。
-- 已有文件使用 v1 Storage 接口，按底层真实存储名覆盖；新文件使用 v2 接口注册知识库节点。不能对已有文件使用 v2 `OVERWRITE`：云端对照已复现它会保留物理文件 ID，却为相同 UUID 增加一条知识库目录登记，导致 DEAP 重复学习。更新后检查 UUID、文件信息及目录登记数保持不变；历史目录登记不自动删除，以免影响源文件。
-- 单请求超时 30 秒；读取和获取访问凭证、下载信息最多额外重试两次；创建、上传、提交不盲重试。单项失败继续处理其他文件，最终任务失败并列出失败项。
-- 手动补跑：[Actions → daily-knowledge-sync](https://github.com/vchenhev/tubu/actions/workflows/daily-knowledge-sync.yml) → **Run workflow**。默认勾选 `dry_run` 只读预览；取消勾选正式同步。摘要记录源码 SHA、新增/更新/跳过/失败数量、预计变化及耗时，不含正文和密钥。
-- 本地编辑功能时仍维护 Help，正文改变后运行源仓库 `Tools/UpdateHelpIndex.ps1` 并一起提交生成文件。同步不调用 LLM，不重新编写手册；离线 Help、Pages 和云效 QA 生产保持原路径。
+## Start here
 
-## 运行记录
+| Need | Link |
+| --- | --- |
+| Learn the workflow | [Open the online manual](https://vchenhev.github.io/tubu/) |
+| Install or update | [Download the latest release](https://github.com/vchenhev/tubu/releases/latest) |
+| Review what changed | [Browse the monthly release history](CHANGELOG.md) |
+| Ask a question | Use the software vocabulary from the manual when describing a page, tab, parameter or alarm. |
 
-2026-11-06 重复学习修复记录（北京时间）：
+## A calm release experience
 
-- [云端隔离对照](https://github.com/vchenhev/tubu/actions/runs/42060445130) 确认 v2 覆盖将同 UUID 目录登记从 1 增至 2；v1 按真实存储名覆盖后内容及版本更新、登记仍为 2。测试目录已送回收站，临时诊断工作流已移除。
-- 修复版 16 项测试通过。[正式同步](https://github.com/vchenhev/tubu/actions/runs/42061270574) 更新 2、跳过 2、失败 0；[重复执行](https://github.com/vchenhev/tubu/actions/runs/42061502797) 跳过 4、无新增或更新、失败 0。源码均为 `a7103aadbfc07637c9f6f132687a9b952a47ab52`，原文件 UUID 及目录登记数不变。
-- DEAP 页面确认手册及本周 QA 分别于 00:08:01、00:08:03 自动学习成功，没有新增业务学习记录。历史同源重复学习记录已清理 8 条，保留 4 份业务文档；历史知识库目录别名不自动删除，避免影响钉钉源文件。本次隔离测试产生的两条失败学习记录另行清理，不属于业务知识源。
+The release pipeline turns the current production software into a versioned package, publishes the matching manual to GitHub Pages, and keeps the knowledge synchronization tasks independent from the installer. The repository stays intentionally small: the application source remains in its source repository, while this project is the public release surface.
 
-- 知识运营：现有云效 Flow 读取问题 → LLM 分析 → 回填 Codeup QA；每日独立同步任务将已提交文档送入知识库。
-- 注意：本仓库 Actions 日志公开，涉及 LLM 分析时严禁把源码内容和任何密钥打印到日志。
+<details>
+<summary><strong>For maintainers</strong></summary>
 
-## 文档与日志维护
+The repository contains three focused GitHub Actions workflows:
 
-- 更新日志入口为 [CHANGELOG.md](CHANGELOG.md)，发布记录按年月保存在 `changelog/YYYY-MM.md`，随 Pages 一起发布。
-- 2026-11-18：发布与手册统一维护于 `vchenhev/tubu`；保留每日构建、GitHub Pages、每日钉钉知识库同步及周五钉盘上传，停止千问静态网页同步。
-- 只调整发布配置或运维文档的源码提交可在标题加 `[skip changelog]`，不写入面向软件用户的发布说明。
+- `release.yml` builds and publishes a package when the source branch changes.
+- `daily-knowledge-sync.yml` synchronizes committed manual and QA material to the DingTalk knowledge base.
+- `weekly-dingtalk-upload.yml` uploads the latest package to the configured DingTalk Drive folder.
+
+The `docs/` directory is the GitHub Pages deployment target. Monthly release notes live in `changelog/YYYY-MM.md`; the root `CHANGELOG.md` is the index. Credentials belong in GitHub Actions Secrets and are never part of the repository content.
+
+</details>
+
+## Repository map
+
+```text
+README.md              Product landing page (English)
+README.zh-CN.md        产品介绍页（简体中文）
+CHANGELOG.md           Monthly release index
+changelog/YYYY-MM.md   Monthly release notes
+docs/                  GitHub Pages deployment
+Tools/                 Knowledge sync and package upload tasks
+.github/workflows/     Release automation
+```
+
+TuBu is designed for teams that want a dependable inspection workflow, a readable manual and a release page they can return to.

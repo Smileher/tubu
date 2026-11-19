@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="color-scheme" content="light dark" />
   <meta name="author" content="chenhe" />
-  <meta name="manual-version" content="20261118145335" /><meta name="manual-pages-hash" content="8e8da1e460c8ae563ed6af2eaaa751de3bf9175a4247d33171768bea64b5b319" />
+  <meta name="manual-version" content="20261119091852" /><meta name="manual-pages-hash" content="7b97f02cc7e39e21f0277fc812cfdb0781d080346276c8d47452b78ddca0bb51" />
   <title>操作手册 · 涂布检测软件</title>
   <link rel="stylesheet" href="assets/help.css" />
   <link rel="icon" href="assets/logo.png" type="image/png" />
@@ -14,6 +14,7 @@
   <script src="assets/export.js" defer></script>
   <script src="assets/search.js" defer></script>
   <script src="assets/help.js" defer></script>
+  <script src="assets/download.js" defer></script>
 </head>
 <body>
   <a class="skip-link" href="#main">跳到正文</a>
@@ -31,7 +32,7 @@
   <div class="workspace">
     <header class="topbar">
       <button id="nav-toggle" class="nav-toggle" type="button" aria-expanded="false" aria-controls="sidebar">☰ 目录</button>
-      <div class="breadcrumb"><strong id="breadcrumb">手册概览</strong></div>
+      <div class="breadcrumb"><strong id="breadcrumb">手册概览</strong><span class="author-label">by chenhe</span></div>
       <div class="toolbar" aria-label="阅读设置">
         <a class="top-search-link" href="#search" aria-label="打开搜索">⌕ <span>搜索</span></a>
         <details class="reading-settings" open="open"><summary aria-label="字号设置" title="字号设置">Aa</summary><div class="font-controls">
@@ -42,16 +43,36 @@
         <span class="toolbar-divider"></span>
         <button id="theme" class="theme-toggle" type="button" role="switch" aria-checked="false" aria-label="深色主题" title="切换主题"><span class="theme-sun" aria-hidden="true">☀</span><span class="theme-moon" aria-hidden="true">☾</span><span class="theme-thumb" aria-hidden="true"></span></button>
         <span class="toolbar-divider"></span>
+        <div class="export-control">
+          <button id="export-toggle" type="button" aria-expanded="false" aria-controls="export-menu">导出 <span aria-hidden="true">↓</span></button>
+          <div id="export-menu" class="export-menu" hidden="hidden">
+            <label for="export-scope">导出范围</label>
+            <select id="export-scope"><option value="all" selected="selected">整本手册</option><option value="current">当前文章</option></select>
+            <button id="export-word" type="button">Word <small>下载可编辑 DOCX</small></button>
+            <p id="export-status" role="status"></p>
+          </div>
+        </div>
       </div>
     </header>
     <div class="reading-layout">
       <main id="main" tabindex="-1"></main>
       <aside id="contents" class="contents" aria-label="本篇目录"></aside>
     </div>
-    <footer class="site-footer"><span class="footer-company">南京华视智能科技股份有限公司</span><span class="footer-product">VISIONMEASURE <span class="footer-dot">·</span> 操作手册</span><div class="footer-actions"><div class="export-control"><button id="export-toggle" type="button" aria-expanded="false" aria-controls="export-menu">导出 <span aria-hidden="true">↓</span></button><div id="export-menu" class="export-menu" hidden="hidden"><label for="export-scope">导出范围</label><select id="export-scope"><option value="all" selected="selected">整本手册</option><option value="current">当前文章</option></select><button id="export-word" type="button">Word <small>下载可编辑 DOCX</small></button><p id="export-status" role="status"></p></div></div><a class="footer-quiet-link" href="https://github.com/vchenhev/tubu/releases/latest">下载</a><a class="footer-quiet-link" href="ai-knowledge.md">AI 知识文档</a><button id="site-notes" class="footer-quiet-link" type="button" aria-pressed="false">特殊现场说明</button></div></footer>
+    <footer class="site-footer"><span class="footer-company">南京华视智能科技股份有限公司</span><span class="footer-product">VISIONMEASURE <span class="footer-dot">·</span> 操作手册</span><div class="footer-actions"><button id="download-open" class="footer-quiet-link" type="button">下载</button><a class="footer-quiet-link" href="ai-knowledge.md">AI 知识文档</a><button id="site-notes" class="footer-quiet-link" type="button" aria-pressed="false">特殊现场说明</button></div></footer>
   </div>
   <div id="reading-progress" class="reading-progress" role="progressbar" aria-label="阅读进度" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" hidden="hidden"><span></span></div>
   <p id="reader-status" class="sr-only" role="status"></p>
+  <dialog id="download-dialog" class="download-dialog" aria-labelledby="download-title" aria-describedby="download-description">
+    <div class="download-heading"><span class="download-symbol" aria-hidden="true">↓</span><h2 id="download-title"><button id="download-unlock" type="button">访问受限</button></h2></div>
+    <p id="download-description">请联系技术支持获取下载权限。</p>
+    <form id="download-form" hidden="hidden" novalidate="novalidate">
+      <label for="download-password">访问密码</label>
+      <div class="download-entry"><input id="download-password" type="password" inputmode="numeric" maxlength="6" autocomplete="off" aria-describedby="download-status" placeholder="请输入六位密码" /><button id="download-verify" type="submit">验证</button></div>
+    </form>
+    <p id="download-status" role="status"></p>
+    <div id="download-files" class="download-files" hidden="hidden"></div>
+    <div class="download-actions"><button id="download-more" type="button" hidden="hidden">更早版本</button><button id="download-close" type="button" autofocus="autofocus">关闭</button></div>
+  </dialog>
   <noscript><p class="load-error">请在浏览器中启用 JavaScript 后查看操作手册。</p></noscript>
 </body>
 </html>
